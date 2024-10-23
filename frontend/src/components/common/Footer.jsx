@@ -3,10 +3,10 @@ import React from "react";
 export default function Footer() {
   return (
     <footer
-      className="text-white px-36 text-sm bg-zinc-900"
+      className="text-white px-20 text-sm bg-zinc-900"
     >
       <div className="flex justify-between items-center p-11">
-        <div className="flex space-x-4 text-gray-400">
+        <div className="flex space-x-2 text-gray-400">
           {/* Facebook */}
           <a
             href="https://facebook.com"
@@ -47,7 +47,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <div className="flex space-x-4 text-gray-400">
+        <div className="flex space-x-3 text-gray-400">
           <p className="text-sm text-white">
             © 2024 OsteoLog. Tous droits réservés.
           </p>

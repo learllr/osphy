@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext.jsx";
 import LogoutModal from "../modals/LogoutModal.jsx";
 
-export default function NavBar() {
+export default function PublicNavBar() {
   const { isAuthenticated, logoutUser } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const isSubscribed = true;
 
   const openLogoutModal = () => {
     setShowLogoutModal(true);
@@ -31,6 +32,9 @@ export default function NavBar() {
 
       {/* Liens de navigation à droite */}
       <div className="flex space-x-4">
+        {isAuthenticated && isSubscribed && (
+          <Link to="/dashboard">Tableau de bord</Link>
+        )}
         {isAuthenticated ? (
           <>
             <Link to="/manage-account">Mon Compte</Link>
