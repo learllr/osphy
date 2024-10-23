@@ -11,7 +11,6 @@ export default function AccountManagement() {
     birthDate: "",
     newsletterAccepted: false,
   });
-  const { grades } = useGlobal();
 
   useEffect(() => {
     if (user) {
@@ -46,25 +45,6 @@ export default function AccountManagement() {
         <h1 className="text-2xl mb-4">Mon compte</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="gradeId" className="block">
-              Niveau
-            </label>
-            <select
-              id="gradeId"
-              name="gradeId"
-              value={formData.gradeId}
-              onChange={handleChange}
-              className="border p-2 w-full"
-            >
-              {grades.map((grade) => (
-                <option key={grade.id} value={grade.id}>
-                  {grade.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <div>
             <label htmlFor="firstName" className="block">
               Prénom
