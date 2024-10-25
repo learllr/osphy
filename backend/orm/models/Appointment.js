@@ -12,6 +12,26 @@ export default (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      patientId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Patients",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -39,22 +59,6 @@ export default (sequelize) => {
         defaultValue: "En attente",
         allowNull: false,
       },
-      userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
-      typeId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "AppointmentTypes",
-          key: "id",
-        },
-      },
     },
     {
       sequelize,
@@ -69,10 +73,9 @@ export default (sequelize) => {
       foreignKey: "userId",
       as: "user",
     });
-
-    Appointment.belongsTo(models.AppointmentType, {
-      foreignKey: "typeId",
-      as: "type",
+    Appointment.belongsTo(models.Patient, {
+      foreignKey: "patientId",
+      as: "patient",
     });
   };
 
