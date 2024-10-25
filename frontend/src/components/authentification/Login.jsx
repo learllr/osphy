@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import ResetPasswordModal from "../modals/ResetPasswordModal.jsx";
 import { useUser } from "../contexts/UserContext.jsx";
 import axios from "axios";
-import PublicNavBar from "../public/PublicNavBar.jsx";
+import NavBar from "../common/NavBar.jsx";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -24,7 +24,6 @@ export default function Login() {
   const [resetMessage, setResetMessage] = useState("");
   const [resetError, setResetError] = useState("");
 
-  // Gérer le changement des champs de formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -33,7 +32,6 @@ export default function Login() {
     }));
   };
 
-  // Soumission du formulaire de connexion
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -47,7 +45,6 @@ export default function Login() {
     }
   };
 
-  // Soumission du formulaire de réinitialisation du mot de passe
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
@@ -75,71 +72,71 @@ export default function Login() {
 
   return (
     <div className="min-h-screen">
-        <PublicNavBar />
-        <div className="flex justify-center items-center m-20">
-            <div className="bg-white w-full max-w-lg p-8">
-            <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-                Connexion
-            </h1>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                <label className="block text-gray-700 mb-2">Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-                {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                )}
-                </div>
-                <div>
-                <label className="block text-gray-700 mb-2">Mot de passe</label>
-                <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    minLength={8}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-                {errors.password && (
-                    <p className="text-red-500 text-sm">{errors.password}</p>
-                )}
-                </div>
-                <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                Se connecter
-                </button>
-
-                <div className="text-center mt-4">
-                <a
-                    href="#"
-                    onClick={() => setShowModal(true)}
-                    className="text-blue-500 hover:underline transition-colors"
-                >
-                    Mot de passe oublié ?
-                </a>
-                </div>
-            </form>
-
-            <ResetPasswordModal
-                isVisible={showModal}
-                onClose={() => setShowModal(false)}
-                onSubmit={handleResetPassword}
-                resetEmail={resetEmail}
-                setResetEmail={setResetEmail}
-                resetMessage={resetMessage}
-                resetError={resetError}
-            />
+      <NavBar />
+      <div className="flex justify-center items-center m-20">
+        <div className="bg-white w-full max-w-lg p-8">
+          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+            Connexion
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
+            <div>
+              <label className="block text-gray-700 mb-2">Mot de passe</label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                minLength={8}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Se connecter
+            </button>
+
+            <div className="text-center mt-4">
+              <a
+                href="#"
+                onClick={() => setShowModal(true)}
+                className="text-blue-500 hover:underline transition-colors"
+              >
+                Mot de passe oublié ?
+              </a>
+            </div>
+          </form>
+
+          <ResetPasswordModal
+            isVisible={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={handleResetPassword}
+            resetEmail={resetEmail}
+            setResetEmail={setResetEmail}
+            resetMessage={resetMessage}
+            resetError={resetError}
+          />
         </div>
+      </div>
     </div>
-  )
+  );
 }
