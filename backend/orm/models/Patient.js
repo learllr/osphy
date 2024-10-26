@@ -12,8 +12,8 @@ export default (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
-      civility: {
-        type: DataTypes.ENUM('Mr', 'Mrs', 'Miss'),
+      gender: {
+        type: DataTypes.ENUM("Homme", "Femme"),
         allowNull: false,
       },
       lastName: {
@@ -77,14 +77,6 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      boysCount: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      girlsCount: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
       height: {
         type: DataTypes.FLOAT,
         allowNull: true,
@@ -100,7 +92,7 @@ export default (sequelize) => {
         },
       },
       handedness: {
-        type: DataTypes.ENUM('Gaucher', 'Droitier', 'Ambidextre'),
+        type: DataTypes.ENUM("Gaucher", "Droitier", "Ambidextre"),
         allowNull: true,
       },
       medicalTreatments: {
@@ -110,7 +102,7 @@ export default (sequelize) => {
       additionalInfo: {
         type: DataTypes.TEXT,
         allowNull: true,
-      }
+      },
     },
     {
       sequelize,
@@ -124,6 +116,54 @@ export default (sequelize) => {
     Patient.hasMany(models.Consultation, {
       foreignKey: "patientId",
       as: "consultations",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientActivity, {
+      foreignKey: "patientId",
+      as: "activities",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientAntecedent, {
+      foreignKey: "patientId",
+      as: "antecedents",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientContraindication, {
+      foreignKey: "patientId",
+      as: "contraindications",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasOne(models.PatientGynecology, {
+      foreignKey: "patientId",
+      as: "gynecology",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientPractitioner, {
+      foreignKey: "patientId",
+      as: "practitioners",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientPregnancy, {
+      foreignKey: "patientId",
+      as: "pregnancies",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasOne(models.PatientSleep, {
+      foreignKey: "patientId",
+      as: "sleep",
+      onDelete: "CASCADE",
+    });
+
+    Patient.hasMany(models.PatientWarning, {
+      foreignKey: "patientId",
+      as: "warnings",
       onDelete: "CASCADE",
     });
   };

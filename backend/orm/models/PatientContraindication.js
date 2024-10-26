@@ -12,11 +12,11 @@ export default (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
-      consultationId: {
+      patientId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Consultations",
+          model: "Patients",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -33,7 +33,7 @@ export default (sequelize) => {
           notEmpty: true,
           len: [3, 255],
         },
-      }
+      },
     },
     {
       sequelize,
@@ -44,9 +44,9 @@ export default (sequelize) => {
   );
 
   PatientContraindication.associate = (models) => {
-    PatientContraindication.belongsTo(models.Consultation, {
-      foreignKey: "consultationId",
-      as: "consultation",
+    PatientContraindication.belongsTo(models.Patient, {
+      foreignKey: "patientId",
+      as: "patient",
       onDelete: "CASCADE",
     });
   };

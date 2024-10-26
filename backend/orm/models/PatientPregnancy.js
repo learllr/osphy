@@ -22,13 +22,12 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      pregnancyCount: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
+      gender: {
+        type: DataTypes.ENUM("Garçon", "Fille"),
+        allowNull: true,
       },
       deliveryMethod: {
-        type: DataTypes.ENUM('Voie basse', 'Césarienne'),
+        type: DataTypes.ENUM("Voie basse", "Césarienne"),
         allowNull: true,
       },
       epidural: {
