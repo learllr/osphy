@@ -99,16 +99,16 @@ export default (sequelize) => {
           min: 0,
         },
       },
+      handedness: {
+        type: DataTypes.ENUM('Gaucher', 'Droitier', 'Ambidextre'),
+        allowNull: true,
+      },
       medicalTreatments: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
       additionalInfo: {
         type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      handedness: {
-        type: DataTypes.ENUM('Gaucher', 'Droitier', 'Ambidextre'),
         allowNull: true,
       },
       sleepQuality: {
@@ -118,6 +118,11 @@ export default (sequelize) => {
       sleepDuration: {
         type: DataTypes.ENUM('<5h', '5-6h', '7-8h', '>8h'),
         allowNull: true,
+      },
+      restorativeSleep: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
       },
     },
     {
