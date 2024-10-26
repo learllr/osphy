@@ -2,9 +2,9 @@
 import { Model, DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  class Warning extends Model {}
+  class PatientPregnancy extends Model {}
 
-  Warning.init(
+  PatientPregnancy.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,32 +19,38 @@ export default (sequelize) => {
           model: "Patients",
           key: "id",
         },
-        onUpdate: "CASCADE",
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
-      warning: {
-        type: DataTypes.TEXT,
+      pregnancyCount: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
+        defaultValue: 0,
+      },
+      deliveryMethod: {
+        type: DataTypes.ENUM('Voie basse', 'Césarienne'),
+        allowNull: true,
+      },
+      epidural: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: "Warning",
-      tableName: "Warnings",
+      modelName: "PatientPregnancy",
+      tableName: "PatientPregnancies",
       timestamps: true,
     }
   );
 
-  Warning.associate = (models) => {
-    Warning.belongsTo(models.Patient, {
+  PatientPregnancy.associate = (models) => {
+    PatientPregnancy.belongsTo(models.Patient, {
       foreignKey: "patientId",
       as: "patient",
       onDelete: "CASCADE",
     });
   };
 
-  return Warning;
+  return PatientPregnancy;
 };

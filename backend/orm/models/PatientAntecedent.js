@@ -2,9 +2,9 @@
 import { Model, DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  class Gynecology extends Model {}
+  class PatientAntecedent extends Model {}
 
-  Gynecology.init(
+  PatientAntecedent.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,36 +22,33 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      period: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      menopause: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      contraception: {
-        type: DataTypes.ENUM('Aucune', 'Stérilet', 'Pillule', 'Implant', 'Patch', 'Anneau', 'Diaphragme', 'Préservatif', 'Autre'),
+      temporalInfo: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
+      antecedent: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      }
     },
     {
       sequelize,
-      modelName: "Gynecology",
-      tableName: "Gynecologies",
+      modelName: "PatientAntecedent",
+      tableName: "PatientAntecedents",
       timestamps: true,
     }
   );
 
-  Gynecology.associate = (models) => {
-    Gynecology.belongsTo(models.Patient, {
+  PatientAntecedent.associate = (models) => {
+    PatientAntecedent.belongsTo(models.Patient, {
       foreignKey: "patientId",
       as: "patient",
       onDelete: "CASCADE",
     });
   };
 
-  return Gynecology;
+  return PatientAntecedent;
 };

@@ -2,9 +2,9 @@
 import { Model, DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  class Pregnancy extends Model {}
+  class PatientGynecology extends Model {}
 
-  Pregnancy.init(
+  PatientGynecology.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,35 +22,46 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      pregnancyCount: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      deliveryMethod: {
-        type: DataTypes.ENUM('Voie basse', 'Césarienne'),
-        allowNull: true,
-      },
-      epidural: {
+      period: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      menopause: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      contraception: {
+        type: DataTypes.ENUM(
+          'Aucune', 
+          'Stérilet', 
+          'Pillule', 
+          'Implant', 
+          'Patch', 
+          'Anneau', 
+          'Diaphragme', 
+          'Préservatif', 
+          'Autre'
+        ),
         allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: "Pregnancy",
-      tableName: "Pregnancies",
+      modelName: "PatientGynecology",
+      tableName: "PatientGynecologies",
       timestamps: true,
     }
   );
 
-  Pregnancy.associate = (models) => {
-    Pregnancy.belongsTo(models.Patient, {
+  PatientGynecology.associate = (models) => {
+    PatientGynecology.belongsTo(models.Patient, {
       foreignKey: "patientId",
       as: "patient",
       onDelete: "CASCADE",
     });
   };
 
-  return Pregnancy;
+  return PatientGynecology;
 };

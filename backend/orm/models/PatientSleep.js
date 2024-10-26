@@ -2,9 +2,9 @@
 import { Model, DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  class Antecedent extends Model {}
+  class PatientSleep extends Model {}
 
-  Antecedent.init(
+  PatientSleep.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,33 +22,35 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      temporalInfo: {
-        type: DataTypes.STRING,
+      sleepQuality: {
+        type: DataTypes.ENUM('Bon', 'Moyen', 'Mauvais'),
         allowNull: true,
       },
-      antecedent: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
-      }
+      sleepDuration: {
+        type: DataTypes.ENUM('<5h', '5-6h', '7-8h', '>8h'),
+        allowNull: true,
+      },
+      restorativeSleep: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
+      },
     },
     {
       sequelize,
-      modelName: "Antecedent",
-      tableName: "Antecedents",
+      modelName: "PatientSleep",
+      tableName: "PatientSleeps",
       timestamps: true,
     }
   );
 
-  Antecedent.associate = (models) => {
-    Antecedent.belongsTo(models.Patient, {
+  PatientSleep.associate = (models) => {
+    PatientSleep.belongsTo(models.Patient, {
       foreignKey: "patientId",
       as: "patient",
       onDelete: "CASCADE",
     });
   };
 
-  return Antecedent;
+  return PatientSleep;
 };

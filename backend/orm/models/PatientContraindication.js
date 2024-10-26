@@ -2,9 +2,9 @@
 import { Model, DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  class Contraindication extends Model {}
+  class PatientContraindication extends Model {}
 
-  Contraindication.init(
+  PatientContraindication.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -37,19 +37,19 @@ export default (sequelize) => {
     },
     {
       sequelize,
-      modelName: "Contraindication",
-      tableName: "Contraindications",
+      modelName: "PatientContraindication",
+      tableName: "PatientContraindications",
       timestamps: true,
     }
   );
 
-  Contraindication.associate = (models) => {
-    Contraindication.belongsTo(models.Consultation, {
+  PatientContraindication.associate = (models) => {
+    PatientContraindication.belongsTo(models.Consultation, {
       foreignKey: "consultationId",
       as: "consultation",
       onDelete: "CASCADE",
     });
   };
 
-  return Contraindication;
+  return PatientContraindication;
 };
