@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext.jsx";
 import LogoutModal from "../modals/LogoutModal.jsx";
 
@@ -8,6 +8,7 @@ export default function NavBar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const isSubscribed = true;
+  const navigate = useNavigate();
 
   const openLogoutModal = () => {
     setShowLogoutModal(true);
@@ -20,6 +21,7 @@ export default function NavBar() {
   const handleLogout = () => {
     closeLogoutModal();
     logoutUser();
+    navigate("/");
   };
 
   const handleSearchChange = (e) => {
