@@ -6,6 +6,7 @@ import LogoutModal from "../modals/LogoutModal.jsx";
 export default function NavBar() {
   const { isAuthenticated, logoutUser } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const isSubscribed = true;
 
   const openLogoutModal = () => {
@@ -21,13 +22,35 @@ export default function NavBar() {
     logoutUser();
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    console.log("Rechercher:", searchQuery);
+  };
+
   return (
-    <nav className="flex bg-zinc-800 text-white p-8 justify-between items-center">
+    <nav className="flex bg-zinc-800 text-white px-8 py-3 justify-between items-center">
       {/* Logo à gauche */}
       <div>
         <Link to="/">
           <span>OsteoLog</span>
         </Link>
+      </div>
+
+      {/* Barre de recherche */}
+      <div className="mx-4">
+        <form onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Rechercher un patient"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-96 px-4 py-2 rounded-full bg-white text-black"
+          />
+        </form>
       </div>
 
       {/* Liens de navigation à droite */}
