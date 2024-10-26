@@ -3,6 +3,7 @@ import db from "./orm/models/index.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
 import appointmentRoutes from "./routes/appointments.js";
 
 const app = express();
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api", appointmentRoutes);
 
 db.sequelize

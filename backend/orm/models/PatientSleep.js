@@ -23,11 +23,11 @@ export default (sequelize) => {
         onUpdate: "CASCADE",
       },
       sleepQuality: {
-        type: DataTypes.ENUM('Bon', 'Moyen', 'Mauvais'),
+        type: DataTypes.ENUM("Bon", "Moyen", "Mauvais"),
         allowNull: true,
       },
       sleepDuration: {
-        type: DataTypes.ENUM('<5h', '5-6h', '7-8h', '>8h'),
+        type: DataTypes.ENUM("<5h", "5-6h", "7-8h", ">8h"),
         allowNull: true,
       },
       restorativeSleep: {

@@ -76,18 +76,6 @@ export default (sequelize) => {
       as: "patient",
       onDelete: "CASCADE",
     });
-
-    Consultation.hasMany(models.Contraindication, {
-      foreignKey: "consultationId",
-      as: "contraindications",
-      onDelete: "CASCADE",
-    });
-
-    Consultation.hasMany(models.Warning, {
-      foreignKey: "consultationId",
-      as: "warnings",
-      onDelete: "CASCADE",
-    });
   };
 
   return Consultation;

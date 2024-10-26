@@ -40,8 +40,17 @@ export default function NavBar() {
         </Link>
       </div>
 
+      <div className="flex space-x-4">
+        {isAuthenticated && isSubscribed && (
+          <>
+            <Link to="/patients">Patients</Link>
+            <Link to="/schedule">Agenda</Link>
+          </>
+        )}
+      </div>
+
       {/* Barre de recherche */}
-      <div className="mx-4">
+      {isAuthenticated && isSubscribed && (
         <form onSubmit={handleSearchSubmit}>
           <input
             type="text"
@@ -51,16 +60,10 @@ export default function NavBar() {
             className="w-96 px-4 py-2 rounded-full bg-white text-black"
           />
         </form>
-      </div>
+      )}
 
       {/* Liens de navigation à droite */}
       <div className="flex space-x-4">
-        {isAuthenticated && isSubscribed && (
-          <>
-            <Link to="/patients">Patients</Link>
-            <Link to="/schedule">Agenda</Link>
-          </>
-        )}
         {isAuthenticated ? (
           <>
             <Link to="/manage-account">Mon Compte</Link>
