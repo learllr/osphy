@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext.jsx";
 import LogoutModal from "../modals/LogoutModal.jsx";
+import PatientSearch from "../common/PatientSearch.jsx";
 
 export default function NavBar() {
   const { isAuthenticated, logoutUser } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const isSubscribed = true;
   const navigate = useNavigate();
 
@@ -22,15 +22,6 @@ export default function NavBar() {
     closeLogoutModal();
     logoutUser();
     navigate("/");
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log("Rechercher:", searchQuery);
   };
 
   return (
@@ -52,17 +43,7 @@ export default function NavBar() {
       </div>
 
       {/* Barre de recherche */}
-      {isAuthenticated && isSubscribed && (
-        <form onSubmit={handleSearchSubmit}>
-          <input
-            type="text"
-            placeholder="Rechercher un patient"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-96 px-4 py-2 rounded-full bg-white text-black"
-          />
-        </form>
-      )}
+      {isAuthenticated && isSubscribed && <PatientSearch />}
 
       {/* Liens de navigation à droite */}
       <div className="flex space-x-4">
