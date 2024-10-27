@@ -44,6 +44,15 @@ export default function Patients() {
     }));
   };
 
+  const handleDeletePatient = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/api/patient/${id}`);
+      setPatients((prevPatients) => prevPatients.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error("Erreur lors de la suppression du patient:", error);
+    }
+  };
+
   const filteredPatients = patients.filter((patient) => {
     return (
       patient.id.toString().includes(filters.id) &&
@@ -173,7 +182,10 @@ export default function Patients() {
                         </button>
                       </li>
                       <li>
-                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500">
+                        <button
+                          onClick={() => handleDeletePatient(patient.id)}
+                          className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
+                        >
                           Supprimer
                         </button>
                       </li>
