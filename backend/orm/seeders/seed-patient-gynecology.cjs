@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert("PatientGynecologies", [
+    await queryInterface.bulkInsert("PatientGynecologies", [
       {
         patientId: 2,
         period: true,
@@ -12,7 +12,23 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        patientId: 3,
+        patientId: 4,
+        period: false,
+        menopause: true,
+        contraception: "Stérilet",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        patientId: 6,
+        period: true,
+        menopause: false,
+        contraception: "Implant",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        patientId: 8,
         period: false,
         menopause: true,
         contraception: "Aucune",
@@ -23,6 +39,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete("PatientGynecologies", null, {});
+    await queryInterface.bulkDelete("PatientGynecologies", null, {});
   },
 };
