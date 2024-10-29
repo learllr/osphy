@@ -7,7 +7,7 @@ import Signup from "./components/authentification/Signup.jsx";
 import Patients from "./components/private/Patients.jsx";
 import Schedule from "./components/private/Schedule.jsx";
 import AccountManagement from "./components/public/AccountManagement.jsx";
-import PatientDetails from "./components/private/PatientDetails.jsx";
+import PatientDetails from "./components/private/PatientElements/PatientDetails.jsx";
 
 export default function App() {
   return (

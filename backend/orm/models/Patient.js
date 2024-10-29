@@ -12,6 +12,16 @@ export default (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
       gender: {
         type: DataTypes.ENUM("Homme", "Femme"),
         allowNull: false,
@@ -113,6 +123,12 @@ export default (sequelize) => {
   );
 
   Patient.associate = (models) => {
+    Patient.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "user",
+      onDelete: "CASCADE",
+    });
+
     Patient.hasMany(models.Consultation, {
       foreignKey: "patientId",
       as: "consultations",

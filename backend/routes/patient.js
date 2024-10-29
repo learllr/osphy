@@ -17,11 +17,16 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const patients = await Patient.findAll({
+      where: { userId },
       attributes: ["id", "gender", "lastName", "firstName", "birthDate"],
     });
+
     res.status(200).json(patients);
   } catch (error) {
+    console.error("Erreur lors de la récupération des patients:", error);
     res
       .status(500)
       .json({ message: "Erreur lors de la récupération des patients." });
@@ -31,7 +36,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const patient = await Patient.findByPk(id, {
+    const userId = req.user.id;
+    console.log("id", id);
+    console.log("userId", userId);
+
+    const patient = await Patient.findOne({
+      where: { id, userId },
       attributes: [
         "id",
         "gender",
@@ -99,6 +109,7 @@ router.get("/:id", async (req, res) => {
     }
     res.status(200).json(patient);
   } catch (error) {
+    console.error("Erreur lors de la récupération du patient:", error);
     res
       .status(500)
       .json({ message: "Erreur lors de la récupération du patient." });
@@ -107,6 +118,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
+    const userId = req.user.id;
     const {
       gender,
       lastName,
@@ -119,7 +131,9 @@ router.post("/", async (req, res) => {
       email,
       occupation,
     } = req.body;
+
     const newPatient = await Patient.create({
+      userId,
       gender,
       lastName,
       firstName,
@@ -133,6 +147,7 @@ router.post("/", async (req, res) => {
     });
     res.status(201).json(newPatient);
   } catch (error) {
+    console.error("Erreur lors de la création du patient:", error);
     res.status(500).json({ message: "Erreur lors de la création du patient." });
   }
 });
@@ -140,6 +155,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
     const {
       gender,
       lastName,
@@ -153,7 +169,7 @@ router.put("/:id", async (req, res) => {
       occupation,
     } = req.body;
 
-    const patient = await Patient.findByPk(id);
+    const patient = await Patient.findOne({ where: { id, userId } });
     if (!patient) {
       return res.status(404).json({ message: "Patient non trouvé." });
     }
@@ -172,6 +188,7 @@ router.put("/:id", async (req, res) => {
     });
     res.status(200).json(patient);
   } catch (error) {
+    console.error("Erreur lors de la mise à jour du patient:", error);
     res
       .status(500)
       .json({ message: "Erreur lors de la mise à jour du patient." });
@@ -181,7 +198,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const patient = await Patient.findByPk(id);
+    const userId = req.user.id;
+
+    const patient = await Patient.findOne({ where: { id, userId } });
     if (!patient) {
       return res.status(404).json({ message: "Patient non trouvé." });
     }
@@ -189,6 +208,7 @@ router.delete("/:id", async (req, res) => {
     await patient.destroy();
     res.status(204).send();
   } catch (error) {
+    console.error("Erreur lors de la suppression du patient:", error);
     res
       .status(500)
       .json({ message: "Erreur lors de la suppression du patient." });

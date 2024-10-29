@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../common/NavBar";
-import axios from "axios";
+import axios from "../../axiosConfig.js";
 import { Link } from "react-router-dom";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { useUser } from "../contexts/UserContext";
+import AddPatientModal from "../modals/AddPatientModal.jsx";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     id: "",
     gender: "",
@@ -15,20 +16,23 @@ export default function Patients() {
     birthDate: "",
   });
 
+  const { user } = useUser();
   const [showDropdown, setShowDropdown] = useState({});
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/patient`);
+        const response = await axios.get("/api/patient");
         setPatients(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des patients:", error);
       }
     };
 
-    fetchPatients();
-  }, []);
+    if (user) {
+      fetchPatients();
+    }
+  }, [user]);
 
   const handleFilterChange = (e) => {
     setFilters({
@@ -46,7 +50,7 @@ export default function Patients() {
 
   const handleDeletePatient = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/api/patient/${id}`);
+      await axios.delete(`/api/patient/${id}`);
       setPatients((prevPatients) => prevPatients.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Erreur lors de la suppression du patient:", error);
@@ -68,17 +72,25 @@ export default function Patients() {
     );
   });
 
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handlePatientAdded = (newPatient) => {
+    setPatients((prev) => [...prev, newPatient]);
+  };
+
   return (
     <div>
       <NavBar />
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Liste des Patients</h1>
-        <Link
-          to="/add-patient"
+        <button
+          onClick={toggleModal}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Ajouter un patient
-        </Link>
+        </button>
       </div>
 
       <table className="min-w-full bg-white border">
@@ -161,7 +173,6 @@ export default function Patients() {
                 >
                   Ouvrir la fiche patient
                 </Link>
-
                 <div className="relative inline-block">
                   <button
                     onClick={() => toggleDropdown(patient.id)}
@@ -197,6 +208,12 @@ export default function Patients() {
           ))}
         </tbody>
       </table>
+
+      <AddPatientModal
+        isOpen={isModalOpen}
+        onClose={toggleModal}
+        onPatientAdded={handlePatientAdded}
+      />
     </div>
   );
 }

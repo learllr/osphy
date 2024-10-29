@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import axios from "../../axiosConfig.js";
 
 export default function PatientSearch() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,7 +12,7 @@ export default function PatientSearch() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/patient`);
+        const response = await axios.get("/api/patient");
         setPatients(response.data);
         setFilteredPatients(response.data);
       } catch (error) {

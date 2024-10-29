@@ -1,7 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import axios from "../../axiosConfig.js";
 
 const UserContext = createContext();
 
@@ -16,9 +14,9 @@ export const UserProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get(`${BASE_URL}/api/user/profile`, {
+        .get("/api/user/profile", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: "Bearer ${token}",
           },
           withCredentials: true,
         })
@@ -37,7 +35,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/auth/login`,
+        "/api/auth/login",
         { email, password },
         { withCredentials: true }
       );
@@ -60,7 +58,7 @@ export const UserProvider = ({ children }) => {
   const logoutUser = async () => {
     try {
       await axios.post(
-        `${BASE_URL}/api/auth/logout`,
+        "/api/auth/logout",
         {},
         {
           withCredentials: true,
@@ -76,9 +74,7 @@ export const UserProvider = ({ children }) => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/user/all`, {
-        withCredentials: true,
-      });
+      const response = await axios.get("/api/user/all");
       setUsers(response.data);
       return { success: true };
     } catch (error) {
@@ -94,13 +90,7 @@ export const UserProvider = ({ children }) => {
 
   const addUser = async (newUserData) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/api/user/add`,
-        newUserData,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post("/api/user/add", newUserData);
       setUsers((prevUsers) => [...prevUsers, response.data.user]);
       return { success: true };
     } catch (error) {
@@ -116,13 +106,7 @@ export const UserProvider = ({ children }) => {
 
   const updateUser = async (id, newUserData) => {
     try {
-      const response = await axios.put(
-        `${BASE_URL}/api/user/update/${id}`,
-        newUserData,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.put(`/api/user/update/${id}`, newUserData);
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user.id === id ? response.data.user : user))
       );
@@ -140,9 +124,7 @@ export const UserProvider = ({ children }) => {
 
   const deleteUser = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/api/user/delete/${id}`, {
-        withCredentials: true,
-      });
+      await axios.delete(`/api/user/delete/${id}`);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
       return { success: true };
     } catch (error) {

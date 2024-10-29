@@ -1,6 +1,5 @@
 import express from "express";
 import db from "../orm/models/index.js";
-import { authenticateToken } from "../routes/auth.js";
 import { hash } from "bcrypt";
 
 const router = express.Router();
@@ -9,7 +8,7 @@ const { User } = db;
 /*
 ----- RÉCUPÉRER LE PROFIL DE L'UTILISATEUR CONNECTÉ -----
 */
-router.get("/profile", authenticateToken, async (req, res) => {
+router.get("/profile", async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
       attributes: [
@@ -39,7 +38,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
 /*
 ----- MISE À JOUR DES INFORMATIONS DE L'UTILISATEUR (Profil de l'utilisateur authentifié) -----
 */
-router.put("/update/:id", authenticateToken, async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   try {
     const {
       firstName,
@@ -85,7 +84,7 @@ router.put("/update/:id", authenticateToken, async (req, res) => {
 /*
 ----- RÉCUPÉRER TOUS LES UTILISATEURS (Administration) -----
 */
-router.get("/all", authenticateToken, async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: [
@@ -112,7 +111,7 @@ router.get("/all", authenticateToken, async (req, res) => {
 /*
 ----- AJOUTER UN UTILISATEUR (Administration) -----
 */
-router.post("/add", authenticateToken, async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const {
       firstName,
@@ -130,7 +129,6 @@ router.post("/add", authenticateToken, async (req, res) => {
       termsAccepted !== undefined ? termsAccepted : true;
 
     const hashedPassword = await hash(password, 10);
-    console.log(hashedPassword);
 
     const user = await User.create({
       firstName,
@@ -156,7 +154,7 @@ router.post("/add", authenticateToken, async (req, res) => {
 /*
 ----- SUPPRIMER UN UTILISATEUR (Administration) -----
 */
-router.delete("/delete/:id", authenticateToken, async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   try {
     const userId = req.params.id;
 

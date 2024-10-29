@@ -114,6 +114,12 @@ export default (sequelize) => {
       foreignKey: "roleId",
       as: "role",
     });
+
+    User.hasMany(models.Patient, {
+      foreignKey: "userId",
+      as: "patients",
+      onDelete: "CASCADE",
+    });
   };
 
   return User;

@@ -134,18 +134,4 @@ router.post("/logout", (req, res) => {
   res.status(200).json({ message: "Déconnexion réussie" });
 });
 
-/*
------ MIDDLEWARE D'AUTHENTIFICATION -----
-*/
-export function authenticateToken(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) return res.sendStatus(401); // Unauthorized
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403); // Forbidden
-    req.user = user;
-    next();
-  });
-}
-
 export default router;

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ResetPasswordModal from "../modals/ResetPasswordModal.jsx";
 import { useUser } from "../contexts/UserContext.jsx";
-import axios from "axios";
+import axios from "../../axiosConfig.js";
 import NavBar from "../common/NavBar.jsx";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Login() {
   const { user, loginUser } = useUser();
@@ -48,7 +46,7 @@ export default function Login() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BASE_URL}/api/reset-password`, {
+      const response = await axios.post("/api/reset-password", {
         email: resetEmail,
       });
       if (response.status === 200) {

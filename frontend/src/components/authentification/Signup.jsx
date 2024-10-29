@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../common/NavBar.jsx";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -46,7 +44,7 @@ export default function Signup() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post(`${BASE_URL}/api/auth/signup`, {
+        const response = await axios.post("/api/auth/signup", {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,

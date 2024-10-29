@@ -2,10 +2,12 @@ import express from "express";
 import db from "./orm/models/index.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { authenticateToken } from "./middlewares/authMiddleware.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import appointmentRoutes from "./routes/appointment.js";
 import patientRoutes from "./routes/patient.js";
+import consultationRoutes from "./routes/consultation.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -34,9 +36,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/appointment", appointmentRoutes);
-app.use("/api/patient", patientRoutes);
+app.use("/api/user", authenticateToken, userRoutes);
+app.use("/api/appointment", authenticateToken, appointmentRoutes);
+app.use("/api/patient", authenticateToken, patientRoutes);
+app.use("/api/consultation", authenticateToken, consultationRoutes);
 
 db.sequelize
   .sync()

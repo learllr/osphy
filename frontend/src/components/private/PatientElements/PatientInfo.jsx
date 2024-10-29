@@ -1,36 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import NavBar from "../common/NavBar";
+import React from "react";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-export default function PatientDetails() {
-  const { id } = useParams();
-  const [patient, setPatient] = useState(null);
-
-  useEffect(() => {
-    const fetchPatientData = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/patient/${id}`);
-        setPatient(response.data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération du patient:", error);
-      }
-    };
-
-    fetchPatientData();
-  }, [id]);
-
-  if (!patient) {
-    return <div>Chargement...</div>;
-  }
-
+export default function PatientInfo({ patient }) {
   return (
-    <div>
-      <NavBar />
-      <h1 className="text-2xl font-bold mb-4">Fiche du patient</h1>
+    <>
+      <h1 className="text-xl font-bold mb-4">Fiche du patient</h1>
       <div className="px-8 pt-6 pb-8 mb-4">
+        {/* Informations Générales */}
         <h2 className="text-xl mb-2">Informations générales</h2>
         <p>
           <strong>Nom:</strong> {patient.lastName} {patient.firstName}
@@ -71,9 +46,10 @@ export default function PatientDetails() {
           <strong>Autres informations:</strong> {patient.additionalInfo}
         </p>
 
+        {/* Activités */}
         <h2 className="text-xl mb-2 mt-4">Activités</h2>
         <ul>
-          {patient.activities.length > 0 ? (
+          {patient.activities && patient.activities.length > 0 ? (
             patient.activities.map((activity) => (
               <li key={activity.id}>
                 <strong>{activity.activity}</strong> ({activity.temporalInfo})
@@ -84,9 +60,10 @@ export default function PatientDetails() {
           )}
         </ul>
 
+        {/* Antécédents */}
         <h2 className="text-xl mb-2 mt-4">Antécédents</h2>
         <ul>
-          {patient.antecedents.length > 0 ? (
+          {patient.antecedents && patient.antecedents.length > 0 ? (
             patient.antecedents.map((antecedent) => (
               <li key={antecedent.id}>
                 <strong>{antecedent.antecedent}</strong> (
@@ -98,9 +75,10 @@ export default function PatientDetails() {
           )}
         </ul>
 
+        {/* Contre-indications */}
         <h2 className="text-xl mb-2 mt-4">Contre-indications</h2>
         <ul>
-          {patient.contraindications.length > 0 ? (
+          {patient.contraindications && patient.contraindications.length > 0 ? (
             patient.contraindications.map((ci) => (
               <li key={ci.id}>
                 <strong>{ci.contraindication}</strong> ({ci.temporalInfo})
@@ -111,6 +89,7 @@ export default function PatientDetails() {
           )}
         </ul>
 
+        {/* Gynécologie */}
         <h2 className="text-xl mb-2 mt-4">Gynécologie</h2>
         {patient.gynecology ? (
           <div>
@@ -131,9 +110,10 @@ export default function PatientDetails() {
           <p>Aucune information gynécologique enregistrée.</p>
         )}
 
+        {/* Grossesses */}
         <h2 className="text-xl mb-2 mt-4">Grossesses</h2>
         <ul>
-          {patient.pregnancies.length > 0 ? (
+          {patient.pregnancies && patient.pregnancies.length > 0 ? (
             patient.pregnancies.map((pregnancy) => (
               <div key={pregnancy.id}>
                 <p>
@@ -154,6 +134,7 @@ export default function PatientDetails() {
           )}
         </ul>
 
+        {/* Sommeil */}
         <h2 className="text-xl mb-2 mt-4">Sommeil</h2>
         {patient.sleep ? (
           <div>
@@ -172,9 +153,10 @@ export default function PatientDetails() {
           <p>Aucune information sur le sommeil enregistrée.</p>
         )}
 
+        {/* Praticiens */}
         <h2 className="text-xl mb-2 mt-4">Praticiens</h2>
         <ul>
-          {patient.practitioners.length > 0 ? (
+          {patient.practitioners && patient.practitioners.length > 0 ? (
             patient.practitioners.map((practitioner) => (
               <li key={practitioner.id}>
                 <strong>{practitioner.fullName}</strong> (
@@ -186,9 +168,10 @@ export default function PatientDetails() {
           )}
         </ul>
 
+        {/* Avertissements */}
         <h2 className="text-xl mb-2 mt-4">Avertissements</h2>
         <ul>
-          {patient.warnings.length > 0 ? (
+          {patient.warnings && patient.warnings.length > 0 ? (
             patient.warnings.map((warning) => (
               <li key={warning.id}>{warning.warning}</li>
             ))
@@ -197,6 +180,6 @@ export default function PatientDetails() {
           )}
         </ul>
       </div>
-    </div>
+    </>
   );
 }

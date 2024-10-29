@@ -1,14 +1,13 @@
 import express from "express";
 import db from "../orm/models/index.js";
-import { authenticateToken } from "./auth.js"; // Middleware pour protéger les routes
 
 const router = express.Router();
-const { Appointment, User } = db;
+const { Appointment } = db;
 
 /*
 ----- CRÉER UN RENDEZ-VOUS -----
 */
-router.post("/appointments", authenticateToken, async (req, res) => {
+router.post("/appointments", async (req, res) => {
   try {
     const { title, description, start, end } = req.body;
     const userId = req.user.id;
@@ -36,7 +35,7 @@ router.post("/appointments", authenticateToken, async (req, res) => {
 /*
 ----- RÉCUPÉRER LES RENDEZ-VOUS D'UN UTILISATEUR -----
 */
-router.get("/appointments", authenticateToken, async (req, res) => {
+router.get("/appointments", async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -57,7 +56,7 @@ router.get("/appointments", authenticateToken, async (req, res) => {
 /*
 ----- METTRE À JOUR UN RENDEZ-VOUS -----
 */
-router.put("/appointments/:id", authenticateToken, async (req, res) => {
+router.put("/appointments/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, start, end } = req.body;
@@ -91,7 +90,7 @@ router.put("/appointments/:id", authenticateToken, async (req, res) => {
 /*
 ----- SUPPRIMER UN RENDEZ-VOUS -----
 */
-router.delete("/appointments/:id", authenticateToken, async (req, res) => {
+router.delete("/appointments/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;

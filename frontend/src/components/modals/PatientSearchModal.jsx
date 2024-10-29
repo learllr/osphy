@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from "react";
+import AddPatientModal from "./AddPatientModal";
+import axios from "../../axiosConfig";
 
-export default function PatientSearchModal({ patients, onSelect, onClose }) {
+export default function PatientSearchModal({ onSelect, onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPatients, setFilteredPatients] = useState([]);
+  const [showAddPatientModal, setShowAddPatientModal] = useState(false);
+  const [patients, setPatients] = useState([]);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get("/api/patient");
+      setPatients(response.data);
+      setFilteredPatients(response.data); // Actualiser la liste filtrée avec tous les patients
+    } catch (error) {
+      console.error("Erreur lors de la récupération des patients:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
 
   useEffect(() => {
     const results = patients.filter((patient) =>
@@ -13,10 +31,27 @@ export default function PatientSearchModal({ patients, onSelect, onClose }) {
     setFilteredPatients(results);
   }, [searchTerm, patients]);
 
+  const handleNewPatientClick = () => {
+    setShowAddPatientModal(true);
+  };
+
+  const handlePatientAdded = () => {
+    fetchPatients();
+    setShowAddPatientModal(false);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-bold mb-4">Rechercher un patient</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Rechercher un patient</h2>
+          <button
+            onClick={handleNewPatientClick}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          >
+            Ajouter un patient
+          </button>
+        </div>
         <input
           type="text"
           placeholder="Rechercher par nom"
@@ -46,6 +81,14 @@ export default function PatientSearchModal({ patients, onSelect, onClose }) {
           Fermer
         </button>
       </div>
+
+      {showAddPatientModal && (
+        <AddPatientModal
+          isOpen={showAddPatientModal}
+          onClose={() => setShowAddPatientModal(false)}
+          onPatientAdded={handlePatientAdded}
+        />
+      )}
     </div>
   );
 }
