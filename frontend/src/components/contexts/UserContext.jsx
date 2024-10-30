@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
       axios
         .get("/api/user/profile", {
           headers: {
-            Authorization: "Bearer ${token}",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         })
@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post(
-        "/api/auth/login",
+        "/api/authentification/login",
         { email, password },
         { withCredentials: true }
       );
@@ -58,7 +58,7 @@ export const UserProvider = ({ children }) => {
   const logoutUser = async () => {
     try {
       await axios.post(
-        "/api/auth/logout",
+        "/api/authentification/logout",
         {},
         {
           withCredentials: true,

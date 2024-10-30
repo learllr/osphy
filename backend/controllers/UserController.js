@@ -1,28 +1,9 @@
-import express from "express";
-import db from "../orm/models/index.js";
 import { hash } from "bcrypt";
+import UserDAO from "../dao/UserDAO.js";
 
-const router = express.Router();
-const { User } = db;
-
-/*
------ RÉCUPÉRER LE PROFIL DE L'UTILISATEUR CONNECTÉ -----
-*/
-router.get("/profile", async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "roleId",
-        "postalCode",
-        "birthDate",
-        "newsletterAccepted",
-        "termsAccepted",
-      ],
-    });
+    const user = await UserDAO.getUserById(req.user.id);
     res.status(200).json(user);
   } catch (error) {
     console.error(
@@ -33,12 +14,9 @@ router.get("/profile", async (req, res) => {
       error: "Erreur lors de la récupération du profil de l'utilisateur.",
     });
   }
-});
+};
 
-/*
------ MISE À JOUR DES INFORMATIONS DE L'UTILISATEUR (Profil de l'utilisateur authentifié) -----
-*/
-router.put("/update/:id", async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const {
       firstName,
@@ -51,12 +29,12 @@ router.put("/update/:id", async (req, res) => {
     } = req.body;
     const userId = req.params.id;
 
-    const user = await User.findByPk(userId);
+    const user = await UserDAO.getUserById(userId);
     if (!user) {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
     }
 
-    await user.update({
+    const updatedUser = await UserDAO.updateUser(user, {
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       email: email || user.email,
@@ -68,7 +46,7 @@ router.put("/update/:id", async (req, res) => {
 
     res.status(200).json({
       message: "Informations de l'utilisateur mises à jour avec succès",
-      user,
+      user: updatedUser,
     });
   } catch (error) {
     console.error(
@@ -79,26 +57,11 @@ router.put("/update/:id", async (req, res) => {
       error: "Erreur lors de la mise à jour des informations de l'utilisateur",
     });
   }
-});
+};
 
-/*
------ RÉCUPÉRER TOUS LES UTILISATEURS (Administration) -----
-*/
-router.get("/all", async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: [
-        "id",
-        "firstName",
-        "lastName",
-        "email",
-        "roleId",
-        "postalCode",
-        "birthDate",
-        "newsletterAccepted",
-        "termsAccepted",
-      ],
-    });
+    const users = await UserDAO.getAllUsers();
     res.status(200).json(users);
   } catch (error) {
     console.error("Erreur lors de la récupération des utilisateurs:", error);
@@ -106,12 +69,9 @@ router.get("/all", async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de la récupération des utilisateurs." });
   }
-});
+};
 
-/*
------ AJOUTER UN UTILISATEUR (Administration) -----
-*/
-router.post("/add", async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const {
       firstName,
@@ -127,10 +87,9 @@ router.post("/add", async (req, res) => {
 
     const finalTermsAccepted =
       termsAccepted !== undefined ? termsAccepted : true;
-
     const hashedPassword = await hash(password, 10);
 
-    const user = await User.create({
+    const user = await UserDAO.createUser({
       firstName,
       lastName,
       email,
@@ -149,21 +108,18 @@ router.post("/add", async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de la création de l'utilisateur" });
   }
-});
+};
 
-/*
------ SUPPRIMER UN UTILISATEUR (Administration) -----
-*/
-router.delete("/delete/:id", async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const user = await User.findByPk(userId);
+    const user = await UserDAO.getUserById(userId);
     if (!user) {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
     }
 
-    await user.destroy();
+    await UserDAO.deleteUser(user);
     res.status(200).json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
     console.error("Erreur lors de la suppression de l'utilisateur:", error);
@@ -171,6 +127,4 @@ router.delete("/delete/:id", async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de la suppression de l'utilisateur" });
   }
-});
-
-export default router;
+};

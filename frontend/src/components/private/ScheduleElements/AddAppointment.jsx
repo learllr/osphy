@@ -1,37 +1,62 @@
 import React, { useState } from "react";
+import axios from "../../../axiosConfig.js";
 import PatientSearchModal from "../../modals/PatientSearchModal.jsx";
 
 export default function AddAppointment({ patients, onAppointmentAdd }) {
   const [newAppointment, setNewAppointment] = useState({
-    title: "",
     start: "",
     end: "",
-    description: "",
     type: "Consultation",
     patient: "",
+    status: "En attente",
   });
   const [showModal, setShowModal] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setNewAppointment({ ...newAppointment, [name]: checked });
-    } else {
-      setNewAppointment({ ...newAppointment, [name]: value });
-    }
+    setNewAppointment({
+      ...newAppointment,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAppointmentAdd(newAppointment);
-    setNewAppointment({
-      title: "",
-      start: "",
-      end: "",
-      description: "",
-      type: "Consultation",
-      patient: "",
-    });
+
+    const selectedPatient = patients.find(
+      (patient) =>
+        `${patient.firstName} ${patient.lastName}` === newAppointment.patient
+    );
+
+    if (!selectedPatient) {
+      alert("Veuillez sélectionner un patient.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/appointment", {
+        userId: selectedPatient.userId,
+        patientId: selectedPatient.id,
+        start: newAppointment.start,
+        end: newAppointment.end,
+        status: newAppointment.status,
+      });
+
+      onAppointmentAdd({
+        ...response.data,
+        patient: selectedPatient,
+      });
+
+      setNewAppointment({
+        start: "",
+        end: "",
+        type: "Consultation",
+        patient: "",
+        status: "En attente",
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création du rendez-vous :", error);
+    }
   };
 
   const handlePatientSelect = (patient) => {
@@ -46,44 +71,6 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     <div className="p-5 w-1/4">
       <h2 className="text-2xl font-semibold mb-2">Ajouter un rendez-vous</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-2">
-          <label className="block mb-1">Titre :</label>
-          <input
-            type="text"
-            name="title"
-            value={newAppointment.title}
-            onChange={handleInputChange}
-            placeholder="Titre du rendez-vous"
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block mb-1">Description (facultatif) :</label>
-          <textarea
-            name="description"
-            value={newAppointment.description}
-            onChange={handleInputChange}
-            placeholder="Description du rendez-vous"
-            className="w-full p-2 border rounded"
-            rows="4"
-          />
-        </div>
-        <div className="mb-2">
-          <label className="block mb-1">Type de rendez-vous :</label>
-          <select
-            name="type"
-            value={newAppointment.type}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="Consultation">Consultation</option>
-            <option value="Suivi">Suivi</option>
-            <option value="Première consultation">Première consultation</option>
-            <option value="Urgence">Urgence</option>
-          </select>
-        </div>
         <div className="mb-4">
           <label className="block mb-1">Patient :</label>
           <div className="flex space-x-2">
@@ -103,6 +90,23 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             </button>
           </div>
         </div>
+
+        <div className="mb-2">
+          <label className="block mb-1">Type de rendez-vous :</label>
+          <select
+            name="type"
+            value={newAppointment.type}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="Consultation">Consultation</option>
+            <option value="Suivi">Suivi</option>
+            <option value="Première consultation">Première consultation</option>
+            <option value="Urgence">Urgence</option>
+          </select>
+        </div>
+
         <div className="mb-4">
           <label className="block mb-1">Date de début :</label>
           <input
@@ -114,6 +118,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             className="w-full p-2 border rounded"
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Date de fin :</label>
           <input
@@ -125,6 +130,22 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             className="w-full p-2 border rounded"
           />
         </div>
+
+        <div className="mb-4">
+          <label className="block mb-1">Statut :</label>
+          <select
+            name="status"
+            value={newAppointment.status}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="En attente">En attente</option>
+            <option value="Confirmé">Confirmé</option>
+            <option value="Annulé">Annulé</option>
+          </select>
+        </div>
+
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

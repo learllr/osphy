@@ -3,11 +3,11 @@ import db from "./orm/models/index.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middlewares/authMiddleware.js";
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
-import appointmentRoutes from "./routes/appointment.js";
-import patientRoutes from "./routes/patient.js";
-import consultationRoutes from "./routes/consultation.js";
+import authentificationRoutes from "./routes/authentificationRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
+import patientRoutes from "./routes/patientRoutes.js";
+import consultationRoutes from "./routes/consultationRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/api/authentification", authentificationRoutes);
 app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/appointment", authenticateToken, appointmentRoutes);
 app.use("/api/patient", authenticateToken, patientRoutes);

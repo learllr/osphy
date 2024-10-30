@@ -1,18 +1,13 @@
-import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import db from "../orm/models/index.js";
+import AuthentificationDAO from "../dao/AuthentificationDAO.js";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-const router = express.Router();
-const { User } = db;
 const JWT_SECRET = process.env.JWT_SECRET;
 
-/*
------ INSCRIPTION -----
-*/
-router.post("/signup", async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const {
       firstName,
@@ -25,16 +20,17 @@ router.post("/signup", async (req, res) => {
       terms,
     } = req.body;
 
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await AuthentificationDAO.findUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: "Cet email est déjà utilisé." });
     }
 
-    const user = await User.create({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await AuthentificationDAO.createUser({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
       postalCode,
       birthDate,
       newsletterAccepted: newsletter,
@@ -58,16 +54,13 @@ router.post("/signup", async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de l'inscription de l'utilisateur" });
   }
-});
+};
 
-/*
------ CONNEXION -----
-*/
-router.post("/login", async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await AuthentificationDAO.findUserByEmail(email);
     if (!user) {
       return res
         .status(400)
@@ -124,14 +117,9 @@ router.post("/login", async (req, res) => {
       .status(500)
       .json({ error: "Erreur lors de la connexion de l'utilisateur" });
   }
-});
+};
 
-/*
------ DÉCONNEXION -----
-*/
-router.post("/logout", (req, res) => {
+export const logout = (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Déconnexion réussie" });
-});
-
-export default router;
+};

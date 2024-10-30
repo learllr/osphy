@@ -32,14 +32,6 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
       start: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -55,7 +47,7 @@ export default (sequelize) => {
         },
       },
       status: {
-        type: DataTypes.ENUM("En attente", "Confirmé", "Supprimé"),
+        type: DataTypes.ENUM("Annulé", "En attente", "Confirmé"),
         defaultValue: "En attente",
         allowNull: false,
       },
