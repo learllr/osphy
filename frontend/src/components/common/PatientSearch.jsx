@@ -23,6 +23,27 @@ export default function PatientSearch() {
     fetchPatients();
   }, []);
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const highlightText = (text, query) => {
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return (
+      <>
+        {parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} className="font-bold">
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
+  };
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
 
@@ -77,7 +98,12 @@ export default function PatientSearch() {
               className="p-2 cursor-pointer hover:bg-gray-200"
               onClick={() => handlePatientSelect(patient.id)}
             >
-              {patient.firstName} {patient.lastName}
+              {highlightText(
+                capitalizeFirstLetter(patient.firstName),
+                searchQuery
+              )}{" "}
+              {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
+              {new Date(patient.birthDate).toLocaleDateString()}
             </li>
           ))}
         </ul>
