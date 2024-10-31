@@ -45,14 +45,21 @@ export default function PatientSearch() {
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
 
-    if (e.target.value.length >= 1) {
-      const results = patients.filter((patient) =>
-        `${patient.firstName} ${patient.lastName}`
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase())
-      );
+    if (query.length >= 1) {
+      const results = patients.filter((patient) => {
+        const fullName =
+          `${patient.firstName} ${patient.lastName}`.toLowerCase();
+        const birthDate = new Date(patient.birthDate)
+          .toLocaleDateString()
+          .toLowerCase();
+        return (
+          fullName.includes(query.toLowerCase()) ||
+          birthDate.includes(query.toLowerCase())
+        );
+      });
       setFilteredPatients(results);
     } else {
       setFilteredPatients(patients);
@@ -92,20 +99,25 @@ export default function PatientSearch() {
 
       {isDropdownVisible && filteredPatients.length > 0 && (
         <ul className="absolute bg-white text-black w-96 mt-1 max-h-60 overflow-y-auto rounded shadow-lg z-10">
-          {filteredPatients.map((patient) => (
-            <li
-              key={patient.id}
-              className="p-2 cursor-pointer hover:bg-gray-200"
-              onClick={() => handlePatientSelect(patient.id)}
-            >
-              {highlightText(
-                capitalizeFirstLetter(patient.firstName),
-                searchQuery
-              )}{" "}
-              {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
-              {new Date(patient.birthDate).toLocaleDateString()}
-            </li>
-          ))}
+          {filteredPatients.map((patient) => {
+            const formattedBirthDate = new Date(
+              patient.birthDate
+            ).toLocaleDateString();
+            return (
+              <li
+                key={patient.id}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+                onClick={() => handlePatientSelect(patient.id)}
+              >
+                {highlightText(
+                  capitalizeFirstLetter(patient.firstName),
+                  searchQuery
+                )}{" "}
+                {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
+                {highlightText(formattedBirthDate, searchQuery)}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
