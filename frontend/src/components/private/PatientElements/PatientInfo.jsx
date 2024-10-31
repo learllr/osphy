@@ -3,14 +3,11 @@ import axios from "../../../axiosConfig.js";
 
 export default function PatientInfo({ patient }) {
   const [appointments, setAppointments] = useState([]);
-  const [showPastAppointments, setShowPastAppointments] = useState(false);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(
-          `/appointments?patientId=${patient.id}`
-        );
+        const response = await axios.get(`/appointment/${patient.id}`);
         setAppointments(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous:", error);
@@ -20,17 +17,10 @@ export default function PatientInfo({ patient }) {
     fetchAppointments();
   }, [patient.id]);
 
+  // Filtrer pour n'afficher que les rendez-vous à venir
   const upcomingAppointments = appointments.filter(
     (appointment) => new Date(appointment.start) > new Date()
   );
-
-  const pastAppointments = appointments.filter(
-    (appointment) => new Date(appointment.start) <= new Date()
-  );
-
-  const toggleShowPastAppointments = () => {
-    setShowPastAppointments(!showPastAppointments);
-  };
 
   return (
     <>
@@ -77,8 +67,8 @@ export default function PatientInfo({ patient }) {
           <strong>Autres informations:</strong> {patient.additionalInfo}
         </p>
 
-        {/* Section Rendez-vous */}
-        <h2 className="text-xl mb-2 mt-4">Rendez-vous</h2>
+        {/* Section Rendez-vous à venir */}
+        <h2 className="text-xl mb-2 mt-4">Rendez-vous à venir</h2>
         {upcomingAppointments.length > 0 ? (
           <ul>
             {upcomingAppointments.map((appointment) => (
@@ -97,34 +87,6 @@ export default function PatientInfo({ patient }) {
           </ul>
         ) : (
           <p>Aucun rendez-vous à venir.</p>
-        )}
-
-        {/* Afficher les rendez-vous passés */}
-        <button
-          onClick={toggleShowPastAppointments}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          {showPastAppointments
-            ? "Masquer les rendez-vous passés"
-            : "Afficher les rendez-vous passés"}
-        </button>
-
-        {showPastAppointments && (
-          <ul className="mt-4">
-            {pastAppointments.map((appointment) => (
-              <li key={appointment.id} className="mb-2">
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(appointment.start).toLocaleDateString()}{" "}
-                  {new Date(appointment.start).toLocaleTimeString()} -{" "}
-                  {new Date(appointment.end).toLocaleTimeString()}
-                </p>
-                <p>
-                  <strong>Statut:</strong> {appointment.status}
-                </p>
-              </li>
-            ))}
-          </ul>
         )}
 
         {/* Activités */}
