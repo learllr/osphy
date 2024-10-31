@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaMars, FaVenus } from "react-icons/fa";
 import axios from "../../axiosConfig.js";
 
 export default function PatientSearch() {
@@ -42,6 +43,20 @@ export default function PatientSearch() {
         )}
       </>
     );
+  };
+
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+    return age;
   };
 
   const handleSearchChange = (e) => {
@@ -103,18 +118,29 @@ export default function PatientSearch() {
             const formattedBirthDate = new Date(
               patient.birthDate
             ).toLocaleDateString();
+            const age = calculateAge(patient.birthDate);
+            const genderIcon =
+              patient.gender === "Homme" ? (
+                <FaMars className="text-blue-500 mr-2" />
+              ) : (
+                <FaVenus className="text-pink-500 mr-2" />
+              );
+
             return (
               <li
                 key={patient.id}
-                className="p-2 cursor-pointer hover:bg-gray-200"
+                className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
                 onClick={() => handlePatientSelect(patient.id)}
               >
-                {highlightText(
-                  capitalizeFirstLetter(patient.firstName),
-                  searchQuery
-                )}{" "}
-                {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
-                {highlightText(formattedBirthDate, searchQuery)}
+                {genderIcon}
+                <span>
+                  {highlightText(
+                    capitalizeFirstLetter(patient.firstName),
+                    searchQuery
+                  )}{" "}
+                  {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
+                  {highlightText(formattedBirthDate, searchQuery)} ({age} ans)
+                </span>
               </li>
             );
           })}
