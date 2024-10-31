@@ -12,7 +12,7 @@ export default function PatientSearch() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/api/patient");
+        const response = await axios.get("/patient");
         setPatients(response.data);
         setFilteredPatients(response.data);
       } catch (error) {

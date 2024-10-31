@@ -46,7 +46,7 @@ export default function Login() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/reset-password", {
+      const response = await axios.post("/reset-password", {
         email: resetEmail,
       });
       if (response.status === 200) {

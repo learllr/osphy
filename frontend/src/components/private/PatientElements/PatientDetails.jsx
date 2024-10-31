@@ -15,8 +15,8 @@ export default function PatientDetails() {
   useEffect(() => {
     const fetchPatientData = async () => {
       try {
-        const patientResponse = await axios.get(`/api/patient/${id}`);
-        const consultationResponse = await axios.get(`/api/consultation/${id}`);
+        const patientResponse = await axios.get(`/patient/${id}`);
+        const consultationResponse = await axios.get(`/consultation/${id}`);
         setPatient(patientResponse.data);
         setConsultations(consultationResponse.data);
       } catch (error) {

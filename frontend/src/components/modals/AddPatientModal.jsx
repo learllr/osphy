@@ -23,7 +23,7 @@ export default function AddPatientModal({ isOpen, onClose, onPatientAdded }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/patient", formData);
+      const response = await axios.post("/patient", formData);
       onPatientAdded(response.data);
       onClose();
     } catch (error) {

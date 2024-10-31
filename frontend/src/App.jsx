@@ -8,6 +8,7 @@ import Patients from "./components/private/Patients.jsx";
 import Schedule from "./components/private/Schedule.jsx";
 import AccountManagement from "./components/public/AccountManagement.jsx";
 import PatientDetails from "./components/private/PatientElements/PatientDetails.jsx";
+import Settings from "./components/private/Settings.jsx";
 
 export default function App() {
   return (
@@ -15,11 +16,8 @@ export default function App() {
       <Routes>
         {/* Routes publiques */}
         <Route path="/" element={<Home />} />
-        {/* <Route path="/plans/:bar" element={<Plans />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
-        {/* Route 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
 
         {/* Routes protégées */}
@@ -47,12 +45,19 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/patient/:id"
           element={
             <PrivateRoute>
               <PatientDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
             </PrivateRoute>
           }
         />

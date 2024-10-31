@@ -34,7 +34,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     }
 
     try {
-      const response = await axios.post("/api/appointment", {
+      const response = await axios.post("/appointment", {
         userId: selectedPatient.userId,
         patientId: selectedPatient.id,
         start: newAppointment.start,

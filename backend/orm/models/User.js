@@ -120,6 +120,12 @@ export default (sequelize) => {
       as: "patients",
       onDelete: "CASCADE",
     });
+
+    User.hasOne(models.UserSetting, {
+      foreignKey: "userId",
+      as: "userSettings",
+      onDelete: "CASCADE",
+    });
   };
 
   return User;

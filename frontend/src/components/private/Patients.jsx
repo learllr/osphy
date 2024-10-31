@@ -22,7 +22,7 @@ export default function Patients() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/api/patient");
+        const response = await axios.get("/patient");
         setPatients(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des patients:", error);
@@ -50,7 +50,7 @@ export default function Patients() {
 
   const handleDeletePatient = async (id) => {
     try {
-      await axios.delete(`/api/patient/${id}`);
+      await axios.delete(`/patient/${id}`);
       setPatients((prevPatients) => prevPatients.filter((p) => p.id !== id));
     } catch (error) {
       console.error("Erreur lors de la suppression du patient:", error);

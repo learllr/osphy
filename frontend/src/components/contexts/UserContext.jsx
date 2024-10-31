@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("/api/user/profile", {
+        .get("/user/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -35,7 +35,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post(
-        "/api/authentification/login",
+        "/authentification/login",
         { email, password },
         { withCredentials: true }
       );
@@ -58,7 +58,7 @@ export const UserProvider = ({ children }) => {
   const logoutUser = async () => {
     try {
       await axios.post(
-        "/api/authentification/logout",
+        "/authentification/logout",
         {},
         {
           withCredentials: true,
@@ -74,7 +74,7 @@ export const UserProvider = ({ children }) => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await axios.get("/api/user/all");
+      const response = await axios.get("/user/all");
       setUsers(response.data);
       return { success: true };
     } catch (error) {
@@ -90,7 +90,7 @@ export const UserProvider = ({ children }) => {
 
   const addUser = async (newUserData) => {
     try {
-      const response = await axios.post("/api/user/add", newUserData);
+      const response = await axios.post("/user/add", newUserData);
       setUsers((prevUsers) => [...prevUsers, response.data.user]);
       return { success: true };
     } catch (error) {
@@ -106,7 +106,7 @@ export const UserProvider = ({ children }) => {
 
   const updateUser = async (id, newUserData) => {
     try {
-      const response = await axios.put(`/api/user/update/${id}`, newUserData);
+      const response = await axios.put(`/user/update/${id}`, newUserData);
       setUsers((prevUsers) =>
         prevUsers.map((user) => (user.id === id ? response.data.user : user))
       );
@@ -124,7 +124,7 @@ export const UserProvider = ({ children }) => {
 
   const deleteUser = async (id) => {
     try {
-      await axios.delete(`/api/user/delete/${id}`);
+      await axios.delete(`/user/delete/${id}`);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
       return { success: true };
     } catch (error) {

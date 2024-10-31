@@ -44,7 +44,7 @@ export default function Signup() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post("/api/authentification/signup", {
+        const response = await axios.post("/authentification/signup", {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,

@@ -10,7 +10,7 @@ export default function PatientSearchModal({ onSelect, onClose }) {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("/api/patient");
+      const response = await axios.get("/patient");
       setPatients(response.data);
       setFilteredPatients(response.data); // Actualiser la liste filtrée avec tous les patients
     } catch (error) {

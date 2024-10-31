@@ -11,7 +11,7 @@ export default function Schedule() {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/api/patient");
+        const response = await axios.get("/patient");
         setPatients(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des patients:", error);
@@ -40,7 +40,7 @@ export default function Schedule() {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get("/api/appointment");
+        const response = await axios.get("/appointment");
         const events = response.data.map((appointment) => ({
           id: appointment.id,
           title: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
