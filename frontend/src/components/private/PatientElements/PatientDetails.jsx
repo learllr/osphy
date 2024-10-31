@@ -31,10 +31,13 @@ export default function PatientDetails() {
     setSelectedConsultation(consultation);
   };
 
+  const handleConsultationAdded = (newConsultation) => {
+    setConsultations((prev) => [...prev, newConsultation]);
+  };
+
   if (!patient) {
     return <div>Chargement...</div>;
   }
-
   return (
     <div>
       <NavBar />
@@ -43,6 +46,8 @@ export default function PatientDetails() {
           <ConsultationList
             consultations={consultations}
             onConsultationClick={handleConsultationClick}
+            patientId={id}
+            onConsultationAdded={handleConsultationAdded}
           />
         </div>
         <div className="w-5/12 p-8">
