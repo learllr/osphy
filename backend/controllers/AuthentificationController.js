@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import UserDAO from "../dao/UserDAO.js";
 import AuthentificationDAO from "../dao/AuthentificationDAO.js";
+import UserSettingDAO from "../dao/UserSettingDAO.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -26,7 +28,8 @@ export const signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await AuthentificationDAO.createUser({
+
+    const user = await UserDAO.createUser({
       firstName,
       lastName,
       email,
@@ -35,6 +38,11 @@ export const signup = async (req, res) => {
       birthDate,
       newsletterAccepted: newsletter,
       termsAccepted: terms,
+    });
+
+    await UserSettingDAO.createUserSetting({
+      userId: user.id,
+      consultationDuration: 60,
     });
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {

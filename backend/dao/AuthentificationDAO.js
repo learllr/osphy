@@ -6,8 +6,4 @@ export default class AuthentificationDAO {
   static async findUserByEmail(email) {
     return await User.findOne({ where: { email } });
   }
-
-  static async createUser(userData) {
-    return await User.create(userData);
-  }
 }

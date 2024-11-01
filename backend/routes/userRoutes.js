@@ -6,7 +6,10 @@ import {
   createUser,
   deleteUser,
 } from "../controllers/UserController.js";
-import { updateUserSettings } from "../controllers/UserSettingController.js";
+import {
+  getUserSettings,
+  updateUserSettings,
+} from "../controllers/UserSettingController.js";
 
 const router = express.Router();
 
@@ -16,6 +19,7 @@ router.get("/all", getAllUsers);
 router.post("/add", createUser);
 router.delete("/delete/:id", deleteUser);
 
+router.get("/settings", getUserSettings);
 router.put("/settings", updateUserSettings);
 
 export default router;

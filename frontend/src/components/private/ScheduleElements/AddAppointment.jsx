@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../../axiosConfig.js";
 import PatientSearchModal from "../../modals/PatientSearchModal.jsx";
 
@@ -10,19 +10,72 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     patient: "",
     status: "En attente",
   });
+
   const [showModal, setShowModal] = useState(false);
+  const defaultSettings = {
+    consultationDuration: 60,
+  };
+  const [consultationDuration, setConsultationDuration] = useState(
+    defaultSettings.consultationDuration
+  );
+
+  useEffect(() => {
+    const fetchUserSettings = async () => {
+      try {
+        const response = await axios.get("/user/settings");
+        setConsultationDuration(
+          response.data
+            ? response.data.consultationDuration
+            : consultationDuration
+        );
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des paramètres utilisateur :",
+          error
+        );
+      }
+    };
+    fetchUserSettings();
+  }, []);
+
+  const calculateEndDate = (startDate) => {
+    const endDate = new Date(
+      startDate.getTime() + consultationDuration * 60000
+    );
+
+    const year = endDate.getFullYear();
+    const month = String(endDate.getMonth() + 1).padStart(2, "0");
+    const day = String(endDate.getDate()).padStart(2, "0");
+    const hours = String(endDate.getHours()).padStart(2, "0");
+    const minutes = String(endDate.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setNewAppointment({
-      ...newAppointment,
-      [name]: type === "checkbox" ? checked : value,
+    const { name, value } = e.target;
+
+    setNewAppointment((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const isOverlapping = (start, end, existingAppointments) => {
+    return existingAppointments.some((appointment) => {
+      const existingStart = new Date(appointment.start);
+      const existingEnd = new Date(appointment.end);
+
+      return (
+        (start >= existingStart && start < existingEnd) || // Start time is during another appointment
+        (end > existingStart && end <= existingEnd) || // End time is during another appointment
+        (start <= existingStart && end >= existingEnd) // New appointment encompasses existing appointment
+      );
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const selectedPatient = patients.find(
       (patient) =>
         `${patient.firstName} ${patient.lastName}` === newAppointment.patient
@@ -33,12 +86,26 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
       return;
     }
 
+    const startDate = new Date(newAppointment.start);
+    const endDate =
+      newAppointment.type === "Autres"
+        ? newAppointment.end
+        : calculateEndDate(startDate);
+
     try {
+      const appointmentsResponse = await axios.get("/appointment");
+      const existingAppointments = appointmentsResponse.data;
+
+      if (isOverlapping(startDate, new Date(endDate), existingAppointments)) {
+        alert("Ce créneau horaire chevauche un autre rendez-vous.");
+        return;
+      }
+
       const response = await axios.post("/appointment", {
         userId: selectedPatient.userId,
         patientId: selectedPatient.id,
         start: newAppointment.start,
-        end: newAppointment.end,
+        end: endDate,
         status: newAppointment.status,
       });
 
@@ -60,10 +127,10 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
   };
 
   const handlePatientSelect = (patient) => {
-    setNewAppointment({
-      ...newAppointment,
+    setNewAppointment((prev) => ({
+      ...prev,
       patient: `${patient.firstName} ${patient.lastName}`,
-    });
+    }));
     setShowModal(false);
   };
 
@@ -101,9 +168,9 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             required
           >
             <option value="Consultation">Consultation</option>
-            <option value="Suivi">Suivi</option>
             <option value="Première consultation">Première consultation</option>
             <option value="Urgence">Urgence</option>
+            <option value="Autres">Autre</option>
           </select>
         </div>
 
@@ -119,17 +186,19 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block mb-1">Date de fin :</label>
-          <input
-            type="datetime-local"
-            name="end"
-            value={newAppointment.end}
-            onChange={handleInputChange}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
+        {newAppointment.type === "Autres" && (
+          <div className="mb-4">
+            <label className="block mb-1">Date de fin :</label>
+            <input
+              type="datetime-local"
+              name="end"
+              value={newAppointment.end}
+              onChange={handleInputChange}
+              required
+              className="w-full p-2 border rounded"
+            />
+          </div>
+        )}
 
         <div className="mb-4">
           <label className="block mb-1">Statut :</label>

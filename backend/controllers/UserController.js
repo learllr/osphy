@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
 import UserDAO from "../dao/UserDAO.js";
+import UserSettingDAO from "../dao/UserSettingDAO.js";
 
 export const getProfile = async (req, res) => {
   try {
@@ -99,6 +100,11 @@ export const createUser = async (req, res) => {
       birthDate,
       newsletterAccepted,
       termsAccepted: finalTermsAccepted,
+    });
+
+    await UserSettingDAO.createUserSetting({
+      userId: user.id,
+      consultationDuration: 60,
     });
 
     res.status(201).json({ message: "Utilisateur créé avec succès", user });
