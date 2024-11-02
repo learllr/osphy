@@ -33,6 +33,7 @@ export default function PatientDetails() {
 
   const handleConsultationAdded = (newConsultation) => {
     setConsultations((prev) => [...prev, newConsultation]);
+    setSelectedConsultation(newConsultation);
   };
 
   const handleConsultationDeleted = (deletedId) => {

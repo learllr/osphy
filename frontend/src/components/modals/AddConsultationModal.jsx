@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dayjs from "dayjs";
 import axios from "../../axiosConfig.js";
 
 export default function AddConsultationModal({
@@ -7,7 +8,7 @@ export default function AddConsultationModal({
   onConsultationAdded,
 }) {
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
+    date: dayjs().format("YYYY-MM-DD"),
     patientComplaint: "",
     aggravatingFactors: "",
     relievingFactors: "",
@@ -47,62 +48,6 @@ export default function AddConsultationModal({
             type="date"
             name="date"
             value={formData.date}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Plainte du patient</label>
-          <textarea
-            name="patientComplaint"
-            value={formData.patientComplaint}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Facteurs aggravants</label>
-          <textarea
-            name="aggravatingFactors"
-            value={formData.aggravatingFactors}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Facteurs soulageants</label>
-          <textarea
-            name="relievingFactors"
-            value={formData.relievingFactors}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Symptômes associés</label>
-          <textarea
-            name="associatedSymptoms"
-            value={formData.associatedSymptoms}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Examen clinique</label>
-          <textarea
-            name="clinicalExamination"
-            value={formData.clinicalExamination}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Tests ostéopathiques</label>
-          <textarea
-            name="osteopathyTesting"
-            value={formData.osteopathyTesting}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Traitement</label>
-          <textarea
-            name="treatment"
-            value={formData.treatment}
-            onChange={handleChange}
-            className="w-full mb-4 p-2 border"
-          />
-          <label>Conseils</label>
-          <textarea
-            name="advice"
-            value={formData.advice}
             onChange={handleChange}
             className="w-full mb-4 p-2 border"
           />
