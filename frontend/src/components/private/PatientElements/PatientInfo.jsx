@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../axiosConfig.js";
+import dayjs from "dayjs";
 
 export default function PatientInfo({ patient }) {
   const [appointments, setAppointments] = useState([]);
@@ -17,10 +18,22 @@ export default function PatientInfo({ patient }) {
     fetchAppointments();
   }, [patient.id]);
 
-  // Filtrer pour n'afficher que les rendez-vous à venir
   const upcomingAppointments = appointments.filter(
     (appointment) => new Date(appointment.start) > new Date()
   );
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Confirmé":
+        return "bg-green-500";
+      case "En attente":
+        return "bg-orange-500";
+      case "Annulé":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
 
   return (
     <>
@@ -73,14 +86,19 @@ export default function PatientInfo({ patient }) {
           <ul>
             {upcomingAppointments.map((appointment) => (
               <li key={appointment.id} className="mb-2">
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(appointment.start).toLocaleDateString()}{" "}
-                  {new Date(appointment.start).toLocaleTimeString()} -{" "}
-                  {new Date(appointment.end).toLocaleTimeString()}
-                </p>
-                <p>
-                  <strong>Statut:</strong> {appointment.status}
+                <p className="flex items-center">
+                  <span
+                    className={`w-2 h-2 rounded-full mr-2 ${getStatusStyle(
+                      appointment.status
+                    )}`}
+                  ></span>
+                  {dayjs(appointment.start).format("DD/MM/YYYY")}
+                  <div className="text-gray-500 ml-1">
+                    {"("}
+                    {dayjs(appointment.start).format("HH:mm")}-{""}
+                    {dayjs(appointment.end).format("HH:mm")}
+                    {")"}
+                  </div>
                 </p>
               </li>
             ))}
