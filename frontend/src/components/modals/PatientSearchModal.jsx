@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
+import dayjs from "dayjs";
+import { FaMars, FaVenus, FaSearch } from "react-icons/fa";
 import AddPatientModal from "./AddPatientModal";
 import axios from "../../axiosConfig";
-import { FaSearch } from "react-icons/fa";
+import { calculateAge } from "../../../utils/dateUtils.js";
 
 export default function PatientSearchModal({ onSelect, onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [showAddPatientModal, setShowAddPatientModal] = useState(false);
   const [patients, setPatients] = useState([]);
+  const [genderFilter, setGenderFilter] = useState({
+    homme: true,
+    femme: true,
+  });
 
   const fetchPatients = async () => {
     try {
@@ -24,13 +30,32 @@ export default function PatientSearchModal({ onSelect, onClose }) {
   }, []);
 
   useEffect(() => {
-    const results = patients.filter((patient) =>
-      `${patient.firstName} ${patient.lastName}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
+    const results = patients.filter((patient) => {
+      const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
+      const formattedBirthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+      const age = calculateAge(patient.birthDate).toString();
+      const gender = patient.gender.toLowerCase();
+
+      const matchesSearchTerm =
+        fullName.includes(searchTerm.toLowerCase()) ||
+        formattedBirthDate.includes(searchTerm) ||
+        age.includes(searchTerm);
+
+      const matchesGenderFilter =
+        (gender === "homme" && genderFilter.homme) ||
+        (gender === "femme" && genderFilter.femme);
+
+      return matchesSearchTerm && matchesGenderFilter;
+    });
     setFilteredPatients(results);
-  }, [searchTerm, patients]);
+  }, [searchTerm, patients, genderFilter]);
+
+  const handleGenderChange = (gender) => {
+    setGenderFilter((prev) => ({
+      ...prev,
+      [gender]: !prev[gender],
+    }));
+  };
 
   const handleNewPatientClick = () => {
     setShowAddPatientModal(true);
@@ -39,6 +64,27 @@ export default function PatientSearchModal({ onSelect, onClose }) {
   const handlePatientAdded = () => {
     fetchPatients();
     setShowAddPatientModal(false);
+  };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const highlightText = (text, query) => {
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return (
+      <>
+        {parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} className="font-bold">
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
   };
 
   return (
@@ -53,31 +99,78 @@ export default function PatientSearchModal({ onSelect, onClose }) {
             Ajouter un patient
           </button>
         </div>
+
         <div className="flex items-center border rounded mb-4 p-2">
           <FaSearch className="text-gray-400 mr-2" />
           <input
             type="text"
-            placeholder="Rechercher par nom"
+            placeholder="Rechercher par nom, date de naissance ou âge"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full outline-none"
           />
         </div>
-        <ul className="max-h-60 overflow-y-auto">
+
+        <div className="flex items-center mb-4">
+          <label className="mr-4">Sexe :</label>
+          <div className="flex items-center mr-4">
+            <input
+              type="checkbox"
+              checked={genderFilter.homme}
+              onChange={() => handleGenderChange("homme")}
+              className="mr-1"
+            />
+            <FaMars className="text-blue-500 mr-1" /> Homme
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={genderFilter.femme}
+              onChange={() => handleGenderChange("femme")}
+              className="mr-1"
+            />
+            <FaVenus className="text-pink-500 mr-1" /> Femme
+          </div>
+        </div>
+
+        <ul className="h-60 overflow-y-auto border rounded p-2">
           {filteredPatients.length > 0 ? (
-            filteredPatients.map((patient) => (
-              <li
-                key={patient.id}
-                className="p-2 hover:bg-gray-200 cursor-pointer"
-                onClick={() => onSelect(patient)}
-              >
-                {patient.firstName} {patient.lastName}
-              </li>
-            ))
+            filteredPatients.map((patient) => {
+              const formattedBirthDate = dayjs(patient.birthDate).format(
+                "DD/MM/YYYY"
+              );
+              const age = calculateAge(patient.birthDate);
+              const genderIcon =
+                patient.gender === "Homme" ? (
+                  <FaMars className="text-blue-500 mr-2" />
+                ) : (
+                  <FaVenus className="text-pink-500 mr-2" />
+                );
+
+              return (
+                <li
+                  key={patient.id}
+                  className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => onSelect(patient)}
+                >
+                  {genderIcon}
+                  <span>
+                    {highlightText(
+                      capitalizeFirstLetter(patient.firstName),
+                      searchTerm
+                    )}{" "}
+                    {highlightText(patient.lastName.toUpperCase(), searchTerm)}{" "}
+                    - {highlightText(formattedBirthDate, searchTerm)} (
+                    {highlightText(age.toString(), searchTerm)})
+                  </span>
+                </li>
+              );
+            })
           ) : (
             <li className="p-2">Aucun patient trouvé.</li>
           )}
         </ul>
+
         <button
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
           onClick={onClose}

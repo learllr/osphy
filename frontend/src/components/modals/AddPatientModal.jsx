@@ -39,7 +39,7 @@ export default function AddPatientModal({ isOpen, onClose, onPatientAdded }) {
         <h2 className="text-xl font-bold mb-4">Ajouter un patient</h2>
         <form onSubmit={handleSubmit}>
           <label className="block mb-2">
-            Genre
+            Sexe
             <select
               name="gender"
               value={formData.gender}

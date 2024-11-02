@@ -46,7 +46,7 @@ export default function PatientInfo({ patient }) {
             label="Date de naissance"
             value={dayjs(patient.birthDate).format("DD/MM/YYYY")}
           />
-          <DetailItem label="Genre" value={patient.gender} />
+          <DetailItem label="Sexe" value={patient.gender} />
           <DetailItem
             label="Adresse"
             value={`${patient.address}, ${patient.postalCode} ${patient.city}`}
@@ -169,10 +169,7 @@ export default function PatientInfo({ patient }) {
           {patient.pregnancies && patient.pregnancies.length > 0 ? (
             patient.pregnancies.map((pregnancy) => (
               <div key={pregnancy.id} className="mb-4">
-                <DetailItem
-                  label="Genre de l'enfant"
-                  value={pregnancy.gender}
-                />
+                <DetailItem label="Sexe de l'enfant" value={pregnancy.gender} />
                 <DetailItem
                   label="Méthode d'accouchement"
                   value={pregnancy.deliveryMethod}

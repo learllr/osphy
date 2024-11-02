@@ -6,6 +6,7 @@ import { useUser } from "../contexts/UserContext";
 import AddPatientModal from "../modals/AddPatientModal.jsx";
 import { FaPlus, FaEllipsisV, FaMars, FaVenus } from "react-icons/fa";
 import dayjs from "dayjs";
+import { calculateAge } from "../../../utils/dateUtils.js";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
@@ -49,10 +50,6 @@ export default function Patients() {
     }
   };
 
-  const calculateAge = (birthDate) => {
-    return dayjs().diff(dayjs(birthDate), "year");
-  };
-
   const handleGenderFilterChange = (gender) => {
     setGenderFilters((prev) => ({ ...prev, [gender]: !prev[gender] }));
   };
@@ -77,11 +74,13 @@ export default function Patients() {
       (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
       (genderFilters.femme && patient.gender.toLowerCase() === "femme");
     const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+    const age = calculateAge(patient.birthDate);
 
     return (
       genderMatch &&
       (fullName.includes(searchQuery.toLowerCase()) ||
-        birthDate.includes(searchQuery))
+        birthDate.includes(searchQuery) ||
+        `${age}`.includes(searchQuery))
     );
   });
 
@@ -116,7 +115,7 @@ export default function Patients() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full border border-gray-300 rounded-md p-2"
-              placeholder="Rechercher un patient par nom, prénom ou date de naissance"
+              placeholder="Rechercher un patient par nom, prénom, date de naissance ou âge"
             />
           </div>
 
@@ -137,7 +136,7 @@ export default function Patients() {
                 <FaMars className="text-blue-500 mr-1" /> Homme
               </label>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center mr-4">
               <input
                 type="checkbox"
                 id="femme"
@@ -178,7 +177,8 @@ export default function Patients() {
                       {highlightText(patient.firstName, searchQuery)}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {highlightText(birthDate, searchQuery)} ({age} ans)
+                      {highlightText(birthDate, searchQuery)} (
+                      {highlightText(`${age}`, searchQuery)})
                     </div>
                   </div>
                 </div>

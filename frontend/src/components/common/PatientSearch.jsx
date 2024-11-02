@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { FaMars, FaVenus } from "react-icons/fa";
+import { FaMars, FaVenus, FaSearch } from "react-icons/fa";
 import axios from "../../axiosConfig.js";
+import { calculateAge } from "../../../utils/dateUtils.js";
 
 export default function PatientSearch() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,7 +22,6 @@ export default function PatientSearch() {
         console.error("Erreur lors de la récupération des patients:", error);
       }
     };
-
     fetchPatients();
   }, []);
 
@@ -46,11 +46,6 @@ export default function PatientSearch() {
     );
   };
 
-  const calculateAge = (birthDate) => {
-    const birth = dayjs(birthDate);
-    return dayjs().diff(birth, "year");
-  };
-
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -62,9 +57,11 @@ export default function PatientSearch() {
         const birthDate = dayjs(patient.birthDate)
           .format("DD/MM/YYYY")
           .toLowerCase();
+        const age = calculateAge(patient.birthDate).toString();
         return (
           fullName.includes(query.toLowerCase()) ||
-          birthDate.includes(query.toLowerCase())
+          birthDate.includes(query.toLowerCase()) ||
+          age.includes(query.toLowerCase())
         );
       });
       setFilteredPatients(results);
@@ -92,15 +89,16 @@ export default function PatientSearch() {
 
   return (
     <div className="relative">
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={(e) => e.preventDefault()} className="flex items-center">
+        <FaSearch className="text-gray-400 mr-2 absolute ml-2" />
         <input
           type="text"
-          placeholder="Rechercher un patient"
+          placeholder="Rechercher par nom, date de naissance ou âge"
           value={searchQuery}
           onChange={handleSearchChange}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
-          className="w-96 px-4 py-2 rounded-full bg-white text-black text-sm"
+          className="w-96 pl-10 py-2 rounded-full bg-white text-black text-sm"
         />
       </form>
 
@@ -131,7 +129,8 @@ export default function PatientSearch() {
                     searchQuery
                   )}{" "}
                   {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
-                  {highlightText(formattedBirthDate, searchQuery)} ({age} ans)
+                  {highlightText(formattedBirthDate, searchQuery)} (
+                  {highlightText(age.toString(), searchQuery)})
                 </span>
               </li>
             );
