@@ -9,8 +9,8 @@ export default function AddConsultationModal({
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
     patientComplaint: "",
-    aggravatingSymptoms: "",
-    relievingSymptoms: "",
+    aggravatingFactors: "",
+    relievingFactors: "",
     associatedSymptoms: "",
     clinicalExamination: "",
     osteopathyTesting: "",
@@ -57,17 +57,17 @@ export default function AddConsultationModal({
             onChange={handleChange}
             className="w-full mb-4 p-2 border"
           />
-          <label>Symptômes aggravants</label>
+          <label>Facteurs aggravants</label>
           <textarea
-            name="aggravatingSymptoms"
-            value={formData.aggravatingSymptoms}
+            name="aggravatingFactors"
+            value={formData.aggravatingFactors}
             onChange={handleChange}
             className="w-full mb-4 p-2 border"
           />
-          <label>Symptômes de soulagement</label>
+          <label>Facteurs soulageants</label>
           <textarea
-            name="relievingSymptoms"
-            value={formData.relievingSymptoms}
+            name="relievingFactors"
+            value={formData.relievingFactors}
             onChange={handleChange}
             className="w-full mb-4 p-2 border"
           />

@@ -33,11 +33,11 @@ export default (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      aggravatingSymptoms: {
+      aggravatingFactors: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      relievingSymptoms: {
+      relievingFactors: {
         type: DataTypes.TEXT,
         allowNull: true,
       },

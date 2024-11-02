@@ -13,12 +13,12 @@ export default function ConsultationDetails({ consultation, onEdit }) {
           />
           <DetailItem label="Plainte" value={consultation.patientComplaint} />
           <DetailItem
-            label="Symptômes aggravants"
-            value={consultation.aggravatingSymptoms}
+            label="Facteurs aggravants"
+            value={consultation.aggravatingFactors}
           />
           <DetailItem
-            label="Symptômes soulageants"
-            value={consultation.relievingSymptoms}
+            label="Facteurs soulageants"
+            value={consultation.relievingFactors}
           />
           <DetailItem
             label="Symptômes associés"

@@ -46,6 +46,7 @@ export default (sequelize) => {
           "Patch",
           "Anneau",
           "Préservatif",
+          "Retrait",
           "Autre"
         ),
         allowNull: true,
