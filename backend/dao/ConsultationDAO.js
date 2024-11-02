@@ -9,4 +9,8 @@ export default class ConsultationDAO {
   static async findAllByPatientId(patientId) {
     return await Consultation.findAll({ where: { patientId } });
   }
+
+  static async deleteById(id) {
+    return await Consultation.destroy({ where: { id } });
+  }
 }

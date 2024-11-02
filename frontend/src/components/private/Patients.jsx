@@ -145,7 +145,7 @@ export default function Patients() {
         </thead>
         <tbody>
           {filteredPatients.map((patient) => (
-            <tr>
+            <tr key={patient.id}>
               <td className="border px-4 py-2">{patient.gender}</td>
               <td className="border px-4 py-2">{patient.lastName}</td>
               <td className="border px-4 py-2">{patient.firstName}</td>

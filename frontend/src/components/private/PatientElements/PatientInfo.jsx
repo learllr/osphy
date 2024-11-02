@@ -86,7 +86,7 @@ export default function PatientInfo({ patient }) {
           <ul>
             {upcomingAppointments.map((appointment) => (
               <li key={appointment.id} className="mb-2">
-                <p className="flex items-center">
+                <div className="flex items-center">
                   <span
                     className={`w-2 h-2 rounded-full mr-2 ${getStatusStyle(
                       appointment.status
@@ -99,7 +99,7 @@ export default function PatientInfo({ patient }) {
                     {dayjs(appointment.end).format("HH:mm")}
                     {")"}
                   </div>
-                </p>
+                </div>
               </li>
             ))}
           </ul>

@@ -25,3 +25,22 @@ export const createConsultation = async (req, res) => {
       .json({ message: "Erreur lors de l'ajout de la consultation." });
   }
 };
+
+export const deleteConsultationById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await ConsultationDAO.deleteById(id);
+
+    if (deleted) {
+      res.status(204).send();
+    } else {
+      res.status(404).json({ message: "Consultation non trouvée." });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la consultation:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la suppression de la consultation." });
+  }
+};

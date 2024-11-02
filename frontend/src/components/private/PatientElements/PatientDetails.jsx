@@ -35,27 +35,43 @@ export default function PatientDetails() {
     setConsultations((prev) => [...prev, newConsultation]);
   };
 
+  const handleConsultationDeleted = (deletedId) => {
+    setConsultations((prev) => {
+      const updatedConsultations = prev.filter((c) => c.id !== deletedId);
+
+      if (selectedConsultation && selectedConsultation.id === deletedId) {
+        setSelectedConsultation(null);
+      }
+
+      return updatedConsultations;
+    });
+  };
+
   if (!patient) {
     return <div>Chargement...</div>;
   }
+
   return (
     <div>
       <NavBar />
       <div className="flex">
-        <div className="w-2/12 bg-gray-100 p-8">
+        <div className="w-2/12 bg-gray-100 p-2">
           <ConsultationList
             consultations={consultations}
             onConsultationClick={handleConsultationClick}
             patientId={id}
             onConsultationAdded={handleConsultationAdded}
+            onConsultationDeleted={handleConsultationDeleted}
           />
         </div>
-        <div className="w-5/12 p-8">
+        <div className="w-5/12 p-6">
           <PatientInfo patient={patient} />
         </div>
-        <div className="w-5/12 p-8">
-          {selectedConsultation && (
+        <div className="w-5/12 p-6">
+          {selectedConsultation ? (
             <ConsultationDetails consultation={selectedConsultation} />
+          ) : (
+            <p>Aucune consultation sélectionnée.</p>
           )}
         </div>
       </div>
