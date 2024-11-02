@@ -51,6 +51,10 @@ export default (sequelize) => {
         defaultValue: "En attente",
         allowNull: false,
       },
+      comment: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       sequelize,
