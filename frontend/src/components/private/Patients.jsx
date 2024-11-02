@@ -9,7 +9,6 @@ export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
-    id: "",
     gender: "",
     lastName: "",
     firstName: "",
@@ -59,7 +58,6 @@ export default function Patients() {
 
   const filteredPatients = patients.filter((patient) => {
     return (
-      patient.id.toString().includes(filters.id) &&
       (filters.gender === "" ||
         patient.gender.toLowerCase().includes(filters.gender.toLowerCase())) &&
       patient.lastName.toLowerCase().includes(filters.lastName.toLowerCase()) &&
@@ -96,17 +94,6 @@ export default function Patients() {
       <table className="min-w-full bg-white border">
         <thead>
           <tr>
-            <th className="border px-4 py-2">
-              ID
-              <input
-                type="text"
-                name="id"
-                value={filters.id}
-                onChange={handleFilterChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md"
-                placeholder="Filtrer par ID"
-              />
-            </th>
             <th className="border px-4 py-2">
               Genre
               <select
@@ -158,8 +145,7 @@ export default function Patients() {
         </thead>
         <tbody>
           {filteredPatients.map((patient) => (
-            <tr key={patient.id}>
-              <td className="border px-4 py-2">{patient.id}</td>
+            <tr>
               <td className="border px-4 py-2">{patient.gender}</td>
               <td className="border px-4 py-2">{patient.lastName}</td>
               <td className="border px-4 py-2">{patient.firstName}</td>
