@@ -22,8 +22,8 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      temporalInfo: {
-        type: DataTypes.STRING,
+      year: {
+        type: DataTypes.INTEGER,
         allowNull: true,
       },
       antecedent: {
@@ -32,7 +32,7 @@ export default (sequelize) => {
         validate: {
           notEmpty: true,
         },
-      }
+      },
     },
     {
       sequelize,

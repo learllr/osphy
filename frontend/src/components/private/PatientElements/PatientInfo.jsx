@@ -109,12 +109,14 @@ export default function PatientInfo({ patient }) {
         <Section title="Antécédents">
           {patient.antecedents && patient.antecedents.length > 0 ? (
             <ul>
-              {patient.antecedents.map((antecedent) => (
-                <li key={antecedent.id}>
-                  <strong>{antecedent.antecedent}</strong> (
-                  {antecedent.temporalInfo})
-                </li>
-              ))}
+              {patient.antecedents
+                .slice()
+                .sort((a, b) => a.year - b.year)
+                .map((antecedent) => (
+                  <li key={antecedent.id}>
+                    <strong>{antecedent.antecedent}</strong> ({antecedent.year})
+                  </li>
+                ))}
             </ul>
           ) : (
             <p>Aucun antécédent enregistré.</p>

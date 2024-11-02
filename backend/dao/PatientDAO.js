@@ -50,7 +50,7 @@ export default class PatientDAO {
         {
           model: PatientAntecedent,
           as: "antecedents",
-          attributes: ["id", "antecedent", "temporalInfo"],
+          attributes: ["id", "antecedent", "year"],
         },
         {
           model: PatientContraindication,
