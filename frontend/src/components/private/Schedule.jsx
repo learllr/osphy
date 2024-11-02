@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import NavBar from "../common/NavBar";
 import axios from "../../axiosConfig.js";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
+import dayjs from "dayjs";
 
 export default function Schedule() {
   const [patients, setPatients] = useState([]);
@@ -20,18 +22,67 @@ export default function Schedule() {
     fetchPatients();
   }, []);
 
+  const determineBackgroundColor = (patient, birthDate) => {
+    const birthDateDayjs = dayjs(birthDate);
+    if (!birthDateDayjs.isValid()) {
+      console.warn("Date de naissance invalide pour le patient:", patient);
+      return "#d1d5db";
+    }
+
+    const ageInMonths = dayjs().diff(birthDateDayjs, "month");
+
+    if (patient.gender === "Homme") {
+      if (ageInMonths < 12) {
+        return "#bfdbfe";
+      }
+      return ageInMonths < 216 ? "#3175cb" : "#1622b1";
+    } else if (patient.gender === "Femme") {
+      if (ageInMonths < 12) {
+        return "#fbcfe8";
+      }
+      return ageInMonths < 216 ? "#cb318e" : "#b11655";
+    }
+    return "#d1d5db";
+  };
+
+  const determineStatusIcon = (status) => {
+    switch (status) {
+      case "Confirmé":
+        return <FaCheckCircle className="text-green-500 bg-white rounded-lg" />;
+      case "En attente":
+        return <FaClock className="text-yellow-500 bg-white rounded-lg" />;
+      case "Annulé":
+        return <FaTimesCircle className="text-red-500 bg-white rounded-lg" />;
+      default:
+        return null;
+    }
+  };
+
   const handleAddAppointment = (newAppointment) => {
+    if (!newAppointment.patient || !newAppointment.patient.birthDate) {
+      console.error(
+        "Patient ou date de naissance manquants dans le rendez-vous"
+      );
+      return;
+    }
+
+    const backgroundColor = determineBackgroundColor(
+      newAppointment.patient,
+      newAppointment.patient.birthDate
+    );
+
+    const statusIcon = determineStatusIcon(newAppointment.status);
+
     const updatedAppointment = {
       id: newAppointment.id,
       title: `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`,
       start: newAppointment.start,
       end: newAppointment.end,
-      backgroundColor:
-        newAppointment.status === "Confirmé"
-          ? "green"
-          : newAppointment.status === "En attente"
-          ? "orange"
-          : "red",
+      extendedProps: {
+        status: newAppointment.status,
+        icon: statusIcon,
+        backgroundColor,
+      },
     };
 
     setAppointments([...appointments, updatedAppointment]);
@@ -41,18 +92,26 @@ export default function Schedule() {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get("/appointment");
-        const events = response.data.map((appointment) => ({
-          id: appointment.id,
-          title: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
-          start: appointment.start,
-          end: appointment.end,
-          backgroundColor:
-            appointment.status === "Confirmé"
-              ? "green"
-              : appointment.status === "En attente"
-              ? "orange"
-              : "red",
-        }));
+        const events = response.data.map((appointment) => {
+          const backgroundColor = determineBackgroundColor(
+            appointment.patient,
+            appointment.patient.birthDate
+          );
+
+          const statusIcon = determineStatusIcon(appointment.status);
+
+          return {
+            id: appointment.id,
+            title: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
+            start: appointment.start,
+            end: appointment.end,
+            extendedProps: {
+              status: appointment.status,
+              icon: statusIcon,
+              backgroundColor,
+            },
+          };
+        });
         setAppointments(events);
       } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous:", error);

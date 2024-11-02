@@ -10,11 +10,30 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 export default function CalendarView({ events }) {
+  console.log(events.map((event) => event));
+
   const eventsWithLocalTime = events.map((event) => ({
     ...event,
     start: dayjs.utc(event.start).local().format(),
     end: dayjs.utc(event.end).local().format(),
+    backgroundColor: event.extendedProps.backgroundColor,
+    textColor: "#ffffff",
   }));
+
+  const renderEventContent = (eventInfo) => {
+    return (
+      <div
+        className="flex items-center p-1 rounded"
+        style={{
+          backgroundColor: eventInfo.event.extendedProps.backgroundColor,
+          color: eventInfo.event.extendedProps.textColor || "#ffffff",
+        }}
+      >
+        {eventInfo.event.extendedProps.icon}
+        <span className="ml-1">{eventInfo.event.title}</span>
+      </div>
+    );
+  };
 
   return (
     <div className="p-5 w-3/4">
@@ -23,6 +42,7 @@ export default function CalendarView({ events }) {
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
         events={eventsWithLocalTime}
+        eventContent={renderEventContent}
         selectable={true}
         locale={frLocale}
         timeZone="Europe/Paris"

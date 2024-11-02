@@ -11,7 +11,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     start: "",
     end: "",
     type: "Consultation",
-    patient: "",
+    patient: null,
     status: "En attente",
   });
 
@@ -27,10 +27,8 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const selectedPatient = patients.find(
-      (patient) =>
-        `${patient.firstName} ${patient.lastName}` === newAppointment.patient
-    );
+
+    const selectedPatient = newAppointment.patient;
 
     if (!selectedPatient) {
       alert("Veuillez sélectionner un patient.");
@@ -63,7 +61,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
         start: "",
         end: "",
         type: "Consultation",
-        patient: "",
+        patient: null,
         status: "En attente",
       });
     } catch (error) {
@@ -74,7 +72,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
   const handlePatientSelect = (patient) => {
     setNewAppointment((prev) => ({
       ...prev,
-      patient: `${patient.firstName} ${patient.lastName}`,
+      patient: patient,
     }));
     setShowModal(false);
   };
@@ -87,7 +85,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
           <div className="flex space-x-2">
             <div className="w-full p-2 border rounded bg-gray-100 text-gray-700">
               {newAppointment.patient ? (
-                newAppointment.patient
+                `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`
               ) : (
                 <span className="text-gray-500">Aucun patient sélectionné</span>
               )}
