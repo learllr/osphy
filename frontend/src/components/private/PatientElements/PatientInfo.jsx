@@ -39,7 +39,7 @@ export default function PatientInfo({ patient }) {
   return (
     <div className="bg-zinc-50 min-h-screen p-8">
       <div className="space-y-6">
-        <Section title="Informations générales">
+        <Section title="Informations générales" showCount={false}>
           <DetailItem label="Nom" value={patient.lastName.toUpperCase()} />
           <DetailItem label="Prénom" value={patient.firstName} />
           <DetailItem
@@ -67,7 +67,10 @@ export default function PatientInfo({ patient }) {
           />
         </Section>
 
-        <Section title="Rendez-vous à venir">
+        <Section
+          title="Rendez-vous à venir"
+          count={upcomingAppointments.length}
+        >
           {upcomingAppointments.length > 0 ? (
             <ul>
               {upcomingAppointments.map((appointment) => (
@@ -95,7 +98,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Activités">
+        <Section title="Activités" count={patient.activities?.length || 0}>
           {patient.activities && patient.activities.length > 0 ? (
             <ul>
               {patient.activities.map((activity) => (
@@ -109,7 +112,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Antécédents">
+        <Section title="Antécédents" count={patient.antecedents?.length || 0}>
           {patient.antecedents && patient.antecedents.length > 0 ? (
             <ul>
               {patient.antecedents
@@ -126,7 +129,10 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Contre-indications">
+        <Section
+          title="Contre-indications"
+          count={patient.contraindications?.length || 0}
+        >
           {patient.contraindications && patient.contraindications.length > 0 ? (
             <ul>
               {patient.contraindications.map((ci) => (
@@ -140,7 +146,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Gynécologie">
+        <Section title="Gynécologie" showCount={false}>
           {patient.gynecology ? (
             <div>
               <DetailItem
@@ -165,7 +171,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Grossesses">
+        <Section title="Grossesses" count={patient.pregnancies?.length || 0}>
           {patient.pregnancies && patient.pregnancies.length > 0 ? (
             patient.pregnancies.map((pregnancy) => (
               <div key={pregnancy.id} className="mb-4">
@@ -185,7 +191,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Sommeil">
+        <Section title="Sommeil" showCount={false}>
           {patient.sleep ? (
             <div>
               <DetailItem
@@ -206,7 +212,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Praticiens">
+        <Section title="Praticiens" count={patient.practitioners?.length || 0}>
           {patient.practitioners && patient.practitioners.length > 0 ? (
             <ul>
               {patient.practitioners.map((practitioner) => (
@@ -221,7 +227,7 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Avertissements">
+        <Section title="Avertissements" count={patient.warnings?.length || 0}>
           {patient.warnings && patient.warnings.length > 0 ? (
             <ul>
               {patient.warnings.map((warning) => (
