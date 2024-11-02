@@ -102,10 +102,10 @@ export const createUser = async (req, res) => {
       termsAccepted: finalTermsAccepted,
     });
 
-    await UserSettingDAO.createUserSetting({
-      userId: user.id,
-      consultationDuration: 60,
-    });
+    // await UserSettingDAO.createUserSetting({
+    //   userId: user.id,
+    //   consultationDuration: 60,
+    // });
 
     res.status(201).json({ message: "Utilisateur créé avec succès", user });
   } catch (error) {

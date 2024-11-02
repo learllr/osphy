@@ -40,10 +40,10 @@ export const signup = async (req, res) => {
       termsAccepted: terms,
     });
 
-    await UserSettingDAO.createUserSetting({
-      userId: user.id,
-      consultationDuration: 60,
-    });
+    // await UserSettingDAO.createUserSetting({
+    //   userId: user.id,
+    //   consultationDuration: 60,
+    // });
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "1h",
