@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../axiosConfig.js";
 import dayjs from "dayjs";
+import Section from "../Design/Section.jsx";
+import DetailItem from "../Design/DetailItem.jsx";
 
 export default function PatientInfo({ patient }) {
   const [appointments, setAppointments] = useState([]);
@@ -14,7 +16,6 @@ export default function PatientInfo({ patient }) {
         console.error("Erreur lors de la récupération des rendez-vous:", error);
       }
     };
-
     fetchAppointments();
   }, [patient.id]);
 
@@ -36,211 +37,196 @@ export default function PatientInfo({ patient }) {
   };
 
   return (
-    <>
-      <h1 className="text-xl font-bold mb-4">Fiche du patient</h1>
-      <div className="px-8 pt-6 pb-8 mb-4">
-        {/* Informations Générales */}
-        <h2 className="text-xl mb-2">Informations générales</h2>
-        <p>
-          <strong>Nom:</strong> {patient.lastName} {patient.firstName}
-        </p>
-        <p>
-          <strong>Date de naissance:</strong>{" "}
-          {new Date(patient.birthDate).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>Genre:</strong> {patient.gender}
-        </p>
-        <p>
-          <strong>Adresse:</strong> {patient.address}, {patient.postalCode}{" "}
-          {patient.city}
-        </p>
-        <p>
-          <strong>Téléphone:</strong> {patient.mobilePhone}
-        </p>
-        <p>
-          <strong>Email:</strong> {patient.email}
-        </p>
-        <p>
-          <strong>Profession:</strong> {patient.occupation}
-        </p>
-        <p>
-          <strong>Taille:</strong> {patient.height} cm
-        </p>
-        <p>
-          <strong>Poids:</strong> {patient.weight} kg
-        </p>
-        <p>
-          <strong>Latéralité:</strong> {patient.handedness}
-        </p>
-        <p>
-          <strong>Traitements médicaux:</strong> {patient.medicalTreatments}
-        </p>
-        <p>
-          <strong>Autres informations:</strong> {patient.additionalInfo}
-        </p>
+    <div className="bg-zinc-50 min-h-screen p-8">
+      <div className="space-y-6">
+        <Section title="Informations générales">
+          <DetailItem
+            label="Nom"
+            value={`${patient.lastName} ${patient.firstName}`}
+          />
+          <DetailItem
+            label="Date de naissance"
+            value={dayjs(patient.birthDate).format("DD/MM/YYYY")}
+          />
+          <DetailItem label="Genre" value={patient.gender} />
+          <DetailItem
+            label="Adresse"
+            value={`${patient.address}, ${patient.postalCode} ${patient.city}`}
+          />
+          <DetailItem label="Téléphone" value={patient.mobilePhone} />
+          <DetailItem label="Email" value={patient.email} />
+          <DetailItem label="Profession" value={patient.occupation} />
+          <DetailItem label="Taille" value={`${patient.height} cm`} />
+          <DetailItem label="Poids" value={`${patient.weight} kg`} />
+          <DetailItem label="Latéralité" value={patient.handedness} />
+          <DetailItem
+            label="Traitements médicaux"
+            value={patient.medicalTreatments}
+          />
+          <DetailItem
+            label="Autres informations"
+            value={patient.additionalInfo}
+          />
+        </Section>
 
-        {/* Section Rendez-vous à venir */}
-        <h2 className="text-xl mb-2 mt-4">Rendez-vous à venir</h2>
-        {upcomingAppointments.length > 0 ? (
-          <ul>
-            {upcomingAppointments.map((appointment) => (
-              <li key={appointment.id} className="mb-2">
-                <div className="flex items-center">
+        <Section title="Rendez-vous à venir">
+          {upcomingAppointments.length > 0 ? (
+            <ul>
+              {upcomingAppointments.map((appointment) => (
+                <li key={appointment.id} className="mb-2 flex items-center">
                   <span
                     className={`w-2 h-2 rounded-full mr-2 ${getStatusStyle(
                       appointment.status
                     )}`}
                   ></span>
-                  {dayjs(appointment.start).format("DD/MM/YYYY")}
-                  <div className="text-gray-500 ml-1">
-                    {"("}
-                    {dayjs(appointment.start).format("HH:mm")}-{""}
-                    {dayjs(appointment.end).format("HH:mm")}
-                    {")"}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Aucun rendez-vous à venir.</p>
-        )}
+                  {dayjs(appointment.start).format("DD/MM/YYYY")}{" "}
+                  <span className="text-gray-500 ml-1">
+                    ({dayjs(appointment.start).format("HH:mm")} -{" "}
+                    {dayjs(appointment.end).format("HH:mm")})
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Aucun rendez-vous à venir.</p>
+          )}
+        </Section>
 
-        {/* Activités */}
-        <h2 className="text-xl mb-2 mt-4">Activités</h2>
-        <ul>
+        <Section title="Activités">
           {patient.activities && patient.activities.length > 0 ? (
-            patient.activities.map((activity) => (
-              <li key={activity.id}>
-                <strong>{activity.activity}</strong> ({activity.temporalInfo})
-              </li>
-            ))
+            <ul>
+              {patient.activities.map((activity) => (
+                <li key={activity.id}>
+                  <strong>{activity.activity}</strong> ({activity.temporalInfo})
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li>Aucune activité enregistrée.</li>
+            <p>Aucune activité enregistrée.</p>
           )}
-        </ul>
+        </Section>
 
-        {/* Antécédents */}
-        <h2 className="text-xl mb-2 mt-4">Antécédents</h2>
-        <ul>
+        <Section title="Antécédents">
           {patient.antecedents && patient.antecedents.length > 0 ? (
-            patient.antecedents.map((antecedent) => (
-              <li key={antecedent.id}>
-                <strong>{antecedent.antecedent}</strong> (
-                {antecedent.temporalInfo})
-              </li>
-            ))
+            <ul>
+              {patient.antecedents.map((antecedent) => (
+                <li key={antecedent.id}>
+                  <strong>{antecedent.antecedent}</strong> (
+                  {antecedent.temporalInfo})
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li>Aucun antécédent enregistré.</li>
+            <p>Aucun antécédent enregistré.</p>
           )}
-        </ul>
+        </Section>
 
-        {/* Contre-indications */}
-        <h2 className="text-xl mb-2 mt-4">Contre-indications</h2>
-        <ul>
+        <Section title="Contre-indications">
           {patient.contraindications && patient.contraindications.length > 0 ? (
-            patient.contraindications.map((ci) => (
-              <li key={ci.id}>
-                <strong>{ci.contraindication}</strong> ({ci.temporalInfo})
-              </li>
-            ))
+            <ul>
+              {patient.contraindications.map((ci) => (
+                <li key={ci.id}>
+                  <strong>{ci.contraindication}</strong> ({ci.temporalInfo})
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li>Aucune contre-indication enregistrée.</li>
+            <p>Aucune contre-indication enregistrée.</p>
           )}
-        </ul>
+        </Section>
 
-        {/* Gynécologie */}
-        <h2 className="text-xl mb-2 mt-4">Gynécologie</h2>
-        {patient.gynecology ? (
-          <div>
-            <p>
-              <strong>Règle:</strong>{" "}
-              {patient.gynecology.period ? "Oui" : "Non"}
-            </p>
-            <p>
-              <strong>Ménopause:</strong>{" "}
-              {patient.gynecology.menopause ? "Oui" : "Non"}
-            </p>
-            <p>
-              <strong>Moyen de contraception:</strong>{" "}
-              {patient.gynecology.contraception}
-            </p>
-          </div>
-        ) : (
-          <p>Aucune information gynécologique enregistrée.</p>
-        )}
+        <Section title="Gynécologie">
+          {patient.gynecology ? (
+            <div>
+              <DetailItem
+                label="Règle"
+                value={patient.gynecology.period ? "Oui" : "Non"}
+              />
+              <DetailItem
+                label="Ménopause"
+                value={patient.gynecology.menopause ? "Oui" : "Non"}
+              />
+              <DetailItem
+                label="Moyen de contraception"
+                value={patient.gynecology.contraception}
+              />
+            </div>
+          ) : (
+            <p>Aucune information gynécologique enregistrée.</p>
+          )}
+        </Section>
 
-        {/* Grossesses */}
-        <h2 className="text-xl mb-2 mt-4">Grossesses</h2>
-        <ul>
+        <Section title="Grossesses">
           {patient.pregnancies && patient.pregnancies.length > 0 ? (
             patient.pregnancies.map((pregnancy) => (
-              <div key={pregnancy.id}>
-                <p>
-                  <strong>Genre de l'enfant:</strong> {pregnancy.gender}
-                </p>
-                <p>
-                  <strong>Méthode d'accouchement:</strong>{" "}
-                  {pregnancy.deliveryMethod}
-                </p>
-                <p>
-                  <strong>Péridurale:</strong>{" "}
-                  {pregnancy.epidural ? "Oui" : "Non"}
-                </p>
+              <div key={pregnancy.id} className="mb-4">
+                <DetailItem
+                  label="Genre de l'enfant"
+                  value={pregnancy.gender}
+                />
+                <DetailItem
+                  label="Méthode d'accouchement"
+                  value={pregnancy.deliveryMethod}
+                />
+                <DetailItem
+                  label="Péridurale"
+                  value={pregnancy.epidural ? "Oui" : "Non"}
+                />
               </div>
             ))
           ) : (
             <p>Aucune grossesse enregistrée.</p>
           )}
-        </ul>
+        </Section>
 
-        {/* Sommeil */}
-        <h2 className="text-xl mb-2 mt-4">Sommeil</h2>
-        {patient.sleep ? (
-          <div>
-            <p>
-              <strong>Qualité du sommeil:</strong> {patient.sleep.sleepQuality}
-            </p>
-            <p>
-              <strong>Durée du sommeil:</strong> {patient.sleep.sleepDuration}
-            </p>
-            <p>
-              <strong>Sommeil réparateur:</strong>{" "}
-              {patient.sleep.restorativeSleep ? "Oui" : "Non"}
-            </p>
-          </div>
-        ) : (
-          <p>Aucune information sur le sommeil enregistrée.</p>
-        )}
+        <Section title="Sommeil">
+          {patient.sleep ? (
+            <div>
+              <DetailItem
+                label="Qualité du sommeil"
+                value={patient.sleep.sleepQuality}
+              />
+              <DetailItem
+                label="Durée du sommeil"
+                value={patient.sleep.sleepDuration}
+              />
+              <DetailItem
+                label="Sommeil réparateur"
+                value={patient.sleep.restorativeSleep ? "Oui" : "Non"}
+              />
+            </div>
+          ) : (
+            <p>Aucune information sur le sommeil enregistrée.</p>
+          )}
+        </Section>
 
-        {/* Praticiens */}
-        <h2 className="text-xl mb-2 mt-4">Praticiens</h2>
-        <ul>
+        <Section title="Praticiens">
           {patient.practitioners && patient.practitioners.length > 0 ? (
-            patient.practitioners.map((practitioner) => (
-              <li key={practitioner.id}>
-                <strong>{practitioner.fullName}</strong> (
-                {practitioner.profession})
-              </li>
-            ))
+            <ul>
+              {patient.practitioners.map((practitioner) => (
+                <li key={practitioner.id}>
+                  <strong>{practitioner.fullName}</strong> (
+                  {practitioner.profession})
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li>Aucun praticien enregistré.</li>
+            <p>Aucun praticien enregistré.</p>
           )}
-        </ul>
+        </Section>
 
-        {/* Avertissements */}
-        <h2 className="text-xl mb-2 mt-4">Avertissements</h2>
-        <ul>
+        <Section title="Avertissements">
           {patient.warnings && patient.warnings.length > 0 ? (
-            patient.warnings.map((warning) => (
-              <li key={warning.id}>{warning.warning}</li>
-            ))
+            <ul>
+              {patient.warnings.map((warning) => (
+                <li key={warning.id}>{warning.warning}</li>
+              ))}
+            </ul>
           ) : (
-            <li>Aucun avertissement enregistré.</li>
+            <p>Aucun avertissement enregistré.</p>
           )}
-        </ul>
+        </Section>
       </div>
-    </>
+    </div>
   );
 }

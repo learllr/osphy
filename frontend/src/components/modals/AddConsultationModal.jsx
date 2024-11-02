@@ -38,7 +38,7 @@ export default function AddConsultationModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl max-h-[80vh] overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">Nouvelle Consultation</h2>
         <form onSubmit={handleSubmit}>

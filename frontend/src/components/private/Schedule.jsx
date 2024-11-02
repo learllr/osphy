@@ -63,14 +63,24 @@ export default function Schedule() {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <NavBar />
-      <div className="flex">
-        <AddAppointment
-          patients={patients}
-          onAppointmentAdd={handleAddAppointment}
-        />
-        <CalendarView events={appointments} />
+      <div className="flex flex-col lg:flex-row mt-6 gap-6 mx-6">
+        <div className="w-full lg:w-1/5 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Ajouter un rendez-vous
+          </h2>
+          <AddAppointment
+            patients={patients}
+            onAppointmentAdd={handleAddAppointment}
+          />
+        </div>
+        <div className="w-full lg:w-4/5 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Calendrier des rendez-vous
+          </h2>
+          <CalendarView events={appointments} />
+        </div>
       </div>
     </div>
   );

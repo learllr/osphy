@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddPatientModal from "./AddPatientModal";
 import axios from "../../axiosConfig";
+import { FaSearch } from "react-icons/fa";
 
 export default function PatientSearchModal({ onSelect, onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,7 +13,7 @@ export default function PatientSearchModal({ onSelect, onClose }) {
     try {
       const response = await axios.get("/patient");
       setPatients(response.data);
-      setFilteredPatients(response.data); // Actualiser la liste filtrée avec tous les patients
+      setFilteredPatients(response.data);
     } catch (error) {
       console.error("Erreur lors de la récupération des patients:", error);
     }
@@ -52,13 +53,16 @@ export default function PatientSearchModal({ onSelect, onClose }) {
             Ajouter un patient
           </button>
         </div>
-        <input
-          type="text"
-          placeholder="Rechercher par nom"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-2 border rounded mb-4"
-        />
+        <div className="flex items-center border rounded mb-4 p-2">
+          <FaSearch className="text-gray-400 mr-2" />
+          <input
+            type="text"
+            placeholder="Rechercher par nom"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full outline-none"
+          />
+        </div>
         <ul className="max-h-60 overflow-y-auto">
           {filteredPatients.length > 0 ? (
             filteredPatients.map((patient) => (

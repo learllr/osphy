@@ -45,7 +45,6 @@ export default (sequelize) => {
           "Implant",
           "Patch",
           "Anneau",
-          "Diaphragme",
           "Préservatif",
           "Autre"
         ),

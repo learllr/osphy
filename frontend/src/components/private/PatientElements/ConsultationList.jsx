@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AddConsultationModal from "../../modals/AddConsultationModal.jsx";
 import axios from "../../../axiosConfig.js";
 import { FaTrash } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
 export default function ConsultationList({
   consultations,
@@ -51,9 +52,9 @@ export default function ConsultationList({
       <h2 className="text-xl font-bold mb-4 text-center">Consultations</h2>
       <button
         onClick={openAddModal}
-        className="mb-4 bg-lime-600 text-white px-8 py-2 rounded"
+        className="flex items-center mb-4 bg-lime-600 text-white px-4 py-2 rounded w-full"
       >
-        Ajouter une consultation
+        <FaPlus className="mr-2" /> Ajouter une consultation
       </button>
       <input
         type="text"

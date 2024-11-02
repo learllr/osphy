@@ -96,7 +96,7 @@ export default function Patients() {
   return (
     <>
       <NavBar />
-      <div className="bg-gray-100 min-h-screen p-8">
+      <div className="min-h-screen p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-700">
             Liste des Patients
@@ -109,7 +109,7 @@ export default function Patients() {
           </button>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-4">
+        <div>
           <div className="mb-4">
             <input
               type="text"
@@ -121,7 +121,7 @@ export default function Patients() {
           </div>
 
           <div className="flex items-center mb-6">
-            <label className="mr-4 text-gray-600">Genre :</label>
+            <label className="mr-4 text-gray-600">Sexe :</label>
             <div className="flex items-center mr-4">
               <input
                 type="checkbox"
@@ -154,75 +154,73 @@ export default function Patients() {
             </div>
           </div>
 
-          <div>
-            {filteredPatients.map((patient) => {
-              const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
-              const age = calculateAge(patient.birthDate);
+          {filteredPatients.map((patient) => {
+            const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+            const age = calculateAge(patient.birthDate);
 
-              return (
-                <div
-                  key={patient.id}
-                  className="flex justify-between items-center py-4 border-b border-gray-200 relative"
-                >
-                  <div className="flex items-center">
-                    {patient.gender.toLowerCase() === "homme" ? (
-                      <FaMars className="text-blue-500 mr-2" />
-                    ) : (
-                      <FaVenus className="text-pink-500 mr-2" />
-                    )}
-                    <div>
-                      <div className="text-gray-700 font-semibold">
-                        {highlightText(
-                          patient.lastName.toUpperCase(),
-                          searchQuery
-                        )}{" "}
-                        {highlightText(patient.firstName, searchQuery)}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {highlightText(birthDate, searchQuery)} ({age} ans)
-                      </div>
+            return (
+              <div
+                key={patient.id}
+                className="flex justify-between items-center py-4 border-b border-gray-200 relative"
+              >
+                <div className="flex items-center">
+                  {patient.gender.toLowerCase() === "homme" ? (
+                    <FaMars className="text-blue-500 mr-2" />
+                  ) : (
+                    <FaVenus className="text-pink-500 mr-2" />
+                  )}
+                  <div>
+                    <div className="text-gray-700 font-semibold">
+                      {highlightText(
+                        patient.lastName.toUpperCase(),
+                        searchQuery
+                      )}{" "}
+                      {highlightText(patient.firstName, searchQuery)}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {highlightText(birthDate, searchQuery)} ({age} ans)
                     </div>
                   </div>
-                  <div className="flex items-center">
-                    <Link
-                      to={`/patient/${patient.id}`}
-                      className="text-zinc-700 font-semibold px-4 py-2 border border-zinc-700 rounded-full hover:bg-zinc-700 hover:text-white transition-colors"
-                    >
-                      Ouvrir
-                    </Link>
-                    <button
-                      onClick={() => toggleDropdown(patient.id)}
-                      className="text-gray-500 hover:text-gray-700 ml-3 relative"
-                    >
-                      <FaEllipsisV />
-                    </button>
-                    {showDropdown[patient.id] && (
-                      <ul className="absolute right-0 bg-white border rounded shadow-lg mt-44 z-10 w-52">
-                        <li>
-                          <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                            Modifier
-                          </button>
-                        </li>
-                        <li>
-                          <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                            Exporter en PDF
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => handleDeletePatient(patient.id)}
-                            className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
-                          >
-                            Supprimer
-                          </button>
-                        </li>
-                      </ul>
-                    )}
-                  </div>
                 </div>
-              );
-            })}
-          </div>
+                <div className="flex items-center">
+                  <Link
+                    to={`/patient/${patient.id}`}
+                    className="text-zinc-700 font-semibold px-4 py-2 border border-zinc-700 rounded-full hover:bg-zinc-700 hover:text-white transition-colors"
+                  >
+                    Ouvrir
+                  </Link>
+                  <button
+                    onClick={() => toggleDropdown(patient.id)}
+                    className="text-gray-500 hover:text-gray-700 ml-3 relative"
+                  >
+                    <FaEllipsisV />
+                  </button>
+                  {showDropdown[patient.id] && (
+                    <ul className="absolute right-0 bg-white border rounded shadow-lg mt-44 z-10 w-52">
+                      <li>
+                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
+                          Modifier
+                        </button>
+                      </li>
+                      <li>
+                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
+                          Exporter en PDF
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => handleDeletePatient(patient.id)}
+                          className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
+                        >
+                          Supprimer
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <AddPatientModal

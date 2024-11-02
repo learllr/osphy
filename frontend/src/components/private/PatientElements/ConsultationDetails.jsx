@@ -1,38 +1,41 @@
 import React from "react";
+import DetailItem from "../Design/DetailItem.jsx";
+import Section from "../Design/Section.jsx";
 
-export default function ConsultationDetails({ consultation }) {
+export default function ConsultationDetails({ consultation, onEdit }) {
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold mb-2">Détails de la consultation</h2>
-      <p>
-        <strong>Date:</strong>{" "}
-        {new Date(consultation.date).toLocaleDateString()}
-      </p>
-      <p>
-        <strong>Plainte:</strong> {consultation.patientComplaint}
-      </p>
-      <p>
-        <strong>Symptômes aggravants:</strong>{" "}
-        {consultation.aggravatingSymptoms}
-      </p>
-      <p>
-        <strong>Symptômes soulageants:</strong> {consultation.relievingSymptoms}
-      </p>
-      <p>
-        <strong>Symptômes associés:</strong> {consultation.associatedSymptoms}
-      </p>
-      <p>
-        <strong>Examen clinique:</strong> {consultation.clinicalExamination}
-      </p>
-      <p>
-        <strong>Tests d'ostéopathie:</strong> {consultation.osteopathyTesting}
-      </p>
-      <p>
-        <strong>Traitement:</strong> {consultation.treatment}
-      </p>
-      <p>
-        <strong>Conseils:</strong> {consultation.advice}
-      </p>
+    <div className="bg-zinc-50 p-8 min-h-screen">
+      <Section title="Détails de la consultation" onEdit={onEdit}>
+        <div className="space-y-4">
+          <DetailItem
+            label="Date"
+            value={new Date(consultation.date).toLocaleDateString()}
+          />
+          <DetailItem label="Plainte" value={consultation.patientComplaint} />
+          <DetailItem
+            label="Symptômes aggravants"
+            value={consultation.aggravatingSymptoms}
+          />
+          <DetailItem
+            label="Symptômes soulageants"
+            value={consultation.relievingSymptoms}
+          />
+          <DetailItem
+            label="Symptômes associés"
+            value={consultation.associatedSymptoms}
+          />
+          <DetailItem
+            label="Examen clinique"
+            value={consultation.clinicalExamination}
+          />
+          <DetailItem
+            label="Tests d'ostéopathie"
+            value={consultation.osteopathyTesting}
+          />
+          <DetailItem label="Traitement" value={consultation.treatment} />
+          <DetailItem label="Conseils" value={consultation.advice} />
+        </div>
+      </Section>
     </div>
   );
 }
