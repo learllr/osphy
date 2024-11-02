@@ -152,6 +152,10 @@ export default function PatientInfo({ patient }) {
                 label="Moyen de contraception"
                 value={patient.gynecology.contraception}
               />
+              <DetailItem
+                label="Suivi gynécologique"
+                value={patient.gynecology.followUp}
+              />
             </div>
           ) : (
             <p>Aucune information gynécologique enregistrée.</p>

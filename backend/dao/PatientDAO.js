@@ -60,7 +60,7 @@ export default class PatientDAO {
         {
           model: PatientGynecology,
           as: "gynecology",
-          attributes: ["period", "menopause", "contraception"],
+          attributes: ["period", "menopause", "contraception", "followUp"],
         },
         {
           model: PatientPractitioner,

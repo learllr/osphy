@@ -50,6 +50,11 @@ export default (sequelize) => {
         ),
         allowNull: true,
       },
+      followUp: {
+        type: DataTypes.ENUM("Oui", "Non"),
+        allowNull: false,
+        defaultValue: "Non",
+      },
     },
     {
       sequelize,
