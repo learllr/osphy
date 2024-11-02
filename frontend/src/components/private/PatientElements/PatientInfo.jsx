@@ -82,6 +82,11 @@ export default function PatientInfo({ patient }) {
                     ({dayjs(appointment.start).format("HH:mm")} -{" "}
                     {dayjs(appointment.end).format("HH:mm")})
                   </span>
+                  {appointment.comment && (
+                    <span className="ml-4 text-gray-600 italic">
+                      {appointment.comment}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
