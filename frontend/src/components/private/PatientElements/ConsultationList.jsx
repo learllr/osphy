@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dayjs from "dayjs";
 import AddConsultationModal from "../../modals/AddConsultationModal.jsx";
 import axios from "../../../axiosConfig.js";
 import { FaTrash } from "react-icons/fa";
@@ -44,7 +45,7 @@ export default function ConsultationList({
   };
 
   const filteredConsultations = consultations.filter((consultation) =>
-    new Date(consultation.date).toLocaleDateString().includes(searchQuery)
+    dayjs(consultation.date).format("DD/MM/YYYY").includes(searchQuery)
   );
 
   return (
@@ -75,7 +76,7 @@ export default function ConsultationList({
                 className="text-lime-600 hover:underline"
               >
                 {highlightText(
-                  new Date(consultation.date).toLocaleDateString(),
+                  dayjs(consultation.date).format("DD/MM/YYYY"),
                   searchQuery
                 )}
               </span>

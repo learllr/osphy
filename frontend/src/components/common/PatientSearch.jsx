@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { FaMars, FaVenus } from "react-icons/fa";
 import axios from "../../axiosConfig.js";
@@ -46,17 +47,8 @@ export default function PatientSearch() {
   };
 
   const calculateAge = (birthDate) => {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
-    ) {
-      age--;
-    }
-    return age;
+    const birth = dayjs(birthDate);
+    return dayjs().diff(birth, "year");
   };
 
   const handleSearchChange = (e) => {
@@ -67,8 +59,8 @@ export default function PatientSearch() {
       const results = patients.filter((patient) => {
         const fullName =
           `${patient.firstName} ${patient.lastName}`.toLowerCase();
-        const birthDate = new Date(patient.birthDate)
-          .toLocaleDateString()
+        const birthDate = dayjs(patient.birthDate)
+          .format("DD/MM/YYYY")
           .toLowerCase();
         return (
           fullName.includes(query.toLowerCase()) ||
@@ -115,9 +107,9 @@ export default function PatientSearch() {
       {isDropdownVisible && filteredPatients.length > 0 && (
         <ul className="absolute bg-white text-black w-96 mt-1 max-h-60 overflow-y-auto rounded shadow-lg z-10">
           {filteredPatients.map((patient) => {
-            const formattedBirthDate = new Date(
-              patient.birthDate
-            ).toLocaleDateString();
+            const formattedBirthDate = dayjs(patient.birthDate).format(
+              "DD/MM/YYYY"
+            );
             const age = calculateAge(patient.birthDate);
             const genderIcon =
               patient.gender === "Homme" ? (

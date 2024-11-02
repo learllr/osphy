@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dayjs from "dayjs";
 import axios from "../../axiosConfig.js";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../common/NavBar.jsx";
@@ -44,7 +45,7 @@ export default function Signup() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post("/authentification/signup", {
+        await axios.post("/authentification/signup", {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
@@ -54,7 +55,6 @@ export default function Signup() {
           newsletter: formData.newsletter,
           terms: formData.terms,
         });
-
         navigate("/login");
       } catch (error) {
         console.error("Erreur lors de l'inscription:", error);
@@ -69,7 +69,7 @@ export default function Signup() {
     }
   };
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = dayjs().format("YYYY-MM-DD");
 
   return (
     <div className="min-h-screen">
@@ -136,7 +136,7 @@ export default function Signup() {
               onBlur={() => setIsPasswordFocused(false)}
               required
               minLength={8}
-              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$"
               className="w-full px-3 py-2 border rounded"
             />
           </div>
@@ -170,7 +170,7 @@ export default function Signup() {
               value={formData.postalCode}
               onChange={handleChange}
               required
-              pattern="^\d{5}$"
+              pattern="^\\d{5}$"
               className="w-full px-3 py-2 border rounded"
             />
           </div>

@@ -19,8 +19,8 @@ export default function PatientInfo({ patient }) {
     fetchAppointments();
   }, [patient.id]);
 
-  const upcomingAppointments = appointments.filter(
-    (appointment) => new Date(appointment.start) > new Date()
+  const upcomingAppointments = appointments.filter((appointment) =>
+    dayjs(appointment.start).isAfter(dayjs())
   );
 
   const getStatusStyle = (status) => {
