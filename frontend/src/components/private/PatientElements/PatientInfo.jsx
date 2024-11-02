@@ -40,10 +40,8 @@ export default function PatientInfo({ patient }) {
     <div className="bg-zinc-50 min-h-screen p-8">
       <div className="space-y-6">
         <Section title="Informations générales">
-          <DetailItem
-            label="Nom"
-            value={`${patient.lastName} ${patient.firstName}`}
-          />
+          <DetailItem label="Nom" value={patient.lastName.toUpperCase()} />
+          <DetailItem label="Prénom" value={patient.firstName} />
           <DetailItem
             label="Date de naissance"
             value={dayjs(patient.birthDate).format("DD/MM/YYYY")}
