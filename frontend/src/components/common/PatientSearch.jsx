@@ -108,7 +108,7 @@ export default function PatientSearch() {
           onChange={handleSearchChange}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
-          className="w-96 px-4 py-2 rounded-full bg-white text-black"
+          className="w-96 px-4 py-2 rounded-full bg-white text-black text-sm"
         />
       </form>
 

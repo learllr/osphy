@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import NavBar from "../common/NavBar";
 import axios from "../../axiosConfig.js";
-import { Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import AddPatientModal from "../modals/AddPatientModal.jsx";
+import { FaPlus, FaEllipsisV, FaMars, FaVenus } from "react-icons/fa";
+import dayjs from "dayjs";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    gender: "",
-    lastName: "",
-    firstName: "",
-    birthDate: "",
+  const [searchQuery, setSearchQuery] = useState("");
+  const [genderFilters, setGenderFilters] = useState({
+    homme: true,
+    femme: true,
   });
-
   const { user } = useUser();
   const [showDropdown, setShowDropdown] = useState({});
 
@@ -33,13 +33,6 @@ export default function Patients() {
     }
   }, [user]);
 
-  const handleFilterChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const toggleDropdown = (id) => {
     setShowDropdown((prev) => ({
       ...prev,
@@ -56,17 +49,39 @@ export default function Patients() {
     }
   };
 
+  const calculateAge = (birthDate) => {
+    return dayjs().diff(dayjs(birthDate), "year");
+  };
+
+  const handleGenderFilterChange = (gender) => {
+    setGenderFilters((prev) => ({ ...prev, [gender]: !prev[gender] }));
+  };
+
+  const highlightText = (text, query) => {
+    if (!query) return text;
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <span key={index} className="font-bold">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
   const filteredPatients = patients.filter((patient) => {
+    const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
+    const genderMatch =
+      (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
+      (genderFilters.femme && patient.gender.toLowerCase() === "femme");
+    const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+
     return (
-      (filters.gender === "" ||
-        patient.gender.toLowerCase().includes(filters.gender.toLowerCase())) &&
-      patient.lastName.toLowerCase().includes(filters.lastName.toLowerCase()) &&
-      patient.firstName
-        .toLowerCase()
-        .includes(filters.firstName.toLowerCase()) &&
-      new Date(patient.birthDate)
-        .toLocaleDateString()
-        .includes(filters.birthDate)
+      genderMatch &&
+      (fullName.includes(searchQuery.toLowerCase()) ||
+        birthDate.includes(searchQuery))
     );
   });
 
@@ -79,127 +94,143 @@ export default function Patients() {
   };
 
   return (
-    <div>
+    <>
       <NavBar />
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Liste des Patients</h1>
-        <button
-          onClick={toggleModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Ajouter un patient
-        </button>
-      </div>
+      <div className="bg-gray-100 min-h-screen p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-700">
+            Liste des Patients
+          </h1>
+          <button
+            onClick={toggleModal}
+            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            <FaPlus className="mr-2" /> Ajouter un patient
+          </button>
+        </div>
 
-      <table className="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2">
-              Genre
-              <select
-                name="gender"
-                value={filters.gender}
-                onChange={handleFilterChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md"
+        <div className="bg-white shadow-lg rounded-lg p-4">
+          <div className="mb-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border border-gray-300 rounded-md p-2"
+              placeholder="Rechercher un patient par nom, prénom ou date de naissance"
+            />
+          </div>
+
+          <div className="flex items-center mb-6">
+            <label className="mr-4 text-gray-600">Genre :</label>
+            <div className="flex items-center mr-4">
+              <input
+                type="checkbox"
+                id="homme"
+                checked={genderFilters.homme}
+                onChange={() => handleGenderFilterChange("homme")}
+                className="mr-2"
+              />
+              <label
+                htmlFor="homme"
+                className="flex items-center text-gray-700"
               >
-                <option value="">Tous</option>
-                <option value="homme">Homme</option>
-                <option value="femme">Femme</option>
-              </select>
-            </th>
-            <th className="border px-4 py-2">
-              Nom
+                <FaMars className="text-blue-500 mr-1" /> Homme
+              </label>
+            </div>
+            <div className="flex items-center">
               <input
-                type="text"
-                name="lastName"
-                value={filters.lastName}
-                onChange={handleFilterChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md"
-                placeholder="Filtrer par nom"
+                type="checkbox"
+                id="femme"
+                checked={genderFilters.femme}
+                onChange={() => handleGenderFilterChange("femme")}
+                className="mr-2"
               />
-            </th>
-            <th className="border px-4 py-2">
-              Prénom
-              <input
-                type="text"
-                name="firstName"
-                value={filters.firstName}
-                onChange={handleFilterChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md"
-                placeholder="Filtrer par prénom"
-              />
-            </th>
-            <th className="border px-4 py-2">
-              Date de naissance
-              <input
-                type="text"
-                name="birthDate"
-                value={filters.birthDate}
-                onChange={handleFilterChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md"
-                placeholder="Filtrer par date de naissance"
-              />
-            </th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPatients.map((patient) => (
-            <tr key={patient.id}>
-              <td className="border px-4 py-2">{patient.gender}</td>
-              <td className="border px-4 py-2">{patient.lastName}</td>
-              <td className="border px-4 py-2">{patient.firstName}</td>
-              <td className="border px-4 py-2">
-                {new Date(patient.birthDate).toLocaleDateString()}
-              </td>
-              <td className="border px-4 py-2">
-                <Link
-                  to={`/patient/${patient.id}`}
-                  className="text-blue-500 hover:underline"
-                >
-                  Ouvrir la fiche patient
-                </Link>
-                <div className="relative inline-block">
-                  <button
-                    onClick={() => toggleDropdown(patient.id)}
-                    className="ml-2 px-2 py-1"
-                  >
-                    ...
-                  </button>
-                  {showDropdown[patient.id] && (
-                    <ul className="absolute right-0 bg-white border rounded shadow-lg mt-2 z-10 w-52">
-                      <li>
-                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                          Modifier
-                        </button>
-                      </li>
-                      <li>
-                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                          Exporter en PDF
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => handleDeletePatient(patient.id)}
-                          className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
-                        >
-                          Supprimer
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              <label
+                htmlFor="femme"
+                className="flex items-center text-gray-700"
+              >
+                <FaVenus className="text-pink-500 mr-1" /> Femme
+              </label>
+            </div>
+          </div>
 
-      <AddPatientModal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
-        onPatientAdded={handlePatientAdded}
-      />
-    </div>
+          <div>
+            {filteredPatients.map((patient) => {
+              const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+              const age = calculateAge(patient.birthDate);
+
+              return (
+                <div
+                  key={patient.id}
+                  className="flex justify-between items-center py-4 border-b border-gray-200 relative"
+                >
+                  <div className="flex items-center">
+                    {patient.gender.toLowerCase() === "homme" ? (
+                      <FaMars className="text-blue-500 mr-2" />
+                    ) : (
+                      <FaVenus className="text-pink-500 mr-2" />
+                    )}
+                    <div>
+                      <div className="text-gray-700 font-semibold">
+                        {highlightText(
+                          patient.lastName.toUpperCase(),
+                          searchQuery
+                        )}{" "}
+                        {highlightText(patient.firstName, searchQuery)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {highlightText(birthDate, searchQuery)} ({age} ans)
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <Link
+                      to={`/patient/${patient.id}`}
+                      className="text-zinc-700 font-semibold px-4 py-2 border border-zinc-700 rounded-full hover:bg-zinc-700 hover:text-white transition-colors"
+                    >
+                      Ouvrir
+                    </Link>
+                    <button
+                      onClick={() => toggleDropdown(patient.id)}
+                      className="text-gray-500 hover:text-gray-700 ml-3 relative"
+                    >
+                      <FaEllipsisV />
+                    </button>
+                    {showDropdown[patient.id] && (
+                      <ul className="absolute right-0 bg-white border rounded shadow-lg mt-44 z-10 w-52">
+                        <li>
+                          <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
+                            Modifier
+                          </button>
+                        </li>
+                        <li>
+                          <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
+                            Exporter en PDF
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => handleDeletePatient(patient.id)}
+                            className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
+                          >
+                            Supprimer
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <AddPatientModal
+          isOpen={isModalOpen}
+          onClose={toggleModal}
+          onPatientAdded={handlePatientAdded}
+        />
+      </div>
+    </>
   );
 }
