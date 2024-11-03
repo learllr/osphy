@@ -5,7 +5,11 @@ import Section from "../Design/Section.jsx";
 export default function ConsultationDetails({ consultation, onEdit }) {
   return (
     <div className="bg-zinc-50 p-8 min-h-screen">
-      <Section title="Détails de la consultation" onEdit={onEdit}>
+      <Section
+        title="Détails de la consultation"
+        onEdit={onEdit}
+        showCount={false}
+      >
         <div className="space-y-8">
           <div>
             <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">

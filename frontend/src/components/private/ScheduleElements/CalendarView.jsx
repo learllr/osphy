@@ -36,11 +36,21 @@ export default function CalendarView({ events }) {
   };
 
   return (
-    <div className="p-5 w-3/4">
+    <div className="p-5">
       <h1 className="text-2xl font-semibold mb-4">Mon agenda</h1>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
+        headerToolbar={{
+          left: "prev,next today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek,timeGridDay",
+        }}
+        views={{
+          dayGridMonth: { buttonText: "Mois" },
+          timeGridWeek: { buttonText: "Semaine" },
+          timeGridDay: { buttonText: "Jour" },
+        }}
         events={eventsWithLocalTime}
         eventContent={renderEventContent}
         selectable={true}
