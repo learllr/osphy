@@ -18,6 +18,8 @@ export default function Patients() {
   });
   const { user } = useUser();
   const [showDropdown, setShowDropdown] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const patientsPerPage = 10;
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -68,21 +70,39 @@ export default function Patients() {
     );
   };
 
-  const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
-    const genderMatch =
-      (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
-      (genderFilters.femme && patient.gender.toLowerCase() === "femme");
-    const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
-    const age = calculateAge(patient.birthDate);
+  const filteredPatients = patients
+    .filter((patient) => {
+      const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
+      const genderMatch =
+        (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
+        (genderFilters.femme && patient.gender.toLowerCase() === "femme");
+      const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+      const age = calculateAge(patient.birthDate);
 
-    return (
-      genderMatch &&
-      (fullName.includes(searchQuery.toLowerCase()) ||
-        birthDate.includes(searchQuery) ||
-        `${age}`.includes(searchQuery))
-    );
-  });
+      return (
+        genderMatch &&
+        (fullName.includes(searchQuery.toLowerCase()) ||
+          birthDate.includes(searchQuery) ||
+          `${age}`.includes(searchQuery))
+      );
+    })
+    .sort((a, b) => {
+      if (a.lastName.toLowerCase() < b.lastName.toLowerCase()) return -1;
+      if (a.lastName.toLowerCase() > b.lastName.toLowerCase()) return 1;
+      if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) return -1;
+      if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) return 1;
+      return 0;
+    });
+
+  const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
+  const paginatedPatients = filteredPatients.slice(
+    (currentPage - 1) * patientsPerPage,
+    currentPage * patientsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -153,7 +173,7 @@ export default function Patients() {
             </div>
           </div>
 
-          {filteredPatients.map((patient) => {
+          {paginatedPatients.map((patient) => {
             const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
             const age = calculateAge(patient.birthDate);
 
@@ -170,10 +190,7 @@ export default function Patients() {
                   )}
                   <div>
                     <div className="text-gray-700 font-semibold">
-                      {highlightText(
-                        patient.lastName.toUpperCase(),
-                        searchQuery
-                      )}{" "}
+                      {highlightText(patient.lastName, searchQuery)}{" "}
                       {highlightText(patient.firstName, searchQuery)}
                     </div>
                     <div className="text-sm text-gray-500">
@@ -221,6 +238,24 @@ export default function Patients() {
               </div>
             );
           })}
+
+          <div className="flex justify-center mt-6">
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={`px-3 py-1 border rounded mx-1 ${
+                    currentPage === pageNumber
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-700"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              )
+            )}
+          </div>
         </div>
 
         <AddPatientModal

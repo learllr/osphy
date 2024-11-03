@@ -14,23 +14,19 @@ export const getAppointments = async (req, res) => {
 };
 
 export const getAppointmentsByPatientId = async (req, res) => {
-  const { patientId } = req.params;
+  const { id } = req.params;
 
   try {
-    const appointments = await AppointmentDAO.getAppointmentsByPatientId(
-      patientId
-    );
+    const appointments = await AppointmentDAO.getAppointmentsByid(id);
     res.status(200).json(appointments);
   } catch (error) {
     console.error(
       "Erreur lors de la récupération des rendez-vous pour le patient:",
       error
     );
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la récupération des rendez-vous du patient.",
-      });
+    res.status(500).json({
+      message: "Erreur lors de la récupération des rendez-vous du patient.",
+    });
   }
 };
 

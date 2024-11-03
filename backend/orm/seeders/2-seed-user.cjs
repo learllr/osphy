@@ -10,7 +10,7 @@ module.exports = {
       [
         {
           firstName: "Léa",
-          lastName: "Roullier",
+          lastName: "ROULLIER",
           email: "leleroullier@gmail.com",
           password: hashedPassword,
           roleId: 1,
@@ -22,9 +22,9 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          firstName: "Jane",
-          lastName: "Smith",
-          email: "jane.smith@example.com",
+          firstName: "Sarah",
+          lastName: "MARTINS",
+          email: "sarah.martins@example.com",
           password: await bcrypt.hash("another_password_here", 10),
           roleId: 2,
           postalCode: "69002",

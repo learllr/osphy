@@ -26,7 +26,12 @@ export default function Signup() {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "lastName"
+          ? value.toUpperCase()
+          : value,
     }));
   };
 
@@ -136,7 +141,7 @@ export default function Signup() {
               onBlur={() => setIsPasswordFocused(false)}
               required
               minLength={8}
-              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$"
+              // pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$"
               className="w-full px-3 py-2 border rounded"
             />
           </div>
@@ -170,7 +175,7 @@ export default function Signup() {
               value={formData.postalCode}
               onChange={handleChange}
               required
-              pattern="^\\d{5}$"
+              // pattern="^\\d{5}$"
               className="w-full px-3 py-2 border rounded"
             />
           </div>

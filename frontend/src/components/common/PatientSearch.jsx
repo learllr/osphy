@@ -128,7 +128,7 @@ export default function PatientSearch() {
                     capitalizeFirstLetter(patient.firstName),
                     searchQuery
                   )}{" "}
-                  {highlightText(patient.lastName.toUpperCase(), searchQuery)} -{" "}
+                  {highlightText(patient.lastName, searchQuery)} -{" "}
                   {highlightText(formattedBirthDate, searchQuery)} (
                   {highlightText(age.toString(), searchQuery)})
                 </span>

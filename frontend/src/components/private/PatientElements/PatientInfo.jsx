@@ -40,7 +40,7 @@ export default function PatientInfo({ patient }) {
     <div className="bg-zinc-50 min-h-screen p-8">
       <div className="space-y-6">
         <Section title="Informations générales" showCount={false}>
-          <DetailItem label="Nom" value={patient.lastName.toUpperCase()} />
+          <DetailItem label="Nom" value={patient.lastName} />
           <DetailItem label="Prénom" value={patient.firstName} />
           <DetailItem
             label="Date de naissance"

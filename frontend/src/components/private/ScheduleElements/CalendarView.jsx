@@ -10,8 +10,6 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 export default function CalendarView({ events }) {
-  console.log(events.map((event) => event));
-
   const eventsWithLocalTime = events.map((event) => ({
     ...event,
     start: dayjs.utc(event.start).local().format(),

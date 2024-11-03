@@ -53,7 +53,7 @@ export default function NavBar() {
               />
             </Link>
             <Link to="/manage-account">
-              {user.firstName} {user.lastName.toUpperCase()}
+              {user.firstName} {user.lastName}
             </Link>
             <button
               onClick={openLogoutModal}

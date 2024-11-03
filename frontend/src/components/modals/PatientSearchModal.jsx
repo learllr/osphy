@@ -159,8 +159,8 @@ export default function PatientSearchModal({ onSelect, onClose }) {
                       capitalizeFirstLetter(patient.firstName),
                       searchTerm
                     )}{" "}
-                    {highlightText(patient.lastName.toUpperCase(), searchTerm)}{" "}
-                    - {highlightText(formattedBirthDate, searchTerm)} (
+                    {highlightText(patient.lastName, searchTerm)} -{" "}
+                    {highlightText(formattedBirthDate, searchTerm)} (
                     {highlightText(age.toString(), searchTerm)})
                   </span>
                 </li>
