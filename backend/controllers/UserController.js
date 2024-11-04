@@ -19,15 +19,8 @@ export const getProfile = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      postalCode,
-      birthDate,
-      newsletterAccepted,
-      termsAccepted,
-    } = req.body;
+    const { firstName, lastName, email, newsletterAccepted, termsAccepted } =
+      req.body;
     const userId = req.params.id;
 
     const user = await UserDAO.getUserById(userId);
@@ -39,8 +32,6 @@ export const updateUser = async (req, res) => {
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       email: email || user.email,
-      postalCode: postalCode || user.postalCode,
-      birthDate: birthDate || user.birthDate,
       newsletterAccepted: newsletterAccepted ?? user.newsletterAccepted,
       termsAccepted: termsAccepted ?? user.termsAccepted,
     });
@@ -80,8 +71,6 @@ export const createUser = async (req, res) => {
       email,
       password,
       roleId,
-      postalCode,
-      birthDate,
       newsletterAccepted,
       termsAccepted,
     } = req.body;
@@ -96,8 +85,6 @@ export const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       roleId,
-      postalCode,
-      birthDate,
       newsletterAccepted,
       termsAccepted: finalTermsAccepted,
     });

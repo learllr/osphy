@@ -8,8 +8,6 @@ export default function AccountManagement() {
     firstName: "",
     lastName: "",
     email: "",
-    postalCode: "",
-    birthDate: "",
     newsletterAccepted: false,
   });
 
@@ -19,8 +17,6 @@ export default function AccountManagement() {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
-        postalCode: user.postalCode || "",
-        birthDate: user.birthDate || "",
         newsletterAccepted: user.newsletterAccepted || false,
       });
     }
@@ -84,34 +80,6 @@ export default function AccountManagement() {
               id="email"
               name="email"
               value={formData.email}
-              onChange={handleChange}
-              className="border p-2 w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="postalCode" className="block">
-              Code Postal
-            </label>
-            <input
-              type="text"
-              id="postalCode"
-              name="postalCode"
-              value={formData.postalCode}
-              onChange={handleChange}
-              className="border p-2 w-full"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="birthDate" className="block">
-              Date de naissance
-            </label>
-            <input
-              type="date"
-              id="birthDate"
-              name="birthDate"
-              value={formData.birthDate}
               onChange={handleChange}
               className="border p-2 w-full"
             />

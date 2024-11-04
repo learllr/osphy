@@ -1,13 +1,8 @@
 "use strict";
 import { Model, DataTypes } from "sequelize";
-import { compare, hash } from "bcrypt";
 
 export default (sequelize) => {
-  class User extends Model {
-    async validatePassword(password) {
-      return await compare(password, this.password);
-    }
-  }
+  class User extends Model {}
 
   User.init(
     {
@@ -16,6 +11,11 @@ export default (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
+      },
+      identifier: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
       },
       firstName: {
         type: DataTypes.STRING,
@@ -57,21 +57,6 @@ export default (sequelize) => {
         },
         defaultValue: 4,
       },
-      postalCode: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          is: /^\d{5}$/,
-        },
-      },
-      birthDate: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        validate: {
-          isDate: true,
-          isBefore: new Date().toISOString().split("T")[0],
-        },
-      },
       newsletterAccepted: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -94,18 +79,6 @@ export default (sequelize) => {
       modelName: "User",
       tableName: "Users",
       timestamps: true,
-      hooks: {
-        beforeCreate: async (user) => {
-          if (user.password) {
-            user.password = await hash(user.password, 10);
-          }
-        },
-        beforeUpdate: async (user) => {
-          if (user.changed("password")) {
-            user.password = await hash(user.password, 10);
-          }
-        },
-      },
     }
   );
 

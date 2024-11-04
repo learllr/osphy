@@ -59,7 +59,9 @@ export default function Login() {
         email: resetEmail,
       });
       if (response.status === 200) {
-        setResetMessage("Un lien de réinitialisation de mot de passe a été envoyé à votre email.");
+        setResetMessage(
+          "Un lien de réinitialisation de mot de passe a été envoyé à votre email."
+        );
         setResetError("");
       } else {
         setResetError(response.data.message || "Une erreur est survenue.");
@@ -84,8 +86,12 @@ export default function Login() {
             <Card className="w-full max-w-md">
               <CardHeader className="items-center">
                 <UserRound className="size-10 rounded-full bg-accent p-2.5 text-muted-foreground" />
-                <CardTitle className="text-xl">Connectez-vous avec votre email</CardTitle>
-                <CardDescription>Entrez vos informations pour vous connecter</CardDescription>
+                <CardTitle className="text-xl">
+                  Connectez-vous avec votre email
+                </CardTitle>
+                <CardDescription>
+                  Entrez vos informations pour vous connecter
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="grid gap-4">

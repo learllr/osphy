@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Globe, UserRound } from "lucide-react";
 import { useUser } from "../contexts/UserContext";
@@ -13,17 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import NavBar from "../common/NavBar.jsx";
+import { generateIdentifier } from "../../../utils/randomUtils.js";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { signupUser } = useUser();
+  const { signupUser, loginUser } = useUser();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
-    newsletter: false,
+    newsletterAccepted: false,
     termsAccepted: false,
   });
   const [errors, setErrors] = useState({});
@@ -39,20 +40,47 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: "Les mots de passe ne correspondent pas" });
       return;
     }
     if (!formData.termsAccepted) {
-      setErrors({ termsAccepted: "Vous devez accepter les conditions générales" });
+      setErrors({
+        termsAccepted: "Vous devez accepter les conditions générales",
+      });
       return;
     }
 
-    const { firstName, lastName, email, password, newsletter } = formData;
-    const result = await signupUser({ firstName, lastName, email, password, newsletter });
+    const identifier = generateIdentifier();
+
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      newsletterAccepted,
+      termsAccepted,
+    } = formData;
+
+    const result = await signupUser({
+      identifier,
+      firstName,
+      lastName,
+      email,
+      password,
+      newsletterAccepted,
+      termsAccepted,
+    });
 
     if (result.success) {
-      navigate("/login");
+      const loginResult = await loginUser(email, password);
+
+      if (loginResult.success) {
+        navigate("/");
+      } else {
+        setApiError("Erreur lors de la connexion après inscription.");
+      }
     } else {
       setApiError(result.message);
     }
@@ -82,7 +110,7 @@ export default function Signup() {
                   <span className="text-xs text-muted-foreground">OU</span>
                   <span className="h-px w-full bg-input"></span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">Prénom</Label>
@@ -133,7 +161,9 @@ export default function Signup() {
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="confirmPassword">Confirmez le mot de passe</Label>
+                    <Label htmlFor="confirmPassword">
+                      Confirmez le mot de passe
+                    </Label>
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
@@ -144,21 +174,25 @@ export default function Signup() {
                       required
                     />
                     {errors.confirmPassword && (
-                      <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.confirmPassword}
+                      </p>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    id="newsletter"
-                    name="newsletter"
-                    checked={formData.newsletter}
+                    id="newsletterAccepted"
+                    name="newsletterAccepted"
+                    checked={formData.newsletterAccepted}
                     onChange={handleChange}
                     className="w-4 h-4"
                   />
-                  <Label htmlFor="newsletter">Je souhaite recevoir la newsletter</Label>
+                  <Label htmlFor="newsletter">
+                    Je souhaite recevoir la newsletter
+                  </Label>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -178,10 +212,12 @@ export default function Signup() {
                     </a>
                   </Label>
                   {errors.termsAccepted && (
-                    <p className="text-red-500 text-sm">{errors.termsAccepted}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.termsAccepted}
+                    </p>
                   )}
                 </div>
-                
+
                 <Button type="submit" className="w-full">
                   Créer un compte
                 </Button>

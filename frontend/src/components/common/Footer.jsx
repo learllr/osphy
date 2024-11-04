@@ -2,12 +2,9 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer
-      className="text-white px-20 text-sm bg-zinc-900"
-    >
+    <footer className="text-white px-20 text-sm bg-zinc-900">
       <div className="flex justify-between items-center p-11">
         <div className="flex space-x-2 text-gray-400">
-          {/* Facebook */}
           <a
             href="https://facebook.com"
             target="_blank"
@@ -20,7 +17,6 @@ export default function Footer() {
             />
           </a>
 
-          {/* Instagram */}
           <a
             href="https://instagram.com"
             target="_blank"
@@ -33,7 +29,6 @@ export default function Footer() {
             />
           </a>
 
-          {/* TikTok */}
           <a
             href="https://www.tiktok.com"
             target="_blank"

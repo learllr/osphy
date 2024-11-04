@@ -12,14 +12,13 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const signup = async (req, res) => {
   try {
     const {
+      identifier,
       firstName,
       lastName,
       email,
       password,
-      postalCode,
-      birthDate,
-      newsletter,
-      terms,
+      newsletterAccepted,
+      termsAccepted,
     } = req.body;
 
     const existingUser = await AuthentificationDAO.findUserByEmail(email);
@@ -30,14 +29,13 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await UserDAO.createUser({
+      identifier,
       firstName,
       lastName,
       email,
       password: hashedPassword,
-      postalCode,
-      birthDate,
-      newsletterAccepted: newsletter,
-      termsAccepted: terms,
+      newsletterAccepted,
+      termsAccepted,
     });
 
     // await UserSettingDAO.createUserSetting({
@@ -88,11 +86,10 @@ export const login = async (req, res) => {
 
     const {
       id,
+      identifier,
       firstName,
       lastName,
       roleId,
-      postalCode,
-      birthDate,
       newsletterAccepted,
       createdAt,
     } = user;
@@ -108,12 +105,11 @@ export const login = async (req, res) => {
       message: "Connexion réussie",
       user: {
         id,
+        identifier,
         email,
         firstName,
         lastName,
         roleId,
-        postalCode,
-        birthDate,
         newsletterAccepted,
         createdAt,
       },
