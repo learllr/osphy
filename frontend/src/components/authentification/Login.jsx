@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import ResetPasswordModal from "../modals/ResetPasswordModal.jsx";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import NavBar from "../common/NavBar.jsx";
+import { Globe, UserRound } from "lucide-react";
 import { useUser } from "../contexts/UserContext.jsx";
 import axios from "../../axiosConfig.js";
-import NavBar from "../common/NavBar.jsx";
+import ResetPasswordModal from "../modals/ResetPasswordModal.jsx";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const { user, loginUser } = useUser();
@@ -15,7 +26,6 @@ export default function Login() {
     email: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -32,7 +42,6 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { email, password } = formData;
     const result = await loginUser(email, password);
 
@@ -50,9 +59,7 @@ export default function Login() {
         email: resetEmail,
       });
       if (response.status === 200) {
-        setResetMessage(
-          "Un lien de réinitialisation de mot de passe a été envoyé à votre email."
-        );
+        setResetMessage("Un lien de réinitialisation de mot de passe a été envoyé à votre email.");
         setResetError("");
       } else {
         setResetError(response.data.message || "Une erreur est survenue.");
@@ -69,72 +76,96 @@ export default function Login() {
   }, [user, navigate, from]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <NavBar />
-      <div className="flex justify-center items-center m-20">
-        <div className="bg-white w-full max-w-lg p-8">
-          <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-            Connexion
-          </h1>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-gray-700 mb-2">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
+      <section className="flex flex-1 items-center justify-center">
+        <div className="container">
+          <div className="flex flex-col gap-4 items-center">
+            <Card className="w-full max-w-md">
+              <CardHeader className="items-center">
+                <UserRound className="size-10 rounded-full bg-accent p-2.5 text-muted-foreground" />
+                <CardTitle className="text-xl">Connectez-vous avec votre email</CardTitle>
+                <CardDescription>Entrez vos informations pour vous connecter</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="grid gap-4">
+                  <Button variant="outline" className="w-full">
+                    <Globe className="mr-2 size-4" />
+                    Se connecter avec Google
+                  </Button>
+                  <div className="flex items-center gap-4">
+                    <span className="h-px w-full bg-input"></span>
+                    <span className="text-xs text-muted-foreground">OU</span>
+                    <span className="h-px w-full bg-input"></span>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="sarah@exemple.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm">{errors.email}</p>
+                    )}
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="flex justify-between">
+                      <Label htmlFor="password">Mot de passe</Label>
+                      <a
+                        href="#"
+                        onClick={() => setShowModal(true)}
+                        className="text-sm underline"
+                      >
+                        Mot de passe oublié ?
+                      </a>
+                    </div>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Entrez votre mot de passe"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    {errors.password && (
+                      <p className="text-red-500 text-sm">{errors.password}</p>
+                    )}
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Se connecter
+                  </Button>
+                  {errors.apiError && (
+                    <p className="text-red-500 text-sm text-center mt-4">
+                      {errors.apiError}
+                    </p>
+                  )}
+                </form>
+              </CardContent>
+            </Card>
+            <ResetPasswordModal
+              isVisible={showModal}
+              onClose={() => setShowModal(false)}
+              onSubmit={handleResetPassword}
+              resetEmail={resetEmail}
+              setResetEmail={setResetEmail}
+              resetMessage={resetMessage}
+              resetError={resetError}
+            />
+            <div className="flex gap-1 text-sm">
+              <p>Vous n'avez pas encore de compte ?</p>
+              <Link to="/signup" className="underline">
+                S'inscrire
+              </Link>
             </div>
-            <div>
-              <label className="block text-gray-700 mb-2">Mot de passe</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={8}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password}</p>
-              )}
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Se connecter
-            </button>
-
-            <div className="text-center mt-4">
-              <a
-                href="#"
-                onClick={() => setShowModal(true)}
-                className="text-blue-500 hover:underline transition-colors"
-              >
-                Mot de passe oublié ?
-              </a>
-            </div>
-          </form>
-
-          <ResetPasswordModal
-            isVisible={showModal}
-            onClose={() => setShowModal(false)}
-            onSubmit={handleResetPassword}
-            resetEmail={resetEmail}
-            setResetEmail={setResetEmail}
-            resetMessage={resetMessage}
-            resetError={resetError}
-          />
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

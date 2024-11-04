@@ -32,6 +32,28 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
+  const signupUser = async (userData) => {
+    try {
+      const response = await axios.post(
+        "/authentification/signup",
+        userData,
+        { withCredentials: true }
+      );
+      setUser(response.data.user);
+      localStorage.setItem("token", response.data.token);
+      setIsAuthenticated(true);
+      return { success: true };
+    } catch (error) {
+      console.error("Erreur lors de l'inscription :", error);
+      return {
+        success: false,
+        message:
+          error.response?.data?.error ||
+          "Erreur lors de l'inscription de l'utilisateur",
+      };
+    }
+  };
+
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post(
@@ -57,13 +79,7 @@ export const UserProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      await axios.post(
-        "/authentification/logout",
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.post("/authentification/logout", {}, { withCredentials: true });
       setUser(null);
       localStorage.removeItem("token");
       setIsAuthenticated(false);
@@ -145,6 +161,7 @@ export const UserProvider = ({ children }) => {
         users,
         isAuthenticated,
         setUsers,
+        signupUser,
         loginUser,
         logoutUser,
         fetchAllUsers,
