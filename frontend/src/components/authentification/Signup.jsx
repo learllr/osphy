@@ -101,16 +101,6 @@ export default function Signup() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="grid gap-4">
-                <Button variant="outline" className="w-full">
-                  <Globe className="mr-2 size-4" />
-                  S'inscrire avec Google
-                </Button>
-                <div className="flex items-center gap-4">
-                  <span className="h-px w-full bg-input"></span>
-                  <span className="text-xs text-muted-foreground">OU</span>
-                  <span className="h-px w-full bg-input"></span>
-                </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">Prénom</Label>

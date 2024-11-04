@@ -95,15 +95,6 @@ export default function Login() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="grid gap-4">
-                  <Button variant="outline" className="w-full">
-                    <Globe className="mr-2 size-4" />
-                    Se connecter avec Google
-                  </Button>
-                  <div className="flex items-center gap-4">
-                    <span className="h-px w-full bg-input"></span>
-                    <span className="text-xs text-muted-foreground">OU</span>
-                    <span className="h-px w-full bg-input"></span>
-                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
