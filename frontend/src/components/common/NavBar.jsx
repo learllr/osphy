@@ -1,3 +1,5 @@
+import { FiSettings, FiLogOut } from "react-icons/fi";
+import { CheckCircle, Star } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
@@ -12,17 +14,32 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { FiSettings, FiLogOut } from "react-icons/fi";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 
 const introMenuItems = [
   {
-    title: "Introduction",
-    description: "Découvrez notre application pour la gestion de patients.",
+    title: "Fonctionnalités",
+    description:
+      "Découvrez notre application pour la gestion de patients et de son agenda.",
   },
   {
-    title: "Fonctionnalités",
-    description: "Explorez les fonctionnalités avancées pour ostéopathes.",
+    title: "Abonnement",
+    description:
+      "Faites-vous guider pour vous abonnez à la formule qui vous convient.",
+  },
+];
+
+const subscriptionMenuItems = [
+  {
+    title: "Formule Classique",
+    description:
+      "Accédez aux fonctionnalités de base pour la gestion des patients.",
+    icon: CheckCircle,
+  },
+  {
+    title: "Formule Premium",
+    description: "Profitez de fonctionnalités avancées pour un suivi amélioré.",
+    icon: Star,
   },
 ];
 
@@ -58,22 +75,22 @@ export default function NavBar() {
                     <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
                       Découvrir
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6">
+                    <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[550px]">
                       <div className="flex gap-6">
-                        <div className="flex flex-col space-y-3 w-2/5 p-6 bg-gray-50 rounded-md">
-                          <h2 className="text-xl font-semibold text-gray-800">
+                        <div className="flex flex-col space-y-3 w-1/3 p-6 bg-gray-50 rounded-md justify-center">
+                          <h2 className="text-md font-semibold text-gray-800">
                             OsteoLog
                           </h2>
-                          <p className="text-sm text-gray-600">
-                            Découvrez notre solution pour la gestion de vos
-                            patients en tant qu'ostéopathe.
+                          <p className="text-sm text-gray-500">
+                            Découvrez notre solution pour la gestion de votre
+                            cabinet en tant qu'ostéopathe.
                           </p>
                         </div>
-                        <ul className="space-y-3 w-3/5">
+                        <ul className="space-y-7 w-2/3">
                           {introMenuItems.map((item, idx) => (
                             <li
                               key={idx}
-                              className="p-2 hover:bg-gray-100 rounded-md"
+                              className="p-6 hover:bg-gray-100 rounded-md"
                             >
                               <div>
                                 <p className="font-semibold text-sm text-gray-800">
@@ -91,18 +108,52 @@ export default function NavBar() {
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
+
               <Link
                 to="/about"
                 className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
               >
                 Qui sommes-nous ?
               </Link>
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
+                      Formules
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6 min-w-[400px]">
+                      <ul className="space-y-7">
+                        {subscriptionMenuItems.map((item, idx) => {
+                          const Icon = item.icon;
+                          return (
+                            <li
+                              key={idx}
+                              className="flex items-center gap-4 p-3 hover:bg-gray-100 rounded-md"
+                            >
+                              <Icon className="text-green-500" />
+                              <div>
+                                <p className="font-semibold text-sm text-gray-800">
+                                  {item.title}
+                                </p>
+                                <p className="text-sm text-gray-600 line-clamp-2">
+                                  {item.description}
+                                </p>
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
               <Link
                 to="/contact"
                 className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
               >
                 Contact
               </Link>
+
               <Link to="/login">
                 <Button
                   variant="outline"
@@ -121,13 +172,13 @@ export default function NavBar() {
             <>
               <Link
                 to="/patients"
-                className="text-gray-700 hover:text-gray-900"
+                className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
               >
                 Patients
               </Link>
               <Link
                 to="/schedule"
-                className="text-gray-700 hover:text-gray-900"
+                className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
               >
                 Agenda
               </Link>
@@ -135,13 +186,13 @@ export default function NavBar() {
               <div className="flex items-center space-x-4">
                 <Link
                   to="/settings"
-                  className="text-gray-700 hover:text-gray-900"
+                  className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
                 >
                   <FiSettings title="Paramètres" className="text-xl" />
                 </Link>
                 <Link
                   to="/manage-account"
-                  className="text-gray-700 hover:text-gray-900"
+                  className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
                 >
                   {user
                     ? `${user.firstName} ${user.lastName}`
@@ -149,7 +200,7 @@ export default function NavBar() {
                 </Link>
                 <button
                   onClick={openLogoutModal}
-                  className="text-gray-700 hover:text-gray-900"
+                  className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
                 >
                   <FiLogOut className="text-xl" />
                 </button>

@@ -89,8 +89,11 @@ export default function PatientSearch() {
 
   return (
     <div className="relative">
-      <form onSubmit={(e) => e.preventDefault()} className="flex items-center">
-        <FaSearch className="text-gray-400 mr-2 absolute ml-2" />
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="flex items-center border-2 border-gray-700 rounded-full"
+      >
+        <FaSearch className="text-gray-900 mr-2 absolute ml-2" />
         <input
           type="text"
           placeholder="Rechercher par nom, date de naissance ou âge"
@@ -98,7 +101,7 @@ export default function PatientSearch() {
           onChange={handleSearchChange}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
-          className="w-96 pl-10 py-2 rounded-full bg-white text-black text-sm"
+          className="w-96 pl-10 py-2 rounded-full bg-white hover:bg-gray-50 text-black text-sm"
         />
       </form>
 
