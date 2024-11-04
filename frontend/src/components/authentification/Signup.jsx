@@ -181,21 +181,21 @@ export default function Signup() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 mt-2">
                   <input
                     type="checkbox"
                     id="newsletterAccepted"
                     name="newsletterAccepted"
                     checked={formData.newsletterAccepted}
                     onChange={handleChange}
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-[hsl(var(--primary))]"
                   />
                   <Label htmlFor="newsletter">
                     Je souhaite recevoir la newsletter
                   </Label>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 mb-2">
                   <input
                     type="checkbox"
                     id="termsAccepted"
@@ -203,11 +203,14 @@ export default function Signup() {
                     checked={formData.termsAccepted}
                     onChange={handleChange}
                     required
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-[hsl(var(--primary))]"
                   />
                   <Label htmlFor="termsAccepted">
                     J'accepte les
-                    <a href="#" className="ml-1 underline hover:text-primary">
+                    <a
+                      href="#"
+                      className="ml-1 underline text-primary hover:text-primary/80"
+                    >
                       conditions générales
                     </a>
                   </Label>
@@ -231,7 +234,10 @@ export default function Signup() {
           </Card>
           <div className="flex gap-1 text-sm">
             <p>Vous avez déjà un compte ?</p>
-            <Link to="/login" className="underline">
+            <Link
+              to="/login"
+              className="underline text-primary hover:text-primary/90 font-semibold"
+            >
               Se connecter
             </Link>
           </div>

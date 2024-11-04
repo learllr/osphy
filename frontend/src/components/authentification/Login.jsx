@@ -125,7 +125,7 @@ export default function Login() {
                       <a
                         href="#"
                         onClick={() => setShowModal(true)}
-                        className="text-sm underline"
+                        className="text-sm underline text-primary hover:text-primary/80 font-semibold"
                       >
                         Mot de passe oublié ?
                       </a>
@@ -165,7 +165,10 @@ export default function Login() {
             />
             <div className="flex gap-1 text-sm">
               <p>Vous n'avez pas encore de compte ?</p>
-              <Link to="/signup" className="underline">
+              <Link
+                to="/signup"
+                className="underline text-primary hover:text-primary/80 font-semibold"
+              >
                 S'inscrire
               </Link>
             </div>

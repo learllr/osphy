@@ -1,11 +1,10 @@
 import { FiSettings, FiLogOut } from "react-icons/fi";
-import { CheckCircle, Star } from "lucide-react";
+import { CheckCircle, Star, Menu, X } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import LogoutModal from "../modals/LogoutModal";
 import PatientSearch from "../common/PatientSearch";
-import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -32,8 +31,7 @@ const introMenuItems = [
 const subscriptionMenuItems = [
   {
     title: "Formule Classique",
-    description:
-      "Accédez aux fonctionnalités de base pour la gestion des patients.",
+    description: "Accédez aux fonctionnalités de base.",
     icon: CheckCircle,
   },
   {
@@ -46,6 +44,7 @@ const subscriptionMenuItems = [
 export default function NavBar() {
   const { user, isAuthenticated, logoutUser } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const openLogoutModal = () => setShowLogoutModal(true);
@@ -57,9 +56,11 @@ export default function NavBar() {
     navigate("/");
   };
 
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+    <nav className="bg-white shadow-sm mb-6">
+      <div className="container mx-auto flex justify-between items-center py-4 px-4">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-xl font-semibold text-gray-800">
             OsteoLog
@@ -90,10 +91,10 @@ export default function NavBar() {
                           {introMenuItems.map((item, idx) => (
                             <li
                               key={idx}
-                              className="p-6 hover:bg-gray-100 rounded-md"
+                              className="p-6 hover:bg-gray-50 rounded-md"
                             >
                               <div>
-                                <p className="font-semibold text-sm text-gray-800">
+                                <p className="font-semibold text-sm text-green-500">
                                   {item.title}
                                 </p>
                                 <p className="text-sm text-gray-600 line-clamp-2">
@@ -157,13 +158,13 @@ export default function NavBar() {
               <Link to="/login">
                 <Button
                   variant="outline"
-                  className="text-gray-700 border-gray-300 hover:text-gray-900 hover:border-gray-400"
+                  className="text-primary border-primary hover:text-primary/80 hover:border-primary/80 hover:bg-white"
                 >
                   Connexion
                 </Button>
               </Link>
               <Link to="/signup">
-                <Button className="text-white bg-gray-800 hover:bg-gray-700">
+                <Button className="text-white bg-primary hover:bg-primary/90">
                   Inscription
                 </Button>
               </Link>
@@ -200,7 +201,7 @@ export default function NavBar() {
                 </Link>
                 <button
                   onClick={openLogoutModal}
-                  className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+                  className={`${navigationMenuTriggerStyle()}`}
                 >
                   <FiLogOut className="text-xl" />
                 </button>
@@ -213,11 +214,70 @@ export default function NavBar() {
           <Button
             variant="outline"
             size="icon"
-            className="text-gray-700 hover:text-gray-900"
+            className="text-gray-700 hover:text-gray-900 transition-transform duration-1000"
+            onClick={toggleMenu}
           >
-            <Menu />
+            {isMenuOpen ? <X /> : <Menu />}
           </Button>
         </div>
+      </div>
+
+      <div
+        className={`lg:hidden px-4 bg-white transition-all duration-1000 transform ${
+          isMenuOpen
+            ? "max-h-screen opacity-100"
+            : "max-h-0 opacity-0 overflow-hidden"
+        }`}
+      >
+        {!isAuthenticated ? (
+          <div className="space-y-1 font-semibold mb-4">
+            <Link
+              to="/about"
+              className="block text-gray-700 hover:text-gray-900 px-4 py-2 hover:bg-gray-100 rounded-md"
+            >
+              Qui sommes-nous ?
+            </Link>
+            <Link
+              to="/contact"
+              className="block text-gray-700 hover:text-gray-900 px-4 py-2 hover:bg-gray-100 rounded-md"
+            >
+              Contact
+            </Link>
+            <Link
+              to="/login"
+              className="block text-primary border-primary hover:text-primary/80 hover:border-primary/80 hover:bg-white px-4 py-2 border-[1px] rounded-md"
+            >
+              Connexion
+            </Link>
+            <Link
+              to="/signup"
+              className="block text-white bg-primary hover:bg-primary/90 px-4 py-2 rounded-md"
+            >
+              Inscription
+            </Link>
+          </div>
+        ) : (
+          <>
+            <Link
+              to="/patients"
+              className="block text-gray-700 hover:text-gray-900 py-2"
+            >
+              Patients
+            </Link>
+            <Link
+              to="/schedule"
+              className="block text-gray-700 hover:text-gray-900 py-2"
+            >
+              Agenda
+            </Link>
+            <button
+              onClick={openLogoutModal}
+              className="block text-gray-700 hover:text-gray-900 py-2"
+            >
+              Déconnexion
+            </button>
+          </>
+        )}
       </div>
 
       <LogoutModal
