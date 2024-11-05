@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Globe, UserRound } from "lucide-react";
 import { useUser } from "../contexts/UserContext";
+import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,6 +19,7 @@ import { generateIdentifier } from "../../../utils/randomUtils.js";
 export default function Signup() {
   const navigate = useNavigate();
   const { signupUser, loginUser } = useUser();
+  const { showAlert } = useAlert();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,7 +30,6 @@ export default function Signup() {
     termsAccepted: false,
   });
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -43,12 +44,14 @@ export default function Signup() {
 
     if (formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: "Les mots de passe ne correspondent pas" });
+      showAlert("Les mots de passe ne correspondent pas", "destructive");
       return;
     }
     if (!formData.termsAccepted) {
       setErrors({
         termsAccepted: "Vous devez accepter les conditions générales",
       });
+      showAlert("Vous devez accepter les conditions générales", "destructive");
       return;
     }
 
@@ -77,12 +80,13 @@ export default function Signup() {
       const loginResult = await loginUser(email, password);
 
       if (loginResult.success) {
+        showAlert(loginResult.message, "success");
         navigate("/");
       } else {
-        setApiError("Erreur lors de la connexion après inscription.");
+        showAlert(loginResult.message, "destructive");
       }
     } else {
-      setApiError(result.message);
+      showAlert(result.message, "destructive");
     }
   };
 
@@ -163,11 +167,6 @@ export default function Signup() {
                       onChange={handleChange}
                       required
                     />
-                    {errors.confirmPassword && (
-                      <p className="text-red-500 text-sm">
-                        {errors.confirmPassword}
-                      </p>
-                    )}
                   </div>
                 </div>
 
@@ -204,21 +203,11 @@ export default function Signup() {
                       conditions générales
                     </a>
                   </Label>
-                  {errors.termsAccepted && (
-                    <p className="text-red-500 text-sm">
-                      {errors.termsAccepted}
-                    </p>
-                  )}
                 </div>
 
                 <Button type="submit" className="w-full">
                   Créer un compte
                 </Button>
-                {apiError && (
-                  <p className="text-red-500 text-sm text-center mt-4">
-                    {apiError}
-                  </p>
-                )}
               </form>
             </CardContent>
           </Card>

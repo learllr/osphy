@@ -61,7 +61,7 @@ export const UserProvider = ({ children }) => {
       setUser(response.data.user);
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
-      return { success: true };
+      return { success: true, message: "Connexion réussie !" };
     } catch (error) {
       console.error("Erreur lors de la connexion:", error);
       setIsAuthenticated(false);
