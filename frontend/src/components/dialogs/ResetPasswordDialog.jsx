@@ -20,7 +20,7 @@ export default function ResetPasswordDialog({ isVisible, onClose }) {
 
   const mutation = useMutation(
     async (data) => {
-      return axios.post("/api/authentification/request-password-reset", data);
+      return axios.post("/authentification/request-password-reset", data);
     },
     {
       onSuccess: () => {

@@ -134,7 +134,7 @@ export const requestPasswordReset = async (req, res) => {
   const user = await AuthentificationDAO.findUserByEmail(email);
 
   if (!user) {
-    return res.status(404).json({ message: "Utilisateur non trouvé" });
+    return res.status(404).json();
   }
 
   const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });

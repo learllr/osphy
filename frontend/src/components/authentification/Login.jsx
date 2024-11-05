@@ -15,15 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import axios from "../../axiosConfig.js";
+import ResetPasswordDialog from "../dialogs/ResetPasswordDialog.jsx";
 
 export default function Login() {
   const { user, loginUser } = useUser();
@@ -33,15 +25,8 @@ export default function Login() {
   const from = location.state?.from?.pathname || "/";
 
   const [showDialog, setShowDialog] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    reset,
-  } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: { email: "", password: "" },
   });
 
@@ -70,31 +55,6 @@ export default function Login() {
       navigate(from);
     }
   }, [user, navigate, from]);
-
-  const handlePasswordResetSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "/api/authentification/request-password-reset",
-        { email: resetEmail }
-      );
-      if (response.status === 200) {
-        showAlert("Un e-mail de réinitialisation a été envoyé.", "success");
-        setShowDialog(false);
-        reset();
-      } else {
-        setError("resetEmail", {
-          type: "manual",
-          message: response.data.message || "Une erreur est survenue.",
-        });
-      }
-    } catch (error) {
-      setError("resetEmail", {
-        type: "manual",
-        message: "Une erreur est survenue. Veuillez réessayer.",
-      });
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -154,49 +114,7 @@ export default function Login() {
                 </form>
               </CardContent>
             </Card>
-            <Dialog
-              open={showDialog}
-              onOpenChange={(open) => !open && setShowDialog(false)}
-            >
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Réinitialisation du mot de passe</DialogTitle>
-                  <DialogDescription>
-                    Veuillez entrer l'adresse e-mail utilisée lors de votre
-                    inscription. Vous recevrez un e-mail contenant un lien pour
-                    réinitialiser votre mot de passe.
-                  </DialogDescription>
-                </DialogHeader>
-                <form
-                  onSubmit={handlePasswordResetSubmit}
-                  className="space-y-4"
-                >
-                  <Label htmlFor="resetEmail">Email</Label>
-                  <Input
-                    id="resetEmail"
-                    type="email"
-                    placeholder="Votre adresse e-mail"
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    required
-                  />
-                  {errors.resetEmail && (
-                    <span className="text-red-500">
-                      {errors.resetEmail.message}
-                    </span>
-                  )}
-                  <DialogFooter className="flex justify-end mt-6">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setShowDialog(false)}
-                    >
-                      Annuler
-                    </Button>
-                    <Button type="submit">Envoyer</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+
             <div className="flex gap-1 text-sm">
               <p>Vous n'avez pas encore de compte ?</p>
               <Link
@@ -209,6 +127,11 @@ export default function Login() {
           </div>
         </div>
       </section>
+
+      <ResetPasswordDialog
+        isVisible={showDialog}
+        onClose={() => setShowDialog(false)}
+      />
     </div>
   );
 }

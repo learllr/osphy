@@ -122,7 +122,8 @@ export default function Signup() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">
-                      Prénom <span className="text-red-500">*</span>
+                      Prénom{" "}
+                      <span className="text-red-500 align-middle">*</span>
                     </Label>
                     <Input
                       id="firstName"
@@ -139,7 +140,7 @@ export default function Signup() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="lastName">
-                      Nom <span className="text-red-500">*</span>
+                      Nom <span className="text-red-500 align-middle">*</span>
                     </Label>
                     <Input
                       id="lastName"
@@ -153,7 +154,7 @@ export default function Signup() {
                   </div>
                   <div className="grid gap-2 md:col-span-2">
                     <Label htmlFor="email">
-                      Email <span className="text-red-500">*</span>
+                      Email <span className="text-red-500 align-middle">*</span>
                     </Label>
                     <Input
                       id="email"
@@ -164,7 +165,8 @@ export default function Signup() {
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="password">
-                      Mot de passe <span className="text-red-500">*</span>
+                      Mot de passe{" "}
+                      <span className="text-red-500 align-middle">*</span>
                     </Label>
                     <Input
                       id="password"
@@ -177,7 +179,7 @@ export default function Signup() {
                   <div className="grid gap-2">
                     <Label htmlFor="confirmPassword">
                       Confirmez le mot de passe{" "}
-                      <span className="text-red-500">*</span>
+                      <span className="text-red-500 align-middle">*</span>
                     </Label>
                     <Input
                       id="confirmPassword"
@@ -222,7 +224,8 @@ export default function Signup() {
                       className="ml-1 underline text-primary hover:text-primary/80"
                     >
                       conditions générales
-                    </a>
+                    </a>{" "}
+                    <span className="text-red-500 align-middle">*</span>
                   </Label>
                 </div>
 
