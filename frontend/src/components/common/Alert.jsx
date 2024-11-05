@@ -62,14 +62,16 @@ export default function AlertComponent() {
           <div className="flex items-center">
             <Icon className="h-4 w-4 mr-2" style={{ color: colorVariable }} />
             <AlertDialogTitle>{title}</AlertDialogTitle>
-            <button
-              onClick={clearAlert}
-              className="ml-auto text-gray-500 hover:text-gray-700"
-            >
-              <X />
-            </button>
           </div>
           <AlertDialogDescription>{alertMessage}</AlertDialogDescription>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={clearAlert}
+              className={`bg-white border-[1px] border-zinc-700 text-zinc-700 hover:bg-slate-50 hover:border-zinc-900 hover:text-zinc-900 rounded-xl transition-colors px-4 py-2`}
+            >
+              OK
+            </button>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     );
