@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Globe, UserRound } from "lucide-react";
+import { UserRound, Info } from "lucide-react";
 import { useUser } from "../contexts/UserContext";
 import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,6 @@ export default function Signup() {
     newsletterAccepted: false,
     termsAccepted: false,
   });
-
-  // Ajoutez un état pour suivre le focus sur les champs de mot de passe
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -162,8 +159,6 @@ export default function Signup() {
                       value={formData.password}
                       onChange={handleChange}
                       required
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -178,19 +173,17 @@ export default function Signup() {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       required
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
                     />
                   </div>
                 </div>
 
-                {/* Afficher le message conditionnellement */}
-                {isPasswordFocused && (
-                  <div className="mb-2 text-sm text-gray-500">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                  <Info className="w-8 h-8 text-gray-500" />
+                  <span>
                     Le mot de passe doit contenir au moins 8 caractères, dont
                     une majuscule, une minuscule et un chiffre.
-                  </div>
-                )}
+                  </span>
+                </div>
 
                 <div className="flex items-center gap-3 mt-2">
                   <input

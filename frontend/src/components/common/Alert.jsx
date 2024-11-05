@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAlert } from "../contexts/AlertContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -8,13 +7,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertCircle, CheckCircle, Info, AlertTriangle, X } from "lucide-react";
-import { useLocation } from "react-router-dom";
 
 const isMobile = () => window.innerWidth <= 768;
 
 export default function AlertComponent() {
   const { alertMessage, alertType, clearAlert } = useAlert();
-  const location = useLocation();
 
   let Icon, title, colorVariable;
   switch (alertType) {
