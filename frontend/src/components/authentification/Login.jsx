@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ResetPasswordDialog from "../dialogs/ResetPasswordDialog.jsx";
+import { UserRound } from "lucide-react";
 
 export default function Login() {
   const { user, loginUser } = useUser();
@@ -64,6 +65,7 @@ export default function Login() {
           <div className="flex flex-col gap-4 items-center">
             <Card className="w-full max-w-md">
               <CardHeader className="items-center">
+                <UserRound className="size-10 rounded-full bg-accent p-2.5 text-muted-foreground" />
                 <CardTitle className="text-xl">
                   Connectez-vous avec votre email
                 </CardTitle>

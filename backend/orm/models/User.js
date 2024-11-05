@@ -17,6 +17,13 @@ export default (sequelize) => {
         allowNull: false,
         unique: true,
       },
+      avatarPath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          isUrl: true,
+        },
+      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
