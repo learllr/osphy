@@ -41,15 +41,6 @@ export default function AlertComponent() {
       break;
   }
 
-  useEffect(() => {
-    if (alertMessage && (alertType === "success" || alertType === "info")) {
-      const timer = setTimeout(() => {
-        clearAlert();
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [alertMessage, alertType, clearAlert]);
-
   if (!alertMessage) return null;
 
   if (isMobile()) {
@@ -91,14 +82,12 @@ export default function AlertComponent() {
         <div className="ml-6 text-zinc-700">
           <AlertDescription>{alertMessage}</AlertDescription>
         </div>
-        {(alertType === "destructive" || alertType === "warning") && (
-          <button
-            onClick={clearAlert}
-            className="absolute top-2 right-2 text-zinc-700 hover:text-zinc-900"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
+        <button
+          onClick={clearAlert}
+          className="absolute top-2 right-2 text-zinc-700 hover:text-zinc-900"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </Alert>
     </div>
   );

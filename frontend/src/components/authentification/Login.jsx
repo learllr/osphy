@@ -45,7 +45,6 @@ export default function Login() {
     const result = await loginUser(email, password);
 
     if (result.success) {
-      showAlert(result.message, "success");
       navigate(from);
     } else {
       showAlert(result.message, "destructive");

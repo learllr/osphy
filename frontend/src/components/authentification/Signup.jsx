@@ -29,7 +29,9 @@ export default function Signup() {
     newsletterAccepted: false,
     termsAccepted: false,
   });
-  const [errors, setErrors] = useState({});
+
+  // Ajoutez un état pour suivre le focus sur les champs de mot de passe
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,16 +44,21 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      showAlert(
+        "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.",
+        "warning"
+      );
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      setErrors({ confirmPassword: "Les mots de passe ne correspondent pas" });
-      showAlert("Les mots de passe ne correspondent pas", "destructive");
+      showAlert("Les mots de passe ne correspondent pas.", "destructive");
       return;
     }
     if (!formData.termsAccepted) {
-      setErrors({
-        termsAccepted: "Vous devez accepter les conditions générales",
-      });
-      showAlert("Vous devez accepter les conditions générales", "destructive");
+      showAlert("Vous devez accepter les conditions générales.", "destructive");
       return;
     }
 
@@ -68,8 +75,9 @@ export default function Signup() {
 
     const result = await signupUser({
       identifier,
-      firstName,
-      lastName,
+      firstName:
+        firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase(),
+      lastName: lastName.toUpperCase(),
       email,
       password,
       newsletterAccepted,
@@ -80,7 +88,6 @@ export default function Signup() {
       const loginResult = await loginUser(email, password);
 
       if (loginResult.success) {
-        showAlert(loginResult.message, "success");
         navigate("/");
       } else {
         showAlert(loginResult.message, "destructive");
@@ -113,7 +120,10 @@ export default function Signup() {
                       name="firstName"
                       type="text"
                       placeholder="John"
-                      value={formData.firstName}
+                      value={
+                        formData.firstName.charAt(0).toUpperCase() +
+                        formData.firstName.slice(1).toLowerCase()
+                      }
                       onChange={handleChange}
                       required
                     />
@@ -124,8 +134,8 @@ export default function Signup() {
                       id="lastName"
                       name="lastName"
                       type="text"
-                      placeholder="Doe"
-                      value={formData.lastName}
+                      placeholder="DOE"
+                      value={formData.lastName.toUpperCase()}
                       onChange={handleChange}
                       required
                     />
@@ -152,6 +162,8 @@ export default function Signup() {
                       value={formData.password}
                       onChange={handleChange}
                       required
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -166,9 +178,19 @@ export default function Signup() {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       required
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
                     />
                   </div>
                 </div>
+
+                {/* Afficher le message conditionnellement */}
+                {isPasswordFocused && (
+                  <div className="mb-2 text-sm text-gray-500">
+                    Le mot de passe doit contenir au moins 8 caractères, dont
+                    une majuscule, une minuscule et un chiffre.
+                  </div>
+                )}
 
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -191,7 +213,6 @@ export default function Signup() {
                     name="termsAccepted"
                     checked={formData.termsAccepted}
                     onChange={handleChange}
-                    required
                     className="w-4 h-4 accent-[hsl(var(--primary))]"
                   />
                   <Label htmlFor="termsAccepted">
