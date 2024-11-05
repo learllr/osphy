@@ -4,6 +4,7 @@ import UserDAO from "../dao/UserDAO.js";
 import AuthentificationDAO from "../dao/AuthentificationDAO.js";
 import UserSettingDAO from "../dao/UserSettingDAO.js";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -126,4 +127,58 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ message: "Déconnexion réussie" });
+};
+
+export const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  const user = await AuthentificationDAO.findUserByEmail(email);
+
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur non trouvé" });
+  }
+
+  const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "Demande de réinitialisation de mot de passe",
+    text: `Cliquez sur le lien suivant pour réinitialiser votre mot de passe : ${resetUrl}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res
+        .status(500)
+        .json({ message: "Erreur lors de l'envoi de l'email", error });
+    }
+    res.json({ message: "E-mail de réinitialisation envoyé" });
+  });
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await AuthentificationDAO.updateUserPassword(
+      decoded.userId,
+      hashedPassword
+    );
+
+    res.json({ message: "Mot de passe réinitialisé avec succès" });
+  } catch (error) {
+    res.status(400).json({ message: "Token invalide ou expiré" });
+  }
 };

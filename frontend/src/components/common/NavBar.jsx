@@ -201,7 +201,7 @@ export default function NavBar() {
                   </Link>
                   <Link
                     to="/manage-account"
-                    className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+                    className={`${navigationMenuTriggerStyle()} text-primary hover:text-primary/90`}
                   >
                     {user
                       ? `${user.firstName} ${user.lastName}`

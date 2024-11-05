@@ -1,79 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { FaMars, FaVenus, FaSearch } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useAlert } from "../contexts/AlertContext";
 import axios from "../../axiosConfig.js";
 import { calculateAge } from "../../../utils/dateUtils.js";
+import {
+  highlightText,
+  formatFirstName,
+  formatLastName,
+} from "../../../utils/textUtils.js";
 
 export default function PatientSearch() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [patients, setPatients] = useState([]);
-  const [filteredPatients, setFilteredPatients] = useState([]);
+  const { register, watch, setValue } = useForm({
+    defaultValues: { searchQuery: "" },
+  });
+  const searchQuery = watch("searchQuery");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get("/patient");
-        setPatients(response.data);
-        setFilteredPatients(response.data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des patients:", error);
-      }
-    };
-    fetchPatients();
-  }, []);
-
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  };
-
-  const highlightText = (text, query) => {
-    const parts = text.split(new RegExp(`(${query})`, "gi"));
-    return (
-      <>
-        {parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <span key={index} className="font-bold">
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
-  };
-
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    if (query.length >= 1) {
-      const results = patients.filter((patient) => {
-        const fullName =
-          `${patient.firstName} ${patient.lastName}`.toLowerCase();
-        const birthDate = dayjs(patient.birthDate)
-          .format("DD/MM/YYYY")
-          .toLowerCase();
-        const age = calculateAge(patient.birthDate).toString();
-        return (
-          fullName.includes(query.toLowerCase()) ||
-          birthDate.includes(query.toLowerCase()) ||
-          age.includes(query.toLowerCase())
-        );
-      });
-      setFilteredPatients(results);
-    } else {
-      setFilteredPatients(patients);
+  const { data: patients = [] } = useQuery(
+    "patients",
+    async () => {
+      const response = await axios.get("/patient");
+      return response.data;
+    },
+    {
+      onError: () => {
+        showAlert("Erreur lors de la récupération des patients", "destructive");
+      },
     }
-  };
+  );
+
+  const filteredPatients =
+    searchQuery.length >= 1
+      ? patients.filter((patient) => {
+          const fullName =
+            `${patient.firstName} ${patient.lastName}`.toLowerCase();
+          const birthDate = dayjs(patient.birthDate)
+            .format("DD/MM/YYYY")
+            .toLowerCase();
+          const age = calculateAge(patient.birthDate).toString();
+          return (
+            fullName.includes(searchQuery.toLowerCase()) ||
+            birthDate.includes(searchQuery.toLowerCase()) ||
+            age.includes(searchQuery.toLowerCase())
+          );
+        })
+      : patients;
 
   const handlePatientSelect = (patientId) => {
     navigate(`/patient/${patientId}`);
-    setSearchQuery("");
-    setFilteredPatients(patients);
+    setValue("searchQuery", "");
     setIsDropdownVisible(false);
   };
 
@@ -93,12 +74,11 @@ export default function PatientSearch() {
         onSubmit={(e) => e.preventDefault()}
         className="flex items-center border-2 border-gray-700 rounded-full"
       >
-        <FaSearch className="text-gray-900 mr-2 absolute ml-2" />
+        <FaSearch className="text-primary absolute ml-4" />
         <input
           type="text"
           placeholder="Rechercher par nom, date de naissance ou âge"
-          value={searchQuery}
-          onChange={handleSearchChange}
+          {...register("searchQuery")}
           onFocus={handleSearchFocus}
           onBlur={handleSearchBlur}
           className="w-96 pl-10 py-2 rounded-full bg-white hover:bg-gray-50 text-black text-sm"
@@ -126,15 +106,20 @@ export default function PatientSearch() {
                 onClick={() => handlePatientSelect(patient.id)}
               >
                 {genderIcon}
-                <span>
-                  {highlightText(
-                    capitalizeFirstLetter(patient.firstName),
-                    searchQuery
-                  )}{" "}
-                  {highlightText(patient.lastName, searchQuery)} -{" "}
-                  {highlightText(formattedBirthDate, searchQuery)} (
-                  {highlightText(age.toString(), searchQuery)})
-                </span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: `${highlightText(
+                      formatFirstName(patient.firstName),
+                      searchQuery
+                    )} ${highlightText(
+                      formatLastName(patient.lastName),
+                      searchQuery
+                    )} - ${highlightText(
+                      formattedBirthDate,
+                      searchQuery
+                    )} (${highlightText(age.toString(), searchQuery)})`,
+                  }}
+                />
               </li>
             );
           })}

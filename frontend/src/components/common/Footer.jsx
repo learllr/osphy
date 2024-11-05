@@ -1,4 +1,4 @@
-import { FaApple, FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 
 const sections = [

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
 import NavBar from "../common/NavBar.jsx";
 import { useUser } from "../contexts/UserContext.jsx";
 import { useAlert } from "../contexts/AlertContext";
-import ResetPasswordModal from "../modals/ResetPasswordModal.jsx";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,6 +15,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import axios from "../../axiosConfig.js";
 
 export default function Login() {
   const { user, loginUser } = useUser();
@@ -22,33 +32,37 @@ export default function Login() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [showModal, setShowModal] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [resetMessage, setResetMessage] = useState("");
-  const [resetError, setResetError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
+  } = useForm({
+    defaultValues: { email: "", password: "" },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { email, password } = formData;
-    const result = await loginUser(email, password);
-
-    if (result.success) {
-      navigate(from);
-    } else {
-      showAlert(result.message, "destructive");
+  const mutation = useMutation(
+    ({ email, password }) => loginUser(email, password),
+    {
+      onSuccess: (result) => {
+        if (result.success) {
+          navigate(from);
+        } else {
+          showAlert(result.message, "destructive");
+        }
+      },
+      onError: () => {
+        showAlert("Erreur lors de la connexion", "destructive");
+      },
     }
+  );
+
+  const onSubmit = (data) => {
+    mutation.mutate(data);
   };
 
   useEffect(() => {
@@ -57,10 +71,34 @@ export default function Login() {
     }
   }, [user, navigate, from]);
 
+  const handlePasswordResetSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "/api/authentification/request-password-reset",
+        { email: resetEmail }
+      );
+      if (response.status === 200) {
+        showAlert("Un e-mail de réinitialisation a été envoyé.", "success");
+        setShowDialog(false);
+        reset();
+      } else {
+        setError("resetEmail", {
+          type: "manual",
+          message: response.data.message || "Une erreur est survenue.",
+        });
+      }
+    } catch (error) {
+      setError("resetEmail", {
+        type: "manual",
+        message: "Une erreur est survenue. Veuillez réessayer.",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <NavBar />
-
       <section className="flex flex-1 items-center justify-center">
         <div className="container">
           <div className="flex flex-col gap-4 items-center">
@@ -74,7 +112,7 @@ export default function Login() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="grid gap-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -82,9 +120,7 @@ export default function Login() {
                       name="email"
                       type="email"
                       placeholder="sarah@exemple.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
+                      {...register("email", { required: "Email requis" })}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -92,7 +128,7 @@ export default function Login() {
                       <Label htmlFor="password">Mot de passe</Label>
                       <a
                         href="#"
-                        onClick={() => setShowModal(true)}
+                        onClick={() => setShowDialog(true)}
                         className="text-sm underline text-primary hover:text-primary/80 font-semibold"
                       >
                         Mot de passe oublié ?
@@ -103,25 +139,64 @@ export default function Login() {
                       name="password"
                       type="password"
                       placeholder="Entrez votre mot de passe"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
+                      {...register("password", {
+                        required: "Mot de passe requis",
+                      })}
                     />
                   </div>
-                  <Button type="submit" className="w-full">
-                    Se connecter
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={mutation.isLoading}
+                  >
+                    {mutation.isLoading ? "Connexion..." : "Se connecter"}
                   </Button>
                 </form>
               </CardContent>
             </Card>
-            <ResetPasswordModal
-              isVisible={showModal}
-              onClose={() => setShowModal(false)}
-              resetEmail={resetEmail}
-              setResetEmail={setResetEmail}
-              resetMessage={resetMessage}
-              resetError={resetError}
-            />
+            <Dialog
+              open={showDialog}
+              onOpenChange={(open) => !open && setShowDialog(false)}
+            >
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Réinitialisation du mot de passe</DialogTitle>
+                  <DialogDescription>
+                    Veuillez entrer l'adresse e-mail utilisée lors de votre
+                    inscription. Vous recevrez un e-mail contenant un lien pour
+                    réinitialiser votre mot de passe.
+                  </DialogDescription>
+                </DialogHeader>
+                <form
+                  onSubmit={handlePasswordResetSubmit}
+                  className="space-y-4"
+                >
+                  <Label htmlFor="resetEmail">Email</Label>
+                  <Input
+                    id="resetEmail"
+                    type="email"
+                    placeholder="Votre adresse e-mail"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                  {errors.resetEmail && (
+                    <span className="text-red-500">
+                      {errors.resetEmail.message}
+                    </span>
+                  )}
+                  <DialogFooter className="flex justify-end mt-6">
+                    <Button
+                      variant="secondary"
+                      onClick={() => setShowDialog(false)}
+                    >
+                      Annuler
+                    </Button>
+                    <Button type="submit">Envoyer</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
             <div className="flex gap-1 text-sm">
               <p>Vous n'avez pas encore de compte ?</p>
               <Link

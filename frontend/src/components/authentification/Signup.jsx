@@ -1,6 +1,7 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserRound, Info } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
 import { useUser } from "../contexts/UserContext";
 import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
@@ -15,34 +16,84 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import NavBar from "../common/NavBar.jsx";
 import { generateIdentifier } from "../../../utils/randomUtils.js";
+import { formatFirstName, formatLastName } from "../../../utils/textUtils.js";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { signupUser, loginUser } = useUser();
   const { showAlert } = useAlert();
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    newsletterAccepted: false,
-    termsAccepted: false,
+
+  const { register, handleSubmit, setValue } = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      newsletterAccepted: false,
+      termsAccepted: false,
+    },
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const mutation = useMutation(
+    async (data) => {
+      const identifier = generateIdentifier();
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        newsletterAccepted,
+        termsAccepted,
+      } = data;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+      return await signupUser({
+        identifier,
+        firstName,
+        lastName,
+        email,
+        password,
+        newsletterAccepted,
+        termsAccepted,
+      });
+    },
+    {
+      onSuccess: async (result, variables) => {
+        if (result.success) {
+          const loginResult = await loginUser(
+            variables.email,
+            variables.password
+          );
+          if (loginResult.success) {
+            navigate("/");
+          } else {
+            showAlert(loginResult.message, "destructive");
+          }
+        } else {
+          showAlert(result.message, "destructive");
+        }
+      },
+      onError: () => {
+        showAlert("Erreur lors de l'inscription", "destructive");
+      },
+    }
+  );
+
+  const onSubmit = (data) => {
+    const { password, confirmPassword, termsAccepted } = data;
+
+    if (password !== confirmPassword) {
+      showAlert("Les mots de passe ne correspondent pas.", "destructive");
+      return;
+    }
+
+    if (!termsAccepted) {
+      showAlert("Vous devez accepter les conditions générales.", "destructive");
+      return;
+    }
 
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordPattern.test(formData.password)) {
+    if (!passwordPattern.test(password)) {
       showAlert(
         "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.",
         "warning"
@@ -50,48 +101,7 @@ export default function Signup() {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      showAlert("Les mots de passe ne correspondent pas.", "destructive");
-      return;
-    }
-    if (!formData.termsAccepted) {
-      showAlert("Vous devez accepter les conditions générales.", "destructive");
-      return;
-    }
-
-    const identifier = generateIdentifier();
-
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      newsletterAccepted,
-      termsAccepted,
-    } = formData;
-
-    const result = await signupUser({
-      identifier,
-      firstName:
-        firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase(),
-      lastName: lastName.toUpperCase(),
-      email,
-      password,
-      newsletterAccepted,
-      termsAccepted,
-    });
-
-    if (result.success) {
-      const loginResult = await loginUser(email, password);
-
-      if (loginResult.success) {
-        navigate("/");
-      } else {
-        showAlert(loginResult.message, "destructive");
-      }
-    } else {
-      showAlert(result.message, "destructive");
-    }
+    mutation.mutate(data);
   };
 
   return (
@@ -108,71 +118,73 @@ export default function Signup() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="grid gap-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="firstName">Prénom</Label>
+                    <Label htmlFor="firstName">
+                      Prénom <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="firstName"
-                      name="firstName"
-                      type="text"
-                      placeholder="John"
-                      value={
-                        formData.firstName.charAt(0).toUpperCase() +
-                        formData.firstName.slice(1).toLowerCase()
-                      }
-                      onChange={handleChange}
+                      {...register("firstName", {
+                        onChange: (e) =>
+                          setValue(
+                            "firstName",
+                            formatFirstName(e.target.value)
+                          ),
+                      })}
                       required
+                      placeholder="John"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="lastName">Nom</Label>
+                    <Label htmlFor="lastName">
+                      Nom <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="lastName"
-                      name="lastName"
-                      type="text"
-                      placeholder="DOE"
-                      value={formData.lastName.toUpperCase()}
-                      onChange={handleChange}
+                      {...register("lastName", {
+                        onChange: (e) =>
+                          setValue("lastName", formatLastName(e.target.value)),
+                      })}
                       required
+                      placeholder="DOE"
                     />
                   </div>
                   <div className="grid gap-2 md:col-span-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">
+                      Email <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="email"
-                      name="email"
-                      type="email"
-                      placeholder="john.doe@example.com"
-                      value={formData.email}
-                      onChange={handleChange}
+                      {...register("email")}
                       required
+                      placeholder="john.doe@example.com"
                     />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="password">Mot de passe</Label>
+                    <Label htmlFor="password">
+                      Mot de passe <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="password"
-                      name="password"
+                      {...register("password")}
                       type="password"
-                      placeholder="Entrez votre mot de passe"
-                      value={formData.password}
-                      onChange={handleChange}
                       required
+                      placeholder="Entrez votre mot de passe"
                     />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="confirmPassword">
-                      Confirmez le mot de passe
+                      Confirmez le mot de passe{" "}
+                      <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="confirmPassword"
-                      name="confirmPassword"
+                      {...register("confirmPassword")}
                       type="password"
-                      placeholder="Confirmez votre mot de passe"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
                       required
+                      placeholder="Confirmez votre mot de passe"
                     />
                   </div>
                 </div>
@@ -188,13 +200,10 @@ export default function Signup() {
                 <div className="flex items-center gap-3 mt-2">
                   <input
                     type="checkbox"
-                    id="newsletterAccepted"
-                    name="newsletterAccepted"
-                    checked={formData.newsletterAccepted}
-                    onChange={handleChange}
+                    {...register("newsletterAccepted")}
                     className="w-4 h-4 accent-[hsl(var(--primary))]"
                   />
-                  <Label htmlFor="newsletter">
+                  <Label htmlFor="newsletterAccepted">
                     Je souhaite recevoir la newsletter
                   </Label>
                 </div>
@@ -202,11 +211,9 @@ export default function Signup() {
                 <div className="flex items-center gap-3 mb-2">
                   <input
                     type="checkbox"
-                    id="termsAccepted"
-                    name="termsAccepted"
-                    checked={formData.termsAccepted}
-                    onChange={handleChange}
+                    {...register("termsAccepted")}
                     className="w-4 h-4 accent-[hsl(var(--primary))]"
+                    required
                   />
                   <Label htmlFor="termsAccepted">
                     J'accepte les
@@ -219,8 +226,12 @@ export default function Signup() {
                   </Label>
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Créer un compte
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={mutation.isLoading}
+                >
+                  {mutation.isLoading ? "Création..." : "Créer un compte"}
                 </Button>
               </form>
             </CardContent>

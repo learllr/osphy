@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
-import AddConsultationModal from "../../modals/AddConsultationModal.jsx";
+import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
 import axios from "../../../axiosConfig.js";
-import { FaTrash } from "react-icons/fa";
-import { FaPlus } from "react-icons/fa";
+import { FaTrash, FaPlus } from "react-icons/fa";
+import { highlightText } from "../../../../utils/textUtils.js";
 
 export default function ConsultationList({
   consultations,
@@ -12,11 +12,11 @@ export default function ConsultationList({
   onConsultationAdded,
   onConsultationDeleted,
 }) {
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const openAddModal = () => setShowAddModal(true);
-  const closeAddModal = () => setShowAddModal(false);
+  const openAddDialog = () => setShowAddDialog(true);
+  const closeAddDialog = () => setShowAddDialog(false);
 
   const handleDelete = async (consultationId) => {
     try {
@@ -27,32 +27,20 @@ export default function ConsultationList({
     }
   };
 
-  const highlightText = (text, query) => {
-    const parts = text.split(new RegExp(`(${query})`, "gi"));
-    return (
-      <>
-        {parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <span key={index} className="font-bold">
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
-  };
+  const formattedConsultations = consultations.map((consultation) => ({
+    ...consultation,
+    formattedDate: dayjs(consultation.date).format("DD/MM/YYYY"),
+  }));
 
-  const filteredConsultations = consultations.filter((consultation) =>
-    dayjs(consultation.date).format("DD/MM/YYYY").includes(searchQuery)
+  const filteredConsultations = formattedConsultations.filter((consultation) =>
+    consultation.formattedDate.includes(searchQuery)
   );
 
   return (
     <>
       <h2 className="text-xl font-bold mb-4 text-center">Consultations</h2>
       <button
-        onClick={openAddModal}
+        onClick={openAddDialog}
         className="flex items-center mb-4 bg-lime-600 text-white px-4 py-2 rounded w-full"
       >
         <FaPlus className="mr-2" /> Ajouter une consultation
@@ -74,12 +62,13 @@ export default function ConsultationList({
               <span
                 onClick={() => onConsultationClick(consultation)}
                 className="text-lime-600 hover:underline"
-              >
-                {highlightText(
-                  dayjs(consultation.date).format("DD/MM/YYYY"),
-                  searchQuery
-                )}
-              </span>
+                dangerouslySetInnerHTML={{
+                  __html: highlightText(
+                    consultation.formattedDate,
+                    searchQuery
+                  ),
+                }}
+              />
               <button
                 onClick={() => handleDelete(consultation.id)}
                 className="text-red-500 px-2 py-1 rounded"
@@ -93,13 +82,12 @@ export default function ConsultationList({
         )}
       </ul>
 
-      {showAddModal && (
-        <AddConsultationModal
-          patientId={patientId}
-          onClose={closeAddModal}
-          onConsultationAdded={onConsultationAdded}
-        />
-      )}
+      <AddConsultationDialog
+        patientId={patientId}
+        isVisible={showAddDialog}
+        onClose={closeAddDialog}
+        onConsultationAdded={onConsultationAdded}
+      />
     </>
   );
 }

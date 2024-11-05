@@ -17,7 +17,7 @@ export const getAppointmentsByPatientId = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const appointments = await AppointmentDAO.getAppointmentsByid(id);
+    const appointments = await AppointmentDAO.getAppointmentsByPatientId(id);
     res.status(200).json(appointments);
   } catch (error) {
     console.error(
