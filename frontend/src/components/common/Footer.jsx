@@ -1,5 +1,4 @@
 import { FaApple, FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
-
 import { Separator } from "@/components/ui/separator";
 
 const sections = [
@@ -35,7 +34,7 @@ export default function Footer() {
           <Separator className="my-14 mx-auto max-w-xs md:max-w-full" />
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {sections.map((section, sectionIdx) => (
-              <div key={sectionIdx}>
+              <div key={sectionIdx} className="flex flex-col items-center">
                 <h3 className="mb-4 font-bold text-lg text-gray-900">
                   {section.title}
                 </h3>
@@ -43,7 +42,7 @@ export default function Footer() {
                   {section.links.map((link, linkIdx) => (
                     <li
                       key={linkIdx}
-                      className="font-medium hover:text-primary transition-colors duration-200"
+                      className="font-medium hover:text-primary transition-colors duration-200 text-center"
                     >
                       <a href={link.href}>{link.name}</a>
                     </li>
@@ -51,9 +50,10 @@ export default function Footer() {
                 </ul>
               </div>
             ))}
-            <div>
+            <div className="flex flex-col items-center">
+              {" "}
               <h3 className="mb-4 font-bold text-lg text-gray-900">Légal</h3>
-              <ul className="space-y-4 text-gray-600">
+              <ul className="space-y-4 text-gray-600 text-center">
                 <li className="font-medium hover:text-primary transition-colors duration-200">
                   <a href="#">Conditions d'utilisation</a>
                 </li>
@@ -61,28 +61,25 @@ export default function Footer() {
                   <a href="#">Politique de confidentialité</a>
                 </li>
               </ul>
-              <h3 className="mb-4 mt-8 font-bold text-lg text-gray-900">
-                Réseaux sociaux
-              </h3>
-              <ul className="flex justify-center md:justify-start items-center space-x-6 text-gray-600">
-                <li className="text-primary hover:text-primary/80">
-                  <a href="#">
-                    <FaFacebook className="w-6 h-6" />
-                  </a>
-                </li>
-                <li className="text-primary hover:text-primary/80">
-                  <a href="#">
-                    <FaInstagram className="w-6 h-6" />
-                  </a>
-                </li>
-                <li className="text-primary hover:text-primary/80">
-                  <a href="#">
-                    <FaTiktok className="w-6 h-6" />
-                  </a>
-                </li>
-              </ul>
             </div>
           </div>
+          <ul className="flex justify-center items-center space-x-6 text-gray-600 mt-8">
+            <li className="text-primary hover:text-primary/80">
+              <a href="#">
+                <FaFacebook className="w-6 h-6" />
+              </a>
+            </li>
+            <li className="text-primary hover:text-primary/80">
+              <a href="#">
+                <FaInstagram className="w-6 h-6" />
+              </a>
+            </li>
+            <li className="text-primary hover:text-primary/80">
+              <a href="#">
+                <FaTiktok className="w-6 h-6" />
+              </a>
+            </li>
+          </ul>
           <Separator className="my-14 mx-auto max-w-xs md:max-w-full" />
           <p className="text-sm text-gray-500">
             © 2024 Osteolog. Tous droits réservés.
