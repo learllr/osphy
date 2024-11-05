@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../axiosConfig.js";
-import PatientSearchModal from "../../modals/PatientSearchModal.jsx";
+import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
@@ -170,7 +170,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
       </form>
 
       {showModal && (
-        <PatientSearchModal
+        <PatientSearchDialog
           patients={patients}
           onSelect={handlePatientSelect}
           onClose={() => setShowModal(false)}

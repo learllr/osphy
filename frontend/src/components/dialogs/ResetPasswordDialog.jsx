@@ -68,7 +68,11 @@ export default function ResetPasswordDialog({ isVisible, onClose }) {
             )}
           </div>
           <DialogFooter className="flex justify-between mt-6">
-            <Button variant="secondary" onClick={onClose}>
+            <Button
+              variant="secondary"
+              onClick={onClose}
+              className="hover:bg-zinc-200"
+            >
               Annuler
             </Button>
             <Button type="submit" disabled={mutation.isLoading}>

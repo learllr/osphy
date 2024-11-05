@@ -3,14 +3,22 @@ import { Link } from "react-router-dom";
 import NavBar from "../common/NavBar";
 import axios from "../../axiosConfig.js";
 import { useUser } from "../contexts/UserContext";
-import AddPatientModal from "../modals/AddPatientModal.jsx";
+import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
+import Pagination from "./Design/Pagination.jsx";
 import { FaPlus, FaEllipsisV, FaMars, FaVenus } from "react-icons/fa";
 import dayjs from "dayjs";
 import { calculateAge } from "../../../utils/dateUtils.js";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  formatFirstName,
+  formatLastName,
+  highlightText,
+} from "../../../utils/textUtils.js";
 
 export default function Patients() {
-  const [patients, setPatients] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [genderFilters, setGenderFilters] = useState({
     homme: true,
@@ -20,21 +28,27 @@ export default function Patients() {
   const [showDropdown, setShowDropdown] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const patientsPerPage = 10;
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get("/patient");
-        setPatients(response.data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des patients:", error);
-      }
-    };
-
-    if (user) {
-      fetchPatients();
+  const { data: patients = [], refetch } = useQuery(
+    "patients",
+    async () => {
+      const response = await axios.get("/patient");
+      return response.data;
+    },
+    {
+      enabled: !!user,
     }
-  }, [user]);
+  );
+
+  const deletePatientMutation = useMutation(
+    (id) => axios.delete(`/patient/${id}`),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("patients");
+      },
+    }
+  );
 
   const toggleDropdown = (id) => {
     setShowDropdown((prev) => ({
@@ -44,30 +58,11 @@ export default function Patients() {
   };
 
   const handleDeletePatient = async (id) => {
-    try {
-      await axios.delete(`/patient/${id}`);
-      setPatients((prevPatients) => prevPatients.filter((p) => p.id !== id));
-    } catch (error) {
-      console.error("Erreur lors de la suppression du patient:", error);
-    }
+    deletePatientMutation.mutate(id);
   };
 
   const handleGenderFilterChange = (gender) => {
     setGenderFilters((prev) => ({ ...prev, [gender]: !prev[gender] }));
-  };
-
-  const highlightText = (text, query) => {
-    if (!query) return text;
-    const parts = text.split(new RegExp(`(${query})`, "gi"));
-    return parts.map((part, index) =>
-      part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="font-bold">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
   };
 
   const filteredPatients = patients
@@ -100,16 +95,12 @@ export default function Patients() {
     currentPage * patientsPerPage
   );
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  const toggleDialog = () => {
+    setIsDialogOpen(!isDialogOpen);
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handlePatientAdded = (newPatient) => {
-    setPatients((prev) => [...prev, newPatient]);
+  const handlePatientAdded = () => {
+    refetch();
   };
 
   return (
@@ -120,21 +111,20 @@ export default function Patients() {
           <h1 className="text-2xl font-bold text-gray-700">
             Liste des Patients
           </h1>
-          <button
-            onClick={toggleModal}
+          <Button
+            onClick={toggleDialog}
             className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
           >
             <FaPlus className="mr-2" /> Ajouter un patient
-          </button>
+          </Button>
         </div>
 
         <div>
           <div className="mb-4">
-            <input
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2"
               placeholder="Rechercher un patient par nom, prénom, date de naissance ou âge"
             />
           </div>
@@ -190,12 +180,36 @@ export default function Patients() {
                   )}
                   <div>
                     <div className="text-gray-700 font-semibold">
-                      {highlightText(patient.lastName, searchQuery)}{" "}
-                      {highlightText(patient.firstName, searchQuery)}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: highlightText(
+                            formatLastName(patient.lastName),
+                            searchQuery
+                          ),
+                        }}
+                      />{" "}
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: highlightText(
+                            formatFirstName(patient.firstName),
+                            searchQuery
+                          ),
+                        }}
+                      />
                     </div>
                     <div className="text-sm text-gray-500">
-                      {highlightText(birthDate, searchQuery)} (
-                      {highlightText(`${age}`, searchQuery)})
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: highlightText(birthDate, searchQuery),
+                        }}
+                      />{" "}
+                      (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: highlightText(`${age}`, searchQuery),
+                        }}
+                      />
+                      )
                     </div>
                   </div>
                 </div>
@@ -239,28 +253,16 @@ export default function Patients() {
             );
           })}
 
-          <div className="flex justify-center mt-6">
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-              (pageNumber) => (
-                <button
-                  key={pageNumber}
-                  onClick={() => handlePageChange(pageNumber)}
-                  className={`px-3 py-1 border rounded mx-1 ${
-                    currentPage === pageNumber
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-700"
-                  }`}
-                >
-                  {pageNumber}
-                </button>
-              )
-            )}
-          </div>
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
-        <AddPatientModal
-          isOpen={isModalOpen}
-          onClose={toggleModal}
+        <AddPatientDialog
+          isOpen={isDialogOpen}
+          onClose={toggleDialog}
           onPatientAdded={handlePatientAdded}
         />
       </div>

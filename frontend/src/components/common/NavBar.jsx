@@ -3,7 +3,7 @@ import { CheckCircle, Star, Menu, X } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-import LogoutModal from "../modals/LogoutModal";
+import LogoutDialog from "../dialogs/LogoutDialog";
 import PatientSearch from "../common/PatientSearch";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,15 +44,15 @@ const subscriptionMenuItems = [
 
 export default function NavBar() {
   const { user, isAuthenticated, logoutUser } = useUser();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const openLogoutModal = () => setShowLogoutModal(true);
-  const closeLogoutModal = () => setShowLogoutModal(false);
+  const openLogoutDialog = () => setShowLogoutDialog(true);
+  const closeLogoutDialog = () => setShowLogoutDialog(false);
 
   const handleLogout = () => {
-    closeLogoutModal();
+    closeLogoutDialog();
     logoutUser();
     navigate("/");
   };
@@ -62,7 +62,7 @@ export default function NavBar() {
   return (
     <>
       <nav className="bg-white shadow-sm mb-6">
-        <div className="container mx-auto flex justify-between items-center py-4 px-4">
+        <div className="container mx-auto flex justify-between items-center py-4">
           <Link to="/" className="text-xl font-semibold text-gray-800 flex">
             <div className="flex items-center gap-4">
               <img
@@ -75,7 +75,7 @@ export default function NavBar() {
             </div>
           </Link>
 
-          <div className="hidden lg:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-2">
             {!isAuthenticated ? (
               <>
                 <NavigationMenu>
@@ -192,7 +192,7 @@ export default function NavBar() {
                   Agenda
                 </Link>
                 <PatientSearch />
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                   <Link
                     to="/settings"
                     className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
@@ -208,7 +208,7 @@ export default function NavBar() {
                       : "Chargement..."}
                   </Link>
                   <button
-                    onClick={openLogoutModal}
+                    onClick={openLogoutDialog}
                     className={`${navigationMenuTriggerStyle()}`}
                   >
                     <FiLogOut className="text-xl" />
@@ -279,7 +279,7 @@ export default function NavBar() {
                 Agenda
               </Link>
               <button
-                onClick={openLogoutModal}
+                onClick={openLogoutDialog}
                 className="block text-gray-700 hover:text-gray-900 py-2"
               >
                 Déconnexion
@@ -288,9 +288,9 @@ export default function NavBar() {
           )}
         </div>
 
-        <LogoutModal
-          isVisible={showLogoutModal}
-          onClose={closeLogoutModal}
+        <LogoutDialog
+          isVisible={showLogoutDialog}
+          onClose={closeLogoutDialog}
           onConfirm={handleLogout}
         />
       </nav>
