@@ -9,8 +9,8 @@ import axios from "../../axiosConfig.js";
 import { calculateAge } from "../../../utils/dateUtils.js";
 import {
   highlightText,
-  formatFirstName,
-  formatLastName,
+  capitalizeFirstLetter,
+  formatToUpperCase,
 } from "../../../utils/textUtils.js";
 
 export default function PatientSearch() {
@@ -109,10 +109,10 @@ export default function PatientSearch() {
                 <span
                   dangerouslySetInnerHTML={{
                     __html: `${highlightText(
-                      formatFirstName(patient.firstName),
+                      capitalizeFirstLetter(patient.firstName),
                       searchQuery
                     )} ${highlightText(
-                      formatLastName(patient.lastName),
+                      formatToUpperCase(patient.lastName),
                       searchQuery
                     )} - ${highlightText(
                       formattedBirthDate,

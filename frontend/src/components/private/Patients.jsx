@@ -12,8 +12,8 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  formatFirstName,
-  formatLastName,
+  capitalizeFirstLetter,
+  formatToUpperCase,
   highlightText,
 } from "../../../utils/textUtils.js";
 
@@ -183,7 +183,7 @@ export default function Patients() {
                       <span
                         dangerouslySetInnerHTML={{
                           __html: highlightText(
-                            formatLastName(patient.lastName),
+                            formatToUpperCase(patient.lastName),
                             searchQuery
                           ),
                         }}
@@ -191,7 +191,7 @@ export default function Patients() {
                       <span
                         dangerouslySetInnerHTML={{
                           __html: highlightText(
-                            formatFirstName(patient.firstName),
+                            capitalizeFirstLetter(patient.firstName),
                             searchQuery
                           ),
                         }}

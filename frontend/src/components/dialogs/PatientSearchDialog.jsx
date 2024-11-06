@@ -18,8 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  formatFirstName,
-  formatLastName,
+  capitalizeFirstLetter,
+  formatToUpperCase,
   highlightText,
 } from "../../../utils/textUtils.js";
 
@@ -148,10 +148,10 @@ export default function PatientSearchDialog({ onSelect, onClose }) {
                     <span
                       dangerouslySetInnerHTML={{
                         __html: `${highlightText(
-                          formatFirstName(patient.firstName),
+                          capitalizeFirstLetter(patient.firstName),
                           searchTerm
                         )} ${highlightText(
-                          formatLastName(patient.lastName),
+                          formatToUpperCase(patient.lastName),
                           searchTerm
                         )} - ${highlightText(
                           formattedBirthDate,

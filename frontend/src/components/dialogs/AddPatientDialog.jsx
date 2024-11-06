@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { useAlert } from "../contexts/AlertContext";
 import axios from "../../axiosConfig";
-import { formatFirstName, formatLastName } from "../../../utils/textUtils.js";
+import { capitalizeFirstLetter, formatToUpperCase } from "../../../utils/textUtils.js";
 
 export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
   const { showAlert } = useAlert();
@@ -94,7 +94,7 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
                 <Input
                   {...register("lastName", {
                     onChange: (e) => {
-                      setValue("lastName", formatLastName(e.target.value));
+                      setValue("lastName", formatToUpperCase(e.target.value));
                     },
                   })}
                   required
@@ -106,7 +106,7 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
                 <Input
                   {...register("firstName", {
                     onChange: (e) => {
-                      setValue("firstName", formatFirstName(e.target.value));
+                      setValue("firstName", capitalizeFirstLetter(e.target.value));
                     },
                   })}
                   required

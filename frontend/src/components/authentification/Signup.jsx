@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavBar from "../common/NavBar.jsx";
 import { generateIdentifier } from "../../../utils/randomUtils.js";
-import { formatFirstName, formatLastName } from "../../../utils/textUtils.js";
+import { capitalizeFirstLetter, formatToUpperCase } from "../../../utils/textUtils.js";
 import { useState } from "react";
 
 export default function Signup() {
@@ -149,7 +149,7 @@ export default function Signup() {
                         onChange: (e) =>
                           setValue(
                             "firstName",
-                            formatFirstName(e.target.value)
+                            capitalizeFirstLetter(e.target.value)
                           ),
                       })}
                       required
@@ -164,7 +164,7 @@ export default function Signup() {
                       id="lastName"
                       {...register("lastName", {
                         onChange: (e) =>
-                          setValue("lastName", formatLastName(e.target.value)),
+                          setValue("lastName", formatToUpperCase(e.target.value)),
                       })}
                       required
                       placeholder="DOE"

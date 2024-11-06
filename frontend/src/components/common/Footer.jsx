@@ -21,14 +21,14 @@ const sections = [
     title: "Ressources",
     links: [
       { name: "FAQ", href: "#" },
-      { name: "Contact", href: "#" },
+      { name: "Contact", href: "/contact" },
     ],
   },
 ];
 
 export default function Footer() {
   return (
-    <section className="py-32 bg-white text-gray-800">
+    <section className="py-6 bg-white text-gray-800">
       <div className="container mx-auto max-w-6xl px-4">
         <footer className="text-center md:text-left">
           <Separator className="my-14 mx-auto max-w-xs md:max-w-full" />

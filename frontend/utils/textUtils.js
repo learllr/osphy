@@ -1,8 +1,8 @@
-export const formatFirstName = (value) => {
+export const capitalizeFirstLetter = (value) => {
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 };
 
-export const formatLastName = (value) => {
+export const formatToUpperCase = (value) => {
   return value.toUpperCase();
 };
 
