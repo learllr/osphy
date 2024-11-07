@@ -20,12 +20,26 @@ const introMenuItems = [
   {
     title: "Fonctionnalités",
     description:
-      "Découvrez notre application pour la gestion de patients et de son agenda.",
+      "Des outils puissants pour gérer vos patients, planifier vos rendez-vous et suivre leur évolution.",
+    href: "/#features",
   },
   {
-    title: "Abonnement",
+    title: "Avantages",
     description:
-      "Faites-vous guider pour vous abonnez à la formule qui vous convient.",
+      "Gagnez du temps, améliorez votre organisation et la qualité de vos soins.",
+    href: "/#benefits",
+  },
+  {
+    title: "Sécurité",
+    description:
+      "Données protégées selon les normes les plus strictes pour assurer confidentialité et sécurité.",
+    href: "/#security",
+  },
+  {
+    title: "Support",
+    description:
+      "Une équipe dédiée pour vous accompagner et optimiser votre expérience.",
+    href: "/#support",
   },
 ];
 
@@ -84,9 +98,9 @@ export default function NavBar() {
                   <NavigationMenuList>
                     <NavigationMenuItem>
                       <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
-                        Découvrir
+                        Accueil
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[550px]">
+                      <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[715px]">
                         <div className="flex gap-6">
                           <div className="flex flex-col space-y-3 w-1/3 p-6 bg-gray-50 rounded-md justify-center">
                             <h2 className="text-md font-semibold text-gray-800">
@@ -97,20 +111,20 @@ export default function NavBar() {
                               cabinet en tant qu'ostéopathe.
                             </p>
                           </div>
-                          <ul className="space-y-7 w-2/3">
+                          <ul className="space-y-1">
                             {introMenuItems.map((item, idx) => (
                               <li
                                 key={idx}
-                                className="p-6 hover:bg-gray-50 rounded-md"
+                                className="p-3 hover:bg-gray-50 rounded-md"
                               >
-                                <div>
+                                <a href={item.href}>
                                   <p className="font-semibold text-sm text-green-500">
                                     {item.title}
                                   </p>
-                                  <p className="text-sm text-gray-600 line-clamp-2">
+                                  <p className="text-sm text-gray-600">
                                     {item.description}
                                   </p>
-                                </div>
+                                </a>
                               </li>
                             ))}
                           </ul>
@@ -127,7 +141,6 @@ export default function NavBar() {
                   Qui sommes-nous ?
                 </Link>
 
-                {/* Menu Formules */}
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>

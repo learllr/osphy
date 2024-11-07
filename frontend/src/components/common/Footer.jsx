@@ -5,22 +5,24 @@ const sections = [
   {
     title: "Outil pour ostéopathes",
     links: [
-      { name: "Aperçu", href: "#" },
-      { name: "Tarification", href: "#" },
-      { name: "Fonctionnalités", href: "#" },
+      { name: "Fonctionnalités", href: "/#features" },
+      { name: "Avantages", href: "/#benefits" },
+      { name: "Sécurité", href: "/#security" },
+      { name: "Support", href: "/#support" },
     ],
   },
   {
     title: "Entreprise",
     links: [
-      { name: "À propos", href: "#" },
-      { name: "Équipe", href: "#" },
+      { name: "À propos", href: "/about#about" },
+      { name: "Équipe", href: "/about#team" },
     ],
   },
   {
     title: "Ressources",
     links: [
-      { name: "FAQ", href: "#" },
+      { name: "Tarification", href: "/formules" },
+      { name: "FAQ", href: "/#faq" },
       { name: "Contact", href: "/contact" },
     ],
   },
@@ -51,7 +53,6 @@ export default function Footer() {
               </div>
             ))}
             <div className="flex flex-col items-center">
-              {" "}
               <h3 className="mb-4 font-bold text-lg text-gray-900">Légal</h3>
               <ul className="space-y-4 text-gray-600 text-center">
                 <li className="font-medium hover:text-primary transition-colors duration-200">
@@ -59,6 +60,9 @@ export default function Footer() {
                 </li>
                 <li className="font-medium hover:text-primary transition-colors duration-200">
                   <a href="#">Politique de confidentialité</a>
+                </li>
+                <li className="font-medium hover:text-primary transition-colors duration-200">
+                  <a href="#">Politique de cookies</a>
                 </li>
               </ul>
             </div>
