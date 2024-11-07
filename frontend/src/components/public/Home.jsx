@@ -5,6 +5,7 @@ import Benefits from "./Home/Benefits.jsx";
 import Security from "./Home/Security.jsx";
 import Support from "./Home/Support.jsx";
 import Hero from "./Home/Hero.jsx";
+import FAQ from "./Home/FAQ.jsx";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Benefits />
       <Security />
       <Support />
+      <FAQ />
     </Body>
   );
 }
