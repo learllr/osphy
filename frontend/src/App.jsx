@@ -39,11 +39,46 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
-        <Route path="/patients" element={<PrivateRoute><Patients /></PrivateRoute>} />
-        <Route path="/schedule" element={<PrivateRoute><Schedule /></PrivateRoute>} />
-        <Route path="/manage-account" element={<PrivateRoute><AccountManagement /></PrivateRoute>} />
-        <Route path="/patient/:id" element={<PrivateRoute><PatientDetails /></PrivateRoute>} />
-        <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+        <Route
+          path="/patients"
+          element={
+            <PrivateRoute>
+              <Patients />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/schedule"
+          element={
+            <PrivateRoute>
+              <Schedule />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/manage-account"
+          element={
+            <PrivateRoute>
+              <AccountManagement />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/patient/:id"
+          element={
+            <PrivateRoute>
+              <PatientDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
+            </PrivateRoute>
+          }
+        />
       </Routes>
 
       <div className="fixed bottom-2 left-2 bg-black text-white text-xs p-2 rounded-md">

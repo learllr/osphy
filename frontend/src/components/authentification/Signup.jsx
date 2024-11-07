@@ -17,7 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavBar from "../common/NavBar.jsx";
 import { generateIdentifier } from "../../../utils/randomUtils.js";
-import { capitalizeFirstLetter, formatToUpperCase } from "../../../utils/textUtils.js";
+import {
+  capitalizeFirstLetter,
+  formatToUpperCase,
+} from "../../../utils/textUtils.js";
 import { useState } from "react";
 
 export default function Signup() {
@@ -53,7 +56,7 @@ export default function Signup() {
         newsletterAccepted: data.newsletterAccepted,
         termsAccepted: data.termsAccepted,
       };
-      return await signupUser({ userData, formData });
+      return await signupUser({ userData });
     },
     {
       onSuccess: async (result, variables) => {
@@ -164,7 +167,10 @@ export default function Signup() {
                       id="lastName"
                       {...register("lastName", {
                         onChange: (e) =>
-                          setValue("lastName", formatToUpperCase(e.target.value)),
+                          setValue(
+                            "lastName",
+                            formatToUpperCase(e.target.value)
+                          ),
                       })}
                       required
                       placeholder="DOE"
@@ -239,6 +245,13 @@ export default function Signup() {
                       className="ml-1 underline text-primary hover:text-primary/80"
                     >
                       conditions générales
+                    </a>{" "}
+                    et la
+                    <a
+                      href="#"
+                      className="ml-1 underline text-primary hover:text-primary/80"
+                    >
+                      politique de confidentialité des données
                     </a>{" "}
                     <span className="text-red-500 align-middle">*</span>
                   </Label>
