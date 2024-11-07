@@ -15,12 +15,12 @@ export const getUserSettings = async (req, res) => {
   }
 };
 
-export const updateUserSettings = async (req, res) => {
+export const update = async (req, res) => {
   const userId = req.user.id;
   const settings = req.body;
 
   try {
-    const updatedSettings = await UserSettingDAO.updateUserSettings(
+    const updatedSettings = await UserSettingDAO.update(
       userId,
       settings
     );

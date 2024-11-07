@@ -30,7 +30,7 @@ export default class AppointmentDAO {
     });
   }
 
-  static async createAppointment(appointmentData) {
+  static async create(appointmentData) {
     return await Appointment.create(appointmentData);
   }
 }

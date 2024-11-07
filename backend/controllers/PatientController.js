@@ -32,7 +32,7 @@ export const getPatientById = async (req, res) => {
   }
 };
 
-export const createPatient = async (req, res) => {
+export const create = async (req, res) => {
   try {
     const userId = req.user.id;
     const {
@@ -48,7 +48,7 @@ export const createPatient = async (req, res) => {
       occupation,
     } = req.body;
 
-    const newPatient = await PatientDAO.createPatient({
+    const newPatient = await PatientDAO.create({
       userId,
       gender,
       lastName,
@@ -69,7 +69,7 @@ export const createPatient = async (req, res) => {
   }
 };
 
-export const updatePatient = async (req, res) => {
+export const update = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -91,7 +91,7 @@ export const updatePatient = async (req, res) => {
       return res.status(404).json({ message: "Patient non trouvé." });
     }
 
-    const updatedPatient = await PatientDAO.updatePatient(patient, {
+    const updatedPatient = await PatientDAO.update(patient, {
       gender,
       lastName,
       firstName,
@@ -113,7 +113,7 @@ export const updatePatient = async (req, res) => {
   }
 };
 
-export const deletePatient = async (req, res) => {
+export const delete = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -123,7 +123,7 @@ export const deletePatient = async (req, res) => {
       return res.status(404).json({ message: "Patient non trouvé." });
     }
 
-    await PatientDAO.deletePatient(patient);
+    await PatientDAO.delete(patient);
     res.status(204).send();
   } catch (error) {
     console.error("Erreur lors de la suppression du patient:", error);

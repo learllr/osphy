@@ -20,9 +20,9 @@ export default class PatientDAO {
     });
   }
 
-  static async findPatientByIdAndUserId(id, userId) {
+  static async findPatientByIdAndUserId(patientId, userId) {
     return await Patient.findOne({
-      where: { id, userId },
+      where: { patientId, userId },
       attributes: [
         "id",
         "gender",
@@ -86,15 +86,15 @@ export default class PatientDAO {
     });
   }
 
-  static async createPatient(patientData) {
+  static async create(patientData) {
     return await Patient.create(patientData);
   }
 
-  static async updatePatient(patient, updatedData) {
+  static async update(patient, updatedData) {
     return await patient.update(updatedData);
   }
 
-  static async deletePatient(patient) {
+  static async delete(patient) {
     return await patient.destroy();
   }
 }

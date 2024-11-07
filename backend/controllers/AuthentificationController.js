@@ -30,7 +30,7 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await UserDAO.createUser({
+    const user = await UserDAO.create({
       identifier,
       firstName,
       lastName,
@@ -40,7 +40,7 @@ export const signup = async (req, res) => {
       termsAccepted,
     });
 
-    // await UserSettingDAO.createUserSetting({
+    // await UserSettingDAO.create({
     //   userId: user.id,
     //   consultationDuration: 60,
     // });

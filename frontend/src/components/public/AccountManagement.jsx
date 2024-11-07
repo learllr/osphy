@@ -3,7 +3,7 @@ import { useUser } from "../contexts/UserContext.jsx";
 import Body from "../common/Body.jsx";
 
 export default function AccountManagement() {
-  const { user, updateUser } = useUser();
+  const { user, update } = useUser();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,7 +32,7 @@ export default function AccountManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    updateUser(user.id, formData);
+    update(user.id, formData);
     console.log("Informations mises à jour avec succès.");
   };
 

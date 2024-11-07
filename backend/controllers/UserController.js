@@ -17,7 +17,7 @@ export const getProfile = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const update = async (req, res) => {
   try {
     const { firstName, lastName, email, newsletterAccepted, termsAccepted } =
       req.body;
@@ -28,7 +28,7 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
     }
 
-    const updatedUser = await UserDAO.updateUser(user, {
+    const updatedUser = await UserDAO.update(user, {
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,
       email: email || user.email,
@@ -63,7 +63,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
+export const create = async (req, res) => {
   try {
     const {
       firstName,
@@ -79,7 +79,7 @@ export const createUser = async (req, res) => {
       termsAccepted !== undefined ? termsAccepted : true;
     const hashedPassword = await hash(password, 10);
 
-    const user = await UserDAO.createUser({
+    const user = await UserDAO.create({
       firstName,
       lastName,
       email,
@@ -89,7 +89,7 @@ export const createUser = async (req, res) => {
       termsAccepted: finalTermsAccepted,
     });
 
-    // await UserSettingDAO.createUserSetting({
+    // await UserSettingDAO.create({
     //   userId: user.id,
     //   consultationDuration: 60,
     // });
@@ -103,7 +103,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const delete = async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -112,7 +112,7 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ error: "Utilisateur non trouvé." });
     }
 
-    await UserDAO.deleteUser(user);
+    await UserDAO.delete(user);
     res.status(200).json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
     console.error("Erreur lors de la suppression de l'utilisateur:", error);
