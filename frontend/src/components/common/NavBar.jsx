@@ -34,11 +34,13 @@ const subscriptionMenuItems = [
     title: "Formule Classique",
     description: "Accédez aux fonctionnalités de base.",
     icon: CheckCircle,
+    link: "/formules/classique",
   },
   {
     title: "Formule Premium",
     description: "Profitez de fonctionnalités avancées pour un suivi amélioré.",
     icon: Star,
+    link: "/formules/premium",
   },
 ];
 
@@ -61,7 +63,7 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className="bg-white shadow-sm mb-6">
+      <nav className="bg-white shadow-sm">
         <div className="container mx-auto flex justify-between items-center py-4">
           <Link to="/" className="text-xl font-semibold text-gray-800 flex">
             <div className="flex items-center gap-4">
@@ -124,6 +126,8 @@ export default function NavBar() {
                 >
                   Qui sommes-nous ?
                 </Link>
+
+                {/* Menu Formules */}
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>
@@ -132,6 +136,19 @@ export default function NavBar() {
                       </NavigationMenuTrigger>
                       <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6 min-w-[400px]">
                         <ul className="space-y-7">
+                          <li className="p-3 hover:bg-gray-100 rounded-md">
+                            <Link to="/formules" className="flex items-center gap-4">
+                              <Star className="text-blue-500" />
+                              <div>
+                                <p className="font-semibold text-sm text-gray-800">
+                                  Voir toutes les formules
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Comparez toutes les formules disponibles
+                                </p>
+                              </div>
+                            </Link>
+                          </li>
                           {subscriptionMenuItems.map((item, idx) => {
                             const Icon = item.icon;
                             return (
@@ -140,14 +157,16 @@ export default function NavBar() {
                                 className="flex items-center gap-4 p-3 hover:bg-gray-100 rounded-md"
                               >
                                 <Icon className="text-green-500" />
-                                <div>
-                                  <p className="font-semibold text-sm text-gray-800">
-                                    {item.title}
-                                  </p>
-                                  <p className="text-sm text-gray-600 line-clamp-2">
-                                    {item.description}
-                                  </p>
-                                </div>
+                                <Link to={item.link}>
+                                  <div>
+                                    <p className="font-semibold text-sm text-gray-800">
+                                      {item.title}
+                                    </p>
+                                    <p className="text-sm text-gray-600 line-clamp-2">
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </Link>
                               </li>
                             );
                           })}
@@ -156,6 +175,7 @@ export default function NavBar() {
                     </NavigationMenuItem>
                   </NavigationMenuList>
                 </NavigationMenu>
+
                 <Link
                   to="/contact"
                   className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}

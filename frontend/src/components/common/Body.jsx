@@ -6,7 +6,7 @@ export default function Body({ children, hasFooter = true }) {
   return (
     <>
       <NavBar />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow mt-14">{children}</main>
       {hasFooter && <Footer />}
     </>
   );

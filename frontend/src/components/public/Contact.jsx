@@ -48,7 +48,7 @@ export default function Contact() {
 
   return (
     <Body>
-      <section className="flex items-center justify-center min-h-screen py-12">
+      <section className="flex items-center justify-center md:mx-14">
         <div className="container mx-auto flex max-w-screen-xl flex-col justify-between gap-6 lg:flex-row lg:gap-10 lg:px-8">
           <div className="mx-auto flex max-w-sm flex-col justify-center gap-16 w-full lg:w-1/2">
             <div className="text-center lg:text-left">

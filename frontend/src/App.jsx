@@ -10,6 +10,7 @@ import AccountManagement from "./components/public/AccountManagement.jsx";
 import PatientDetails from "./components/private/PatientElements/PatientDetails.jsx";
 import Settings from "./components/private/Settings.jsx";
 import Contact from "./components/public/Contact.jsx";
+import PricingPlans from "./components/public/PrincingPlans.jsx";
 
 export default function App() {
   const [deviceType, setDeviceType] = useState("");
@@ -38,6 +39,9 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/formules" element={<PricingPlans />} />
+        <Route path="/formules/classique" element={<PricingPlans planType="classic" />} />
+        <Route path="/formules/premium" element={<PricingPlans planType="premium" />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
         <Route
           path="/patients"

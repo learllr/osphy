@@ -28,7 +28,7 @@ const sections = [
 
 export default function Footer() {
   return (
-    <section className="py-6 bg-white text-gray-800">
+    <section className="bg-white text-gray-800 mb-8">
       <div className="container mx-auto max-w-6xl px-4">
         <footer className="text-center md:text-left">
           <Separator className="my-14 mx-auto max-w-xs md:max-w-full" />
