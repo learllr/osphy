@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import NavBar from "../common/NavBar.jsx";
+import Body from "../common/Body.jsx";
 import { useUser } from "../contexts/UserContext.jsx";
 import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
@@ -58,9 +58,8 @@ export default function Login() {
   }, [user, navigate, from]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBar />
-      <section className="flex flex-1 items-center justify-center">
+    <Body >
+      <section className="flex flex-1 items-center justify-center min-h-screen">
         <div className="container">
           <div className="flex flex-col gap-4 items-center">
             <Card className="w-full max-w-md">
@@ -134,6 +133,6 @@ export default function Login() {
         isVisible={showDialog}
         onClose={() => setShowDialog(false)}
       />
-    </div>
+    </Body>
   );
 }

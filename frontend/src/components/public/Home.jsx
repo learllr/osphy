@@ -1,12 +1,10 @@
 import React from "react";
-import NavBar from "../common/NavBar.jsx";
-import Footer from "../common/Footer.jsx";
+import Body from "../common/Body.jsx";
 
 export default function Home() {
   return (
-    <div>
-      <NavBar />
-      <Footer />
-    </div>
+    <Body>
+      {/* Contenu principal de la page d'accueil */}
+    </Body>
   );
 }

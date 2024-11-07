@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../contexts/UserContext.jsx";
-import NavBar from "../common/NavBar.jsx";
+import Body from "../common/Body.jsx";
 
 export default function AccountManagement() {
   const { user, updateUser } = useUser();
@@ -37,8 +37,7 @@ export default function AccountManagement() {
   };
 
   return (
-    <div>
-      <NavBar />
+    <Body>
       <div className="p-4">
         <h1 className="text-2xl mb-4">Mon compte</h1>
 
@@ -104,6 +103,6 @@ export default function AccountManagement() {
           </button>
         </form>
       </div>
-    </div>
+    </Body>
   );
 }

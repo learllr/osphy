@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import NavBar from "../common/NavBar";
+import Body from "../common/Body.jsx";
 import axios from "../../axiosConfig.js";
 import { useUser } from "../contexts/UserContext";
 import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
@@ -104,8 +104,7 @@ export default function Patients() {
   };
 
   return (
-    <>
-      <NavBar />
+    <Body>
       <div className="min-h-screen p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-700">
@@ -266,6 +265,6 @@ export default function Patients() {
           onPatientAdded={handlePatientAdded}
         />
       </div>
-    </>
+    </Body>
   );
 }

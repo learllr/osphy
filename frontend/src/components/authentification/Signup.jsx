@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import NavBar from "../common/NavBar.jsx";
+import Body from "../common/Body.jsx";
 import { generateIdentifier } from "../../../utils/randomUtils.js";
 import {
   capitalizeFirstLetter,
@@ -106,9 +106,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavBar />
-      <section className="flex flex-1 items-center justify-center">
+    <Body >
+      <section className="flex flex-1 items-center justify-center min-h-screen">
         <div className="container flex flex-col items-center gap-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="items-center">
@@ -139,7 +138,7 @@ export default function Signup() {
                       onChange={handleAvatarChange}
                     />
                   </div>
-                </div>{" "}
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">
@@ -277,6 +276,6 @@ export default function Signup() {
           </div>
         </div>
       </section>
-    </div>
+    </Body>
   );
 }

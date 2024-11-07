@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Combobox from "../private/Design/Combobox.jsx";
-import NavBar from "../common/NavBar";
-import Footer from "../common/Footer.jsx";
+import Body from "../common/Body.jsx";
 import axios from "axios";
 import { useAlert } from "../contexts/AlertContext.jsx";
 import {
@@ -48,8 +47,7 @@ export default function Contact() {
   };
 
   return (
-    <>
-      <NavBar />
+    <Body>
       <section className="flex items-center justify-center min-h-screen py-12">
         <div className="container mx-auto flex max-w-screen-xl flex-col justify-between gap-6 lg:flex-row lg:gap-10 lg:px-8">
           <div className="mx-auto flex max-w-sm flex-col justify-center gap-16 w-full lg:w-1/2">
@@ -213,7 +211,6 @@ export default function Contact() {
           </Card>
         </div>
       </section>
-      <Footer />
-    </>
+    </Body>
   );
 }

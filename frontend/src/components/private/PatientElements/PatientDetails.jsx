@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../../../axiosConfig.js";
-import NavBar from "../../common/NavBar.jsx";
+import Body from "../../common/Body.jsx";
 import ConsultationList from "./ConsultationList.jsx";
 import PatientInfo from "./PatientInfo.jsx";
 import ConsultationDetails from "./ConsultationDetails.jsx";
@@ -53,8 +53,7 @@ export default function PatientDetails() {
   }
 
   return (
-    <div>
-      <NavBar />
+    <Body>
       <div className="flex">
         <div className="w-2/12 bg-gray-100 p-2">
           <ConsultationList
@@ -76,6 +75,6 @@ export default function PatientDetails() {
           )}
         </div>
       </div>
-    </div>
+    </Body>
   );
 }
