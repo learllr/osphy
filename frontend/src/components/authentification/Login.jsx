@@ -59,7 +59,7 @@ export default function Login() {
 
   return (
     <Body >
-      <section className="flex flex-1 items-center justify-center min-h-screen">
+      <section className="flex flex-1 items-center justify-center">
         <div className="container">
           <div className="flex flex-col gap-4 items-center">
             <Card className="w-full max-w-md">

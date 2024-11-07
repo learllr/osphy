@@ -123,7 +123,7 @@ export default function Schedule() {
 
   return (
     <Body>
-      <div className="min-h-screen bg-gray-100">
+      <div className="bg-gray-100">
         <div className="flex flex-col lg:flex-row mt-6 gap-6 mx-6">
           <div className="w-full lg:w-1/5 bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">

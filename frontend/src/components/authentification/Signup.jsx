@@ -107,7 +107,7 @@ export default function Signup() {
 
   return (
     <Body >
-      <section className="flex flex-1 items-center justify-center min-h-screen">
+      <section className="flex flex-1 items-center justify-center">
         <div className="container flex flex-col items-center gap-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="items-center">

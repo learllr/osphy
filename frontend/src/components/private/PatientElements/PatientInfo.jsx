@@ -37,7 +37,7 @@ export default function PatientInfo({ patient }) {
   };
 
   return (
-    <div className="bg-zinc-50 min-h-screen p-8">
+    <div className="bg-zinc-50 p-8">
       <div className="space-y-6">
         <Section title="Informations générales" showCount={false}>
           <DetailItem label="Nom" value={patient.lastName} />

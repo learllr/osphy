@@ -4,7 +4,7 @@ import Section from "../Design/Section.jsx";
 
 export default function ConsultationDetails({ consultation, onEdit }) {
   return (
-    <div className="bg-zinc-50 p-8 min-h-screen">
+    <div className="bg-zinc-50 p-8">
       <Section
         title="Détails de la consultation"
         onEdit={onEdit}
