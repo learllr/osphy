@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import UserDAO from "../dao/UserDAO.js";
 import AuthentificationDAO from "../dao/AuthentificationDAO.js";
 import UserSettingDAO from "../dao/UserSettingDAO.js";
+import NewsletterDAO from "../dao/NewsletterDAO.js";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 
@@ -43,6 +44,10 @@ export const signup = async (req, res) => {
     //   userId: user.id,
     //   consultationDuration: 60,
     // });
+
+    if (newsletterAccepted) {
+      await NewsletterDAO.create({ email, status: "Abonné" });
+    }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "1h",
