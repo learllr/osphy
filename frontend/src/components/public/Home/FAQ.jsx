@@ -35,7 +35,7 @@ export default function FAQ()
     ];    
 
     return (
-        <section>
+        <section className='pt-12'>
         <div className="container flex flex-col justify-center mx-auto">
             <h1 className="mb-4 text-3xl font-semibold md:mb-11 md:text-5xl">
             Questions fréquentes

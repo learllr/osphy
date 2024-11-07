@@ -489,9 +489,11 @@ export default function Hero() {
             <Link to="/plans">
               <Button>Commencer maintenant</Button>
             </Link>
+            <a href="/#features">
               <Button variant="outline">
                 En savoir plus <ExternalLink className="ml-2 h-4" />
               </Button>
+            </a>
             </div>
           </div>
         </div>
