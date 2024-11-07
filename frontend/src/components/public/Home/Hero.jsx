@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export default function Hero() {
   return (
@@ -485,7 +486,9 @@ export default function Hero() {
               </p>
             </div>
             <div className="mt-4 flex justify-center gap-2">
+            <Link to="/plans">
               <Button>Commencer maintenant</Button>
+            </Link>
               <Button variant="outline">
                 En savoir plus <ExternalLink className="ml-2 h-4" />
               </Button>

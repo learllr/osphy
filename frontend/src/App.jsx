@@ -41,9 +41,9 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
-        <Route path="/formules" element={<PricingPlans />} />
-        <Route path="/formules/classique" element={<PricingPlans planType="classic" />} />
-        <Route path="/formules/premium" element={<PricingPlans planType="premium" />} />
+        <Route path="/plans" element={<PricingPlans />} />
+        <Route path="/plans/classic" element={<PricingPlans planType="classic" />} />
+        <Route path="/plans/premium" element={<PricingPlans planType="premium" />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
         <Route
           path="/patients"

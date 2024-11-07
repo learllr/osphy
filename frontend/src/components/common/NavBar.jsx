@@ -48,13 +48,13 @@ const subscriptionMenuItems = [
     title: "Formule Classique",
     description: "Accédez aux fonctionnalités de base.",
     icon: CheckCircle,
-    link: "/formules/classique",
+    link: "/plans/classic",
   },
   {
     title: "Formule Premium",
     description: "Profitez de fonctionnalités avancées pour un suivi amélioré.",
     icon: Star,
-    link: "/formules/premium",
+    link: "/plans/premium",
   },
 ];
 
@@ -97,10 +97,12 @@ export default function NavBar() {
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>
+                    <Link to="/">
                       <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
                         Accueil
                       </NavigationMenuTrigger>
-                      <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[715px]">
+                    </Link>
+                      <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[700px]">
                         <div className="flex gap-6">
                           <div className="flex flex-col space-y-3 w-1/3 p-6 bg-gray-50 rounded-md justify-center">
                             <h2 className="text-md font-semibold text-gray-800">
@@ -150,7 +152,7 @@ export default function NavBar() {
                       <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6 min-w-[400px]">
                         <ul className="space-y-7">
                           <li className="p-3 hover:bg-gray-100 rounded-md">
-                            <Link to="/formules" className="flex items-center gap-4">
+                            <Link to="/plans" className="flex items-center gap-4">
                               <Star className="text-blue-500" />
                               <div>
                                 <p className="font-semibold text-sm text-gray-800">

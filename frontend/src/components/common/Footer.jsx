@@ -21,7 +21,7 @@ const sections = [
   {
     title: "Ressources",
     links: [
-      { name: "Tarification", href: "/formules" },
+      { name: "Tarification", href: "/plans" },
       { name: "FAQ", href: "/#faq" },
       { name: "Contact", href: "/contact" },
     ],
