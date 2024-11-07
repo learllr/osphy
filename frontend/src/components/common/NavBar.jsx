@@ -80,7 +80,7 @@ export default function NavBar() {
       <nav className="bg-white shadow-sm">
         <div className="container mx-auto flex justify-between items-center py-4">
           <Link to="/" className="text-xl font-semibold text-gray-800 flex">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 hover:text-zinc-700">
               <img
                 src="/logos/skeleton.png"
                 alt="OsteoLog"
@@ -146,9 +146,11 @@ export default function NavBar() {
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>
-                      <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
-                        Formules
-                      </NavigationMenuTrigger>
+                      <Link to="/plans">
+                        <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
+                          Formules
+                        </NavigationMenuTrigger>
+                      </Link>
                       <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6 min-w-[400px]">
                         <ul className="space-y-7">
                           <li className="p-3 hover:bg-gray-100 rounded-md">
