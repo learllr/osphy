@@ -8,6 +8,8 @@ import userRoutes from "./routes/userRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,6 +42,8 @@ app.use("/api/user", authenticateToken, userRoutes);
 app.use("/api/appointment", authenticateToken, appointmentRoutes);
 app.use("/api/patient", authenticateToken, patientRoutes);
 app.use("/api/consultation", authenticateToken, consultationRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/contact", contactRoutes);
 
 db.sequelize
   .sync()

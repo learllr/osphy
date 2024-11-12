@@ -2,15 +2,15 @@ import db from "../orm/models/index.js";
 const { Consultation } = db;
 
 export default class ConsultationDAO {
-  static async create(consultationData) {
+  static async createConsultation(consultationData) {
     return await Consultation.create(consultationData);
   }
 
-  static async findAllByPatientId(patientId) {
+  static async findAllConsultationByPatientId(patientId) {
     return await Consultation.findAll({ where: { patientId } });
   }
 
-  static async deleteById(consultationId) {
+  static async deleteConsultationById(consultationId) {
     return await Consultation.destroy({ where: { consultationId } });
   }
 }

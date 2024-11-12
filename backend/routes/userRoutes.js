@@ -1,25 +1,25 @@
 import express from "express";
 import {
   getProfile,
-  update,
+  updateUser,
   getAllUsers,
-  create,
-  delete,
+  deleteUserById,
+  createUser,
 } from "../controllers/UserController.js";
 import {
   getUserSettings,
-  update,
+  updateUserSettings,
 } from "../controllers/UserSettingController.js";
 
 const router = express.Router();
 
 router.get("/profile", getProfile);
-router.put("/update/:id", update);
+router.put("/update/:id", updateUser);
 router.get("/all", getAllUsers);
-router.post("/add", create);
-router.delete("/delete/:id", delete);
+router.post("/add", createUser);
+router.delete("/delete/:id", deleteUserById);
 
 router.get("/settings", getUserSettings);
-router.put("/settings", update);
+router.put("/settings", updateUserSettings);
 
 export default router;

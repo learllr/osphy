@@ -10,15 +10,15 @@ export default class UserDAO {
     return await User.findAll();
   }
 
-  static async create(userData) {
+  static async createUser(userData) {
     return await User.create(userData);
   }
 
-  static async update(user, updatedData) {
+  static async updateUser(user, updatedData) {
     return await user.update(updatedData);
   }
 
-  static async delete(user) {
+  static async deleteUser(user) {
     return await user.destroy();
   }
 }

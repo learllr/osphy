@@ -16,7 +16,7 @@ export const getConsultationsByPatientId = async (req, res) => {
 
 export const createConsultation = async (req, res) => {
   try {
-    const consultation = await ConsultationDAO.create(req.body);
+    const consultation = await ConsultationDAO.createConsultation(req.body);
     res.status(201).json(consultation);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la consultation:", error);
@@ -30,7 +30,7 @@ export const deleteConsultationById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deleted = await ConsultationDAO.deleteById(id);
+    const deleted = await ConsultationDAO.deleteConsultationById(id);
 
     if (deleted) {
       res.status(204).send();

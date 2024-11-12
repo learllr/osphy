@@ -86,15 +86,15 @@ export default class PatientDAO {
     });
   }
 
-  static async create(patientData) {
+  static async createPatient(patientData) {
     return await Patient.create(patientData);
   }
 
-  static async update(patient, updatedData) {
+  static async updatePatient(patient, updatedData) {
     return await patient.update(updatedData);
   }
 
-  static async delete(patient) {
+  static async deletePatient(patient) {
     return await patient.destroy();
   }
 }

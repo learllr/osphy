@@ -6,11 +6,11 @@ class UserSettingDAO {
     return await UserSetting.findOne({ where: { userId } });
   }
 
-  static async create(settingData) {
+  static async createUserSettings(settingData) {
     return await UserSetting.create(settingData);
   }
 
-  static async update(userId, settings) {
+  static async updateUserSettings(userId, settings) {
     const setting = await UserSetting.findOne({ where: { userId } });
     if (!setting) return null;
 

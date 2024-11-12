@@ -30,12 +30,12 @@ export const getAppointmentsByPatientId = async (req, res) => {
   }
 };
 
-export const create = async (req, res) => {
+export const createAppointment = async (req, res) => {
   const { patientId, start, end, status } = req.body;
   const userId = req.user.id;
 
   try {
-    const newAppointment = await AppointmentDAO.create({
+    const newAppointment = await AppointmentDAO.createAppointment({
       userId,
       patientId,
       start,

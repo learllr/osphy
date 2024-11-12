@@ -2,13 +2,13 @@ import express from "express";
 import {
   getAppointments,
   getAppointmentsByPatientId,
-  create,
+  createAppointment,
 } from "../controllers/AppointmentController.js";
 
 const router = express.Router();
 
 router.get("/", getAppointments);
 router.get("/:id", getAppointmentsByPatientId);
-router.post("/", create);
+router.post("/", createAppointment);
 
 export default router;
