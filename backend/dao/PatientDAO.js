@@ -22,7 +22,7 @@ export default class PatientDAO {
 
   static async findPatientByIdAndUserId(patientId, userId) {
     return await Patient.findOne({
-      where: { patientId, userId },
+      where: { id: patientId, userId },
       attributes: [
         "id",
         "gender",

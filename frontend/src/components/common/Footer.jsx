@@ -86,7 +86,7 @@ export default function Footer() {
           </ul>
           <Separator className="my-14 mx-auto max-w-xs md:max-w-full" />
           <p className="text-sm text-gray-500">
-            © 2024 Osteolog. Tous droits réservés.
+            © 2024 Osphy. Tous droits réservés.
           </p>
         </footer>
       </div>

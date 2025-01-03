@@ -69,7 +69,10 @@ export default function PatientDetails() {
         </div>
         <div className="w-5/12 p-6">
           {selectedConsultation ? (
-            <ConsultationDetails consultation={selectedConsultation} />
+            <ConsultationDetails
+              consultation={selectedConsultation}
+              patient={patient}
+            />
           ) : (
             <p>Aucune consultation sélectionnée.</p>
           )}

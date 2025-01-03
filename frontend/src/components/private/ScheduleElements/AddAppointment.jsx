@@ -115,6 +115,8 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             <option value="Première consultation">Première consultation</option>
             <option value="Urgence">Urgence</option>
             <option value="Bilan">Bilan</option>
+            <option value="Pédiatrique">Pédiatrique</option>
+            <option value="Autre">Autre</option>
           </select>
         </div>
 

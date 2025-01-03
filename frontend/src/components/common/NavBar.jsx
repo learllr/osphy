@@ -83,11 +83,11 @@ export default function NavBar() {
             <div className="flex items-center gap-4 hover:text-zinc-700">
               <img
                 src="/logos/skeleton.png"
-                alt="OsteoLog"
+                alt="Osphy"
                 width={50}
                 height={50}
               />
-              OsteoLog
+              Osphy
             </div>
           </Link>
 
@@ -97,16 +97,16 @@ export default function NavBar() {
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>
-                    <Link to="/">
-                      <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
-                        Accueil
-                      </NavigationMenuTrigger>
-                    </Link>
+                      <Link to="/">
+                        <NavigationMenuTrigger className="text-gray-700 hover:text-gray-900">
+                          Accueil
+                        </NavigationMenuTrigger>
+                      </Link>
                       <NavigationMenuContent className="bg-white shadow-lg rounded-md p-8 min-w-[700px]">
                         <div className="flex gap-6">
                           <div className="flex flex-col space-y-3 w-1/3 p-6 bg-gray-50 rounded-md justify-center">
                             <h2 className="text-md font-semibold text-gray-800">
-                              OsteoLog
+                              Osphy
                             </h2>
                             <p className="text-sm text-gray-500">
                               Découvrez notre solution pour la gestion de votre
@@ -154,7 +154,10 @@ export default function NavBar() {
                       <NavigationMenuContent className="bg-white shadow-lg rounded-md p-6 min-w-[400px]">
                         <ul className="space-y-7">
                           <li className="p-3 hover:bg-gray-100 rounded-md">
-                            <Link to="/plans" className="flex items-center gap-4">
+                            <Link
+                              to="/plans"
+                              className="flex items-center gap-4"
+                            >
                               <Star className="text-blue-500" />
                               <div>
                                 <p className="font-semibold text-sm text-gray-800">

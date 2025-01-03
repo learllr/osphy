@@ -1,8 +1,35 @@
 import React from "react";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
+import axios from "../../../axiosConfig.js";
 
-export default function ConsultationDetails({ consultation, onEdit }) {
+export default function ConsultationDetails({ consultation, onEdit, patient }) {
+  const handleGenerateDiagnosis = async () => {
+    try {
+      const response = await axios.post("/consultation/diagnosis", {
+        gender: patient.gender,
+        age:
+          new Date().getFullYear() - new Date(patient.birthDate).getFullYear(),
+        weight: patient.weight,
+        height: patient.height,
+        occupation: patient.occupation,
+        antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
+        symptoms: {
+          plaint: consultation.patientComplaint,
+          aggravatingFactors: consultation.aggravatingFactors,
+          relievingFactors: consultation.relievingFactors,
+          associatedSymptoms: consultation.associatedSymptoms,
+        },
+        activities: patient.activities?.map((a) => a.activity) || [],
+      });
+
+      alert(`Diagnostic généré : ${response.data.diagnosis}`);
+    } catch (error) {
+      console.error("Erreur lors de la génération du diagnostic :", error);
+      alert("Impossible de générer le diagnostic.");
+    }
+  };
+
   return (
     <div className="bg-zinc-50 p-8">
       <Section
@@ -38,11 +65,7 @@ export default function ConsultationDetails({ consultation, onEdit }) {
           <div className="text-center my-6">
             <button
               className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-200"
-              onClick={() =>
-                alert(
-                  "Générer le diagnostic différentiel/examen clinique à adopter"
-                )
-              }
+              onClick={handleGenerateDiagnosis}
             >
               Générer le diagnostic différentiel/examen clinique à adopter
             </button>

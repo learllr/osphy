@@ -48,7 +48,7 @@ export const create = async (req, res) => {
       occupation,
     } = req.body;
 
-    const newPatient = await PatientDAO.create({
+    const newPatient = await PatientDAO.createPatient({
       userId,
       gender,
       lastName,

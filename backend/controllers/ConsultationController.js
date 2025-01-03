@@ -1,9 +1,16 @@
 import ConsultationDAO from "../dao/ConsultationDAO.js";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export const getConsultationsByPatientId = async (req, res) => {
   try {
     const { id } = req.params;
-    const consultations = await ConsultationDAO.findAllByPatientId(id);
+    const consultations = await ConsultationDAO.findAllConsultationByPatientId(
+      id
+    );
 
     res.status(200).json(consultations);
   } catch (error) {
@@ -42,5 +49,58 @@ export const deleteConsultationById = async (req, res) => {
     res
       .status(500)
       .json({ message: "Erreur lors de la suppression de la consultation." });
+  }
+};
+
+export const generateDiagnosis = async (req, res) => {
+  try {
+    const {
+      gender,
+      age,
+      weight,
+      height,
+      occupation,
+      antecedents,
+      symptoms,
+      activities,
+    } = req.body;
+
+    const messages = [
+      {
+        role: "user",
+        content: `
+        Voici les informations d'un patient :
+        - Sexe : ${gender}
+        - Âge : ${age} ans
+        - Poids : ${weight} kg
+        - Taille : ${height} cm
+        - Profession : ${occupation}
+        - Antécédents : ${antecedents.join(", ")}
+        - Symptômes : ${symptoms.plaint}, facteurs aggravants : ${
+          symptoms.aggravatingFactors
+        }, facteurs soulageants : ${
+          symptoms.relievingFactors
+        }, symptômes associés : ${symptoms.associatedSymptoms}
+        - Activités : ${activities.join(", ")}
+
+        Donne-moi les diagnostics potentiels et l'examen clinique à adopter.
+        `,
+      },
+    ];
+    console.log(messages);
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      store: true,
+      messages,
+    });
+
+    const diagnosis = completion.choices[0].message.content;
+
+    res.status(200).json({ diagnosis });
+  } catch (error) {
+    console.error("Erreur avec l'API OpenAI :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la génération du diagnostic." });
   }
 };
