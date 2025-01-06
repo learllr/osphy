@@ -84,6 +84,11 @@ export const update = async (req, res) => {
       mobilePhone,
       email,
       occupation,
+      weight,
+      height,
+      handedness,
+      medicalTreatments,
+      additionalInfo,
     } = req.body;
 
     const patient = await PatientDAO.findPatientByIdAndUserId(id, userId);
@@ -102,6 +107,11 @@ export const update = async (req, res) => {
       mobilePhone,
       email,
       occupation,
+      weight,
+      height,
+      handedness,
+      medicalTreatments,
+      additionalInfo,
     });
 
     res.status(200).json(updatedPatient);
