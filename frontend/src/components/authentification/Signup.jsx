@@ -1,9 +1,3 @@
-import { useNavigate, Link } from "react-router-dom";
-import { Info, UserRound } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import { useUser } from "../contexts/UserContext";
-import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,14 +8,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Body from "../common/Body.jsx";
-import { generateIdentifier } from "../../../utils/randomUtils.js";
+import { Info } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { Link, useNavigate } from "react-router-dom";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
 } from "../../../utils/textUtils.js";
-import { useState } from "react";
+import Body from "../common/Body.jsx";
+import { useAlert } from "../contexts/AlertContext";
+import { useUser } from "../contexts/UserContext";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -39,16 +36,9 @@ export default function Signup() {
     },
   });
 
-  const [avatarPreview, setAvatarPreview] = useState(null);
-
   const mutation = useMutation(
     async (data) => {
-      const formData = new FormData();
-      if (data.avatar) {
-        formData.append("avatar", data.avatar[0]);
-      }
       const userData = {
-        identifier: generateIdentifier(),
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -81,7 +71,7 @@ export default function Signup() {
   );
 
   const onSubmit = (data) => {
-    const { password, confirmPassword, termsAccepted } = data;
+    const { password, confirmPassword } = data;
     if (password !== confirmPassword) {
       showAlert("Les mots de passe ne correspondent pas.", "destructive");
       return;
@@ -97,16 +87,8 @@ export default function Signup() {
     mutation.mutate(data);
   };
 
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
-      setValue("avatar", e.target.files);
-    }
-  };
-
   return (
-    <Body >
+    <Body>
       <section className="flex flex-1 items-center justify-center">
         <div className="container flex flex-col items-center gap-4">
           <Card className="w-full max-w-lg">
@@ -118,27 +100,6 @@ export default function Signup() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="avatar">Photo de profil (facultatif)</Label>
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-16 h-16">
-                      <AvatarImage
-                        src={avatarPreview}
-                        alt="Prévisualisation de l'avatar"
-                      />
-                      <AvatarFallback>
-                        <UserRound />
-                      </AvatarFallback>
-                    </Avatar>
-                    <Input
-                      type="file"
-                      id="avatar"
-                      accept="image/*"
-                      {...register("avatar")}
-                      onChange={handleAvatarChange}
-                    />
-                  </div>
-                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="firstName">
@@ -230,11 +191,11 @@ export default function Signup() {
                     Je souhaite recevoir la newsletter
                   </Label>
                 </div>
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-start gap-3 mb-2">
                   <input
                     type="checkbox"
                     {...register("termsAccepted")}
-                    className="w-4 h-4 accent-[hsl(var(--primary))]"
+                    className="checkbox w-5 h-5 accent-[hsl(var(--primary))]"
                     required
                   />
                   <Label htmlFor="termsAccepted">
@@ -255,6 +216,7 @@ export default function Signup() {
                     <span className="text-red-500 align-middle">*</span>
                   </Label>
                 </div>
+
                 <Button
                   type="submit"
                   className="w-full"

@@ -1,10 +1,3 @@
-import { FiSettings, FiLogOut } from "react-icons/fi";
-import { CheckCircle, Star, Menu, X } from "lucide-react";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
-import LogoutDialog from "../dialogs/LogoutDialog";
-import PatientSearch from "../common/PatientSearch";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -12,8 +5,15 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { CheckCircle, Menu, Star, X } from "lucide-react";
+import React, { useState } from "react";
+import { FiLogOut, FiSettings } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import PatientSearch from "../common/PatientSearch";
+import { useUser } from "../contexts/UserContext";
+import LogoutDialog from "../dialogs/LogoutDialog";
 import Alert from "./Alert.jsx";
 
 const introMenuItems = [
