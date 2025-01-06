@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import dayjs from "dayjs";
-import { FaMars, FaVenus, FaSearch } from "react-icons/fa";
-import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
-import axios from "../../axiosConfig";
-import { calculateAge } from "../../../utils/dateUtils.js";
-import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import dayjs from "dayjs";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
+import { useQuery } from "react-query";
+import { calculateAge } from "../../../utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
   highlightText,
 } from "../../../utils/textUtils.js";
+import axios from "../../axiosConfig";
+import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
 
 export default function PatientSearchDialog({ onSelect, onClose }) {
   const { register, watch } = useForm({
@@ -169,16 +169,10 @@ export default function PatientSearchDialog({ onSelect, onClose }) {
         </ScrollArea>
 
         <DialogFooter>
-          <Button
-            onClick={handleNewPatientClick}
-            className="bg-green-500 text-white mt-4 hover:bg-green-600"
-          >
+          <Button onClick={handleNewPatientClick} className="mt-4">
             Ajouter un patient
           </Button>
-          <Button
-            onClick={onClose}
-            className="bg-red-500 text-white mt-4 hover:bg-red-600"
-          >
+          <Button onClick={onClose} variant="destructive" className="mt-4">
             Fermer
           </Button>
         </DialogFooter>

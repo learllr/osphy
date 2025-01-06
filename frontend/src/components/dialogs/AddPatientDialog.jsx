@@ -1,24 +1,23 @@
-import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { useAlert } from "../contexts/AlertContext";
-import axios from "../../axiosConfig";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
 } from "../../../utils/textUtils.js";
+import axios from "../../axiosConfig";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
   const { showAlert } = useAlert();
@@ -26,16 +25,16 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
 
   const { register, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
-      gender: "",
-      lastName: "",
-      firstName: "",
-      birthDate: "",
-      address: "",
-      postalCode: "",
-      city: "",
-      addressComplement: "",
-      mobilePhone: "",
-      email: "",
+      gender: null,
+      lastName: null,
+      firstName: null,
+      birthDate: null,
+      address: null,
+      postalCode: null,
+      city: null,
+      addressComplement: null,
+      mobilePhone: null,
+      email: null,
     },
   });
 
@@ -62,7 +61,7 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto p-8">
         <DialogHeader>
           <DialogTitle>Ajouter un patient</DialogTitle>
           <DialogDescription>
@@ -70,129 +69,124 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
             patient.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-[90vh]">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col space-y-4 p-4"
-          >
-            <Separator />
-            <h4 className="text-md font-medium text-gray-600">
-              Informations personnelles
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label>
-                Sexe
-                <select
-                  {...register("gender")}
-                  className="w-full p-2 border rounded"
-                  required
-                >
-                  <option value="">Sélectionnez</option>
-                  <option value="Homme">Homme</option>
-                  <option value="Femme">Femme</option>
-                </select>
-              </label>
-              <label>
-                Nom
-                <Input
-                  {...register("lastName", {
-                    onChange: (e) => {
-                      setValue("lastName", formatToUpperCase(e.target.value));
-                    },
-                  })}
-                  required
-                  placeholder="DUPONT"
-                />
-              </label>
-              <label>
-                Prénom
-                <Input
-                  {...register("firstName", {
-                    onChange: (e) => {
-                      setValue(
-                        "firstName",
-                        capitalizeFirstLetter(e.target.value)
-                      );
-                    },
-                  })}
-                  required
-                  placeholder="Jean"
-                />
-              </label>
-              <label>
-                Date de naissance
-                <Input type="date" {...register("birthDate")} required />
-              </label>
-            </div>
-
-            <Separator className="my-4" />
-
-            <h4 className="text-md font-medium text-gray-600">Coordonnées</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label>
-                Adresse
-                <Input
-                  {...register("address")}
-                  placeholder="123 Rue de Paris"
-                />
-              </label>
-              <label>
-                Code postal
-                <Input {...register("postalCode")} placeholder="75001" />
-              </label>
-              <label>
-                Ville
-                <Input {...register("city")} placeholder="Paris" />
-              </label>
-              <label>
-                Complément d'adresse
-                <Input
-                  {...register("addressComplement")}
-                  placeholder="Bâtiment, étage, etc."
-                />
-              </label>
-            </div>
-
-            <Separator className="my-4" />
-
-            <h4 className="text-md font-medium text-gray-600">Contact</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label>
-                Email
-                <Input
-                  type="email"
-                  {...register("email")}
-                  placeholder="jean.dupont@example.com"
-                />
-              </label>
-              <label>
-                Téléphone mobile
-                <Input
-                  {...register("mobilePhone")}
-                  placeholder="06 00 00 00 00"
-                />
-              </label>
-            </div>
-
-            <DialogFooter>
-              <Button
-                type="submit"
-                disabled={mutation.isLoading}
-                className="mt-4"
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col space-y-4 p-4"
+        >
+          <Separator />
+          <h4 className="text-md font-medium text-gray-600">
+            Informations personnelles
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label>
+              Sexe
+              <select
+                {...register("gender")}
+                className="w-full p-2 border rounded"
+                required
               >
-                {mutation.isLoading ? "Enregistrement..." : "Enregistrer"}
-              </Button>
-              <Button
-                type="button"
-                onClick={onClose}
-                variant="secondary"
-                className="mt-4 hover:bg-zinc-200"
-              >
-                Annuler
-              </Button>
-            </DialogFooter>
-          </form>
-        </ScrollArea>
+                <option value="">Sélectionnez</option>
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+              </select>
+            </label>
+            <label>
+              Nom
+              <Input
+                {...register("lastName", {
+                  onChange: (e) => {
+                    setValue("lastName", formatToUpperCase(e.target.value));
+                  },
+                })}
+                required
+                placeholder="DUPONT"
+              />
+            </label>
+            <label>
+              Prénom
+              <Input
+                {...register("firstName", {
+                  onChange: (e) => {
+                    setValue(
+                      "firstName",
+                      capitalizeFirstLetter(e.target.value)
+                    );
+                  },
+                })}
+                required
+                placeholder="Jean"
+              />
+            </label>
+            <label>
+              Date de naissance
+              <Input type="date" {...register("birthDate")} required />
+            </label>
+          </div>
+
+          <Separator className="my-4" />
+
+          <h4 className="text-md font-medium text-gray-600">Coordonnées</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label>
+              Adresse
+              <Input {...register("address")} placeholder="123 Rue de Paris" />
+            </label>
+            <label>
+              Code postal
+              <Input {...register("postalCode")} placeholder="75001" />
+            </label>
+            <label>
+              Ville
+              <Input {...register("city")} placeholder="Paris" />
+            </label>
+            <label>
+              Complément d'adresse
+              <Input
+                {...register("addressComplement")}
+                placeholder="Bâtiment, étage, etc."
+              />
+            </label>
+          </div>
+
+          <Separator className="my-4" />
+
+          <h4 className="text-md font-medium text-gray-600">Contact</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label>
+              Email
+              <Input
+                type="email"
+                {...register("email")}
+                placeholder="jean.dupont@example.com"
+              />
+            </label>
+            <label>
+              Téléphone mobile
+              <Input
+                {...register("mobilePhone")}
+                placeholder="06 00 00 00 00"
+              />
+            </label>
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="submit"
+              disabled={mutation.isLoading}
+              className="mt-4"
+            >
+              {mutation.isLoading ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+            <Button
+              type="button"
+              onClick={onClose}
+              variant="secondary"
+              className="mt-4 hover:bg-zinc-200"
+            >
+              Annuler
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

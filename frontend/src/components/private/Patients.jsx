@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Body from "../common/Body.jsx";
-import axios from "../../axiosConfig.js";
-import { useUser } from "../contexts/UserContext";
-import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
-import Pagination from "./Design/Pagination.jsx";
-import { FaPlus, FaEllipsisV, FaMars, FaVenus } from "react-icons/fa";
-import dayjs from "dayjs";
-import { calculateAge } from "../../../utils/dateUtils.js";
-import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import dayjs from "dayjs";
+import React, { useState } from "react";
+import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
+import { calculateAge } from "../../../utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
   highlightText,
 } from "../../../utils/textUtils.js";
+import axios from "../../axiosConfig.js";
+import Body from "../common/Body.jsx";
+import { useUser } from "../contexts/UserContext";
+import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
+import Pagination from "./Design/Pagination.jsx";
 
 export default function Patients() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -112,7 +112,7 @@ export default function Patients() {
           </h1>
           <Button
             onClick={toggleDialog}
-            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            className="flex items-center text-white px-4 py-2 rounded-lg"
           >
             <FaPlus className="mr-2" /> Ajouter un patient
           </Button>

@@ -1,19 +1,19 @@
-import React from "react";
-import dayjs from "dayjs";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import axios from "../../axiosConfig.js";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import dayjs from "dayjs";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import axios from "../../axiosConfig.js";
 
 export default function AddConsultationDialog({
   patientId,
@@ -25,13 +25,6 @@ export default function AddConsultationDialog({
     defaultValues: {
       date: dayjs().format("YYYY-MM-DD"),
       patientComplaint: "",
-      aggravatingFactors: "",
-      relievingFactors: "",
-      associatedSymptoms: "",
-      clinicalExamination: "",
-      osteopathyTesting: "",
-      treatment: "",
-      advice: "",
     },
   });
 
@@ -84,76 +77,6 @@ export default function AddConsultationDialog({
               type="text"
               {...register("patientComplaint")}
               placeholder="Motif de consultation"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="aggravatingFactors">Facteurs aggravants</Label>
-            <Input
-              type="text"
-              {...register("aggravatingFactors")}
-              placeholder="Facteurs aggravants"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="relievingFactors">Facteurs soulageants</Label>
-            <Input
-              type="text"
-              {...register("relievingFactors")}
-              placeholder="Facteurs soulageants"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="associatedSymptoms">Symptômes associés</Label>
-            <Input
-              type="text"
-              {...register("associatedSymptoms")}
-              placeholder="Symptômes associés"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="clinicalExamination">Examen clinique</Label>
-            <Input
-              type="text"
-              {...register("clinicalExamination")}
-              placeholder="Examen clinique"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="osteopathyTesting">Tests ostéopathiques</Label>
-            <Input
-              type="text"
-              {...register("osteopathyTesting")}
-              placeholder="Tests ostéopathiques"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="treatment">Traitement</Label>
-            <Input
-              type="text"
-              {...register("treatment")}
-              placeholder="Traitement"
-              className="w-full mt-2 p-2 border"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="advice">Conseils</Label>
-            <Input
-              type="text"
-              {...register("advice")}
-              placeholder="Conseils"
               className="w-full mt-2 p-2 border"
             />
           </div>

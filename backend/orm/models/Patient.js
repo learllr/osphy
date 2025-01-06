@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class Patient extends Model {}
@@ -57,9 +57,6 @@ export default (sequelize) => {
       postalCode: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          is: /^\d{5}$/,
-        },
       },
       city: {
         type: DataTypes.STRING,
@@ -72,16 +69,10 @@ export default (sequelize) => {
       mobilePhone: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          is: /^[0-9]{10}$/,
-        },
       },
       email: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          isEmail: true,
-        },
       },
       occupation: {
         type: DataTypes.STRING,
@@ -90,16 +81,10 @@ export default (sequelize) => {
       height: {
         type: DataTypes.FLOAT,
         allowNull: true,
-        validate: {
-          min: 0,
-        },
       },
       weight: {
         type: DataTypes.FLOAT,
         allowNull: true,
-        validate: {
-          min: 0,
-        },
       },
       handedness: {
         type: DataTypes.ENUM("Gaucher", "Droitier", "Ambidextre"),

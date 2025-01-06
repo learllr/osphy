@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from "../../../axiosConfig.js";
-import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
+import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import React, { useState } from "react";
+import axios from "../../../axiosConfig.js";
+import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
 
 dayjs.extend(utc);
 
@@ -90,13 +91,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
                 <span className="text-gray-500">Aucun patient sélectionné</span>
               )}
             </div>
-            <button
-              type="button"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-              onClick={() => setShowModal(true)}
-            >
-              Rechercher
-            </button>
+            <Button onClick={() => setShowModal(true)}>Rechercher</Button>
           </div>
         </div>
 

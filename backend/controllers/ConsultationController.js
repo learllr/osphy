@@ -1,5 +1,5 @@
-import ConsultationDAO from "../dao/ConsultationDAO.js";
 import OpenAI from "openai";
+import ConsultationDAO from "../dao/ConsultationDAO.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

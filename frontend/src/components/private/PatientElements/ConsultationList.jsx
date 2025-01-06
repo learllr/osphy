@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
-import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
-import axios from "../../../axiosConfig.js";
-import { FaTrash, FaPlus } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { highlightText } from "../../../../utils/textUtils.js";
+import axios from "../../../axiosConfig.js";
+import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
 
 export default function ConsultationList({
   consultations,
@@ -39,12 +40,12 @@ export default function ConsultationList({
   return (
     <>
       <h2 className="text-xl font-bold mb-4 text-center">Consultations</h2>
-      <button
+      <Button
         onClick={openAddDialog}
-        className="flex items-center mb-4 bg-lime-600 text-white px-4 py-2 rounded w-full"
+        className="flex items-center mb-4 px-4 py-2 w-full"
       >
         <FaPlus className="mr-2" /> Ajouter une consultation
-      </button>
+      </Button>
       <input
         type="text"
         placeholder="Rechercher une consultation..."
@@ -57,11 +58,11 @@ export default function ConsultationList({
           filteredConsultations.map((consultation) => (
             <li
               key={consultation.id}
-              className="mb-4 cursor-pointer flex justify-between items-center border-b-2 border-stone-400"
+              className="mb-4 cursor-pointer flex justify-between items-center border-b-[1px] border-stone-200"
             >
               <span
                 onClick={() => onConsultationClick(consultation)}
-                className="text-lime-600 hover:underline"
+                className="text-primary hover:text-primary/90"
                 dangerouslySetInnerHTML={{
                   __html: highlightText(
                     consultation.formattedDate,

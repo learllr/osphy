@@ -11,6 +11,6 @@ export default class ConsultationDAO {
   }
 
   static async deleteConsultationById(consultationId) {
-    return await Consultation.destroy({ where: { consultationId } });
+    return await Consultation.destroy({ where: { id: consultationId } });
   }
 }

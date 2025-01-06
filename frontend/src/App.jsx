@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PrivateRoute from "./components/private/PrivateRoute.jsx";
-import Home from "./components/public/Home.jsx";
+import React, { useEffect, useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Login from "./components/authentification/Login.jsx";
 import Signup from "./components/authentification/Signup.jsx";
-import Patients from "./components/private/Patients.jsx";
-import Schedule from "./components/private/Schedule.jsx";
-import AccountManagement from "./components/public/AccountManagement.jsx";
 import PatientDetails from "./components/private/PatientElements/PatientDetails.jsx";
+import Patients from "./components/private/Patients.jsx";
+import PrivateRoute from "./components/private/PrivateRoute.jsx";
+import Schedule from "./components/private/Schedule.jsx";
 import Settings from "./components/private/Settings.jsx";
-import Contact from "./components/public/Contact.jsx";
 import About from "./components/public/About.jsx";
+import AccountManagement from "./components/public/AccountManagement.jsx";
+import Contact from "./components/public/Contact.jsx";
+import Home from "./components/public/Home.jsx";
 import PricingPlans from "./components/public/PrincingPlans.jsx";
 
 export default function App() {
@@ -42,8 +42,14 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/plans" element={<PricingPlans />} />
-        <Route path="/plans/classic" element={<PricingPlans planType="classic" />} />
-        <Route path="/plans/premium" element={<PricingPlans planType="premium" />} />
+        <Route
+          path="/plans/classic"
+          element={<PricingPlans planType="classic" />}
+        />
+        <Route
+          path="/plans/premium"
+          element={<PricingPlans planType="premium" />}
+        />
         <Route path="*" element={<h1>404 Not Found</h1>} />
         <Route
           path="/patients"
@@ -87,11 +93,11 @@ export default function App() {
         />
       </Routes>
 
-      <div className="fixed bottom-2 left-2 bg-black text-white text-xs p-2 rounded-md">
+      {/* <div className="fixed bottom-2 left-2 bg-black text-white text-xs p-2 rounded-md">
         <span className="block sm:hidden">MOBILE (sm)</span>
         <span className="hidden sm:block md:hidden">TABLETTE (md)</span>
         <span className="hidden md:block">ORDI (lg)</span>
-      </div>
+      </div> */}
     </Router>
   );
 }
