@@ -71,7 +71,7 @@ export default function PatientDetails() {
           {selectedConsultation ? (
             <ConsultationDetails consultation={selectedConsultation} />
           ) : (
-            <p>Aucune consultation sélectionnée.</p>
+            <p className="p-8">Aucune consultation sélectionnée.</p>
           )}
         </div>
       </div>

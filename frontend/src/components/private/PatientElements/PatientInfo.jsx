@@ -136,12 +136,6 @@ export default function PatientInfo({ patient }) {
             ]}
           />
           <DetailItem
-            label="Traitements médicaux"
-            value={editedPatient.medicalTreatments}
-            isEditing={editingSections.generalInfo}
-            onChange={(value) => handleInputChange("medicalTreatments", value)}
-          />
-          <DetailItem
             label="Autres informations"
             value={editedPatient.additionalInfo}
             isEditing={editingSections.generalInfo}
@@ -209,6 +203,40 @@ export default function PatientInfo({ patient }) {
             </ul>
           ) : (
             <p>Aucune activité enregistrée.</p>
+          )}
+        </Section>
+
+        <Section title="Antécédents" count={patient.antecedents?.length || 0}>
+          {patient.antecedents && patient.antecedents.length > 0 ? (
+            <ul>
+              {patient.antecedents
+                .slice()
+                .sort((a, b) => a.year - b.year)
+                .map((antecedent) => (
+                  <li key={antecedent.id}>
+                    <strong>{antecedent.antecedent}</strong> ({antecedent.year})
+                  </li>
+                ))}
+            </ul>
+          ) : (
+            <p>Aucun antécédent enregistré.</p>
+          )}
+        </Section>
+
+        <Section
+          title="Contre-indications"
+          count={patient.contraindications?.length || 0}
+        >
+          {patient.contraindications && patient.contraindications.length > 0 ? (
+            <ul>
+              {patient.contraindications.map((ci) => (
+                <li key={ci.id}>
+                  <strong>{ci.contraindication}</strong> ({ci.temporalInfo})
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Aucune contre-indication enregistrée.</p>
           )}
         </Section>
 
@@ -282,6 +310,26 @@ export default function PatientInfo({ patient }) {
                 Annuler
               </Button>
             </div>
+          )}
+        </Section>
+
+        <Section title="Grossesses" count={patient.pregnancies?.length || 0}>
+          {patient.pregnancies && patient.pregnancies.length > 0 ? (
+            patient.pregnancies.map((pregnancy) => (
+              <div key={pregnancy.id} className="mb-4">
+                <DetailItem label="Sexe de l'enfant" value={pregnancy.gender} />
+                <DetailItem
+                  label="Méthode d'accouchement"
+                  value={pregnancy.deliveryMethod}
+                />
+                <DetailItem
+                  label="Péridurale"
+                  value={pregnancy.epidural ? "Oui" : "Non"}
+                />
+              </div>
+            ))
+          ) : (
+            <p>Aucune grossesse enregistrée.</p>
           )}
         </Section>
 

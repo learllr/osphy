@@ -87,7 +87,6 @@ export const update = async (req, res) => {
       weight,
       height,
       handedness,
-      medicalTreatments,
       additionalInfo,
     } = req.body;
 
@@ -110,7 +109,6 @@ export const update = async (req, res) => {
       weight,
       height,
       handedness,
-      medicalTreatments,
       additionalInfo,
     });
 

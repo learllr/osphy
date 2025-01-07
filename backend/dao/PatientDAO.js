@@ -38,7 +38,6 @@ export default class PatientDAO {
         "height",
         "weight",
         "handedness",
-        "medicalTreatments",
         "additionalInfo",
       ],
       include: [

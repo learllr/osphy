@@ -11,7 +11,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        patientId: 2,
+        patientId: 1,
         activity: "Yoga",
         temporalInfo: "Hebdomadaire",
         createdAt: new Date(),

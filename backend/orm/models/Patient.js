@@ -90,10 +90,6 @@ export default (sequelize) => {
         type: DataTypes.ENUM("Gaucher", "Droitier", "Ambidextre"),
         allowNull: true,
       },
-      medicalTreatments: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
       additionalInfo: {
         type: DataTypes.TEXT,
         allowNull: true,
