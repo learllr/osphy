@@ -229,11 +229,6 @@ export default function Patients() {
                     <ul className="absolute right-0 bg-white border rounded shadow-lg mt-44 z-10 w-52">
                       <li>
                         <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                          Modifier
-                        </button>
-                      </li>
-                      <li>
-                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
                           Exporter en PDF
                         </button>
                       </li>

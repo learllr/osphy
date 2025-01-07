@@ -1,57 +1,57 @@
+import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
+import axios from "../../../axiosConfig.js";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
 
-export default function ConsultationDetails({ consultation, onEdit, patient }) {
+export default function ConsultationDetails({ consultation, patient }) {
+  const [editableConsultation, setEditableConsultation] =
+    useState(consultation);
   const [diagnosis, setDiagnosis] = useState(null);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleFieldChange = (field, value) => {
+    setEditableConsultation((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      await axios.put(
+        `/consultation/${editableConsultation.id}`,
+        editableConsultation
+      );
+      setIsEditing(false);
+    } catch (error) {
+      console.error(
+        "Erreur lors de la mise à jour de la consultation :",
+        error
+      );
+    }
+  };
 
   const handleGenerateDiagnosis = async () => {
     try {
-      // const response = await axios.post("/consultation/diagnosis", {
-      //   gender: patient.gender,
-      //   age:
-      //     new Date().getFullYear() - new Date(patient.birthDate).getFullYear(),
-      //   weight: patient.weight,
-      //   height: patient.height,
-      //   occupation: patient.occupation,
-      //   antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
-      //   symptoms: {
-      //     plaint: consultation.patientComplaint,
-      //     aggravatingFactors: consultation.aggravatingFactors,
-      //     relievingFactors: consultation.relievingFactors,
-      //     associatedSymptoms: consultation.associatedSymptoms,
-      //   },
-      //   activities: patient.activities?.map((a) => a.activity) || [],
-      // });
-      // setDiagnosis(response.data.diagnosis);
-
       const simulatedDiagnosis =
         "Diagnostic simulé : lombalgie chronique probable.";
       setDiagnosis(simulatedDiagnosis);
-
-      setIsButtonDisabled(true);
     } catch (error) {
       console.error("Erreur lors de la génération du diagnostic :", error);
       alert("Impossible de générer le diagnostic.");
     }
   };
 
-  const handleParameterChange = () => {
-    setDiagnosis(null);
-    setIsButtonDisabled(false);
-  };
-
   useEffect(() => {
     setDiagnosis(null);
-    setIsButtonDisabled(false);
   }, [consultation]);
 
   return (
     <div>
       <Section
         title="Détails de la consultation"
-        onEdit={onEdit}
+        onEdit={() => setIsEditing(!isEditing)}
         showCount={false}
       >
         <div className="space-y-8">
@@ -62,39 +62,46 @@ export default function ConsultationDetails({ consultation, onEdit, patient }) {
             <div className="space-y-4">
               <DetailItem
                 label="Plainte"
-                value={consultation.patientComplaint}
-                onChange={handleParameterChange}
+                value={editableConsultation.patientComplaint}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("patientComplaint", value)
+                }
               />
               <DetailItem
                 label="Facteurs aggravants"
-                value={consultation.aggravatingFactors}
-                onChange={handleParameterChange}
+                value={editableConsultation.aggravatingFactors}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("aggravatingFactors", value)
+                }
               />
               <DetailItem
                 label="Facteurs soulageants"
-                value={consultation.relievingFactors}
-                onChange={handleParameterChange}
+                value={editableConsultation.relievingFactors}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("relievingFactors", value)
+                }
               />
               <DetailItem
                 label="Symptômes associés"
-                value={consultation.associatedSymptoms}
-                onChange={handleParameterChange}
+                value={editableConsultation.associatedSymptoms}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("associatedSymptoms", value)
+                }
               />
             </div>
           </div>
 
           <div className="text-center my-6">
-            <button
-              className={`${
-                isButtonDisabled
-                  ? "bg-gray-400"
-                  : "bg-blue-500 hover:bg-blue-600"
-              } text-white px-6 py-2 rounded-lg transition duration-200`}
+            <Button
               onClick={handleGenerateDiagnosis}
-              disabled={isButtonDisabled}
+              className="text-white px-6 py-2 rounded-lg w-full"
             >
               Générer le diagnostic différentiel/examen clinique à adopter
-            </button>
+            </Button>
           </div>
 
           {diagnosis && (
@@ -114,26 +121,51 @@ export default function ConsultationDetails({ consultation, onEdit, patient }) {
             <div className="space-y-4">
               <DetailItem
                 label="Examen clinique"
-                value={consultation.clinicalExamination}
-                onChange={handleParameterChange}
+                value={editableConsultation.clinicalExamination}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("clinicalExamination", value)
+                }
               />
               <DetailItem
                 label="Tests d'ostéopathie"
-                value={consultation.osteopathyTesting}
-                onChange={handleParameterChange}
+                value={editableConsultation.osteopathyTesting}
+                isEditing={isEditing}
+                onChange={(value) =>
+                  handleFieldChange("osteopathyTesting", value)
+                }
               />
               <DetailItem
                 label="Traitement"
-                value={consultation.treatment}
-                onChange={handleParameterChange}
+                value={editableConsultation.treatment}
+                isEditing={isEditing}
+                onChange={(value) => handleFieldChange("treatment", value)}
               />
               <DetailItem
                 label="Conseils"
-                value={consultation.advice}
-                onChange={handleParameterChange}
+                value={editableConsultation.advice}
+                isEditing={isEditing}
+                onChange={(value) => handleFieldChange("advice", value)}
               />
             </div>
           </div>
+
+          {isEditing && (
+            <div className="flex gap-4 mt-4 justify-center">
+              <Button
+                onClick={handleSaveChanges}
+                className="bg-green-500 text-white"
+              >
+                Enregistrer
+              </Button>
+              <Button
+                onClick={() => setIsEditing(false)}
+                className="bg-gray-300 text-gray-700"
+              >
+                Annuler
+              </Button>
+            </div>
+          )}
         </div>
       </Section>
     </div>

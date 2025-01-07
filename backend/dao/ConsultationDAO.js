@@ -13,4 +13,12 @@ export default class ConsultationDAO {
   static async deleteConsultationById(consultationId) {
     return await Consultation.destroy({ where: { id: consultationId } });
   }
+
+  static async updateConsultationById(consultationId, updatedData) {
+    const [rowsUpdated] = await Consultation.update(updatedData, {
+      where: { id: consultationId },
+    });
+
+    return rowsUpdated > 0;
+  }
 }

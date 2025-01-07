@@ -11,9 +11,7 @@ export default function DetailItem({
 }) {
   return (
     <div className="flex mb-1">
-      <strong className="w-1/3 text-gray-600 flex items-center">
-        {label}:
-      </strong>
+      <strong className="w-1/3 text-gray-600 flex items-center">{label}</strong>
       <span className="w-2/3 flex items-center">
         {isEditing ? (
           type === "select" ? (

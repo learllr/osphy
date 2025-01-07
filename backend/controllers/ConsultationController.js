@@ -104,3 +104,28 @@ export const generateDiagnosis = async (req, res) => {
       .json({ message: "Erreur lors de la génération du diagnostic." });
   }
 };
+
+export const updateConsultationById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const updated = await ConsultationDAO.updateConsultationById(
+      id,
+      updatedData
+    );
+
+    if (updated) {
+      res
+        .status(200)
+        .json({ message: "Consultation mise à jour avec succès." });
+    } else {
+      res.status(404).json({ message: "Consultation non trouvée." });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la consultation :", error);
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour de la consultation.",
+    });
+  }
+};

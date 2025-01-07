@@ -149,10 +149,7 @@ export default function PatientInfo({ patient }) {
           />
           {editingSections.generalInfo && (
             <div className="flex gap-4 mt-4">
-              <Button
-                onClick={() => saveChanges("generalInfo")}
-                className="bg-green-500 text-white"
-              >
+              <Button onClick={() => saveChanges("generalInfo")}>
                 Enregistrer
               </Button>
               <Button
@@ -275,15 +272,12 @@ export default function PatientInfo({ patient }) {
           )}
           {editingSections.gynecology && (
             <div className="flex gap-4 mt-4">
-              <Button
-                onClick={() => saveChanges("gynecology")}
-                className="bg-green-500 text-white"
-              >
+              <Button onClick={() => saveChanges("gynecology")}>
                 Enregistrer
               </Button>
               <Button
                 onClick={() => toggleEditSection("gynecology")}
-                className="bg-gray-300 text-gray-700"
+                variant="secondary"
               >
                 Annuler
               </Button>
