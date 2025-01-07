@@ -1,14 +1,20 @@
 import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig.js";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
 
-export default function ConsultationDetails({ consultation, patient }) {
+export default function ConsultationDetails({ consultation }) {
   const [editableConsultation, setEditableConsultation] =
     useState(consultation);
   const [diagnosis, setDiagnosis] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setEditableConsultation(consultation);
+    setDiagnosis(null);
+  }, [consultation]);
 
   const handleFieldChange = (field, value) => {
     setEditableConsultation((prev) => ({
@@ -50,7 +56,9 @@ export default function ConsultationDetails({ consultation, patient }) {
   return (
     <div>
       <Section
-        title="Détails de la consultation"
+        title={`Détails de la consultation du ${dayjs(
+          consultation.createdAt
+        ).format("DD/MM/YYYY")}`}
         onEdit={() => setIsEditing(!isEditing)}
         showCount={false}
       >
