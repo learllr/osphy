@@ -55,7 +55,7 @@ export default function PatientDetails() {
   return (
     <Body>
       <div className="flex">
-        <div className="w-2/12 p-8">
+        <div className="w-2/12 pr-6 mt-4">
           <ConsultationList
             consultations={consultations}
             onConsultationClick={handleConsultationClick}
@@ -64,10 +64,10 @@ export default function PatientDetails() {
             onConsultationDeleted={handleConsultationDeleted}
           />
         </div>
-        <div className="w-5/12 p-6">
+        <div className="w-5/12 p-2">
           <PatientInfo patient={patient} />
         </div>
-        <div className="w-5/12 p-6">
+        <div className="w-5/12 p-2">
           {selectedConsultation ? (
             <ConsultationDetails consultation={selectedConsultation} />
           ) : (

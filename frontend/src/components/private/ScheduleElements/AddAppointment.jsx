@@ -83,16 +83,16 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">Patient :</label>
-          <div className="flex space-x-2">
-            <div className="w-full p-2 border rounded bg-gray-100 text-gray-700">
-              {newAppointment.patient ? (
-                `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`
-              ) : (
-                <span className="text-gray-500">Aucun patient sélectionné</span>
-              )}
-            </div>
-            <Button onClick={() => setShowModal(true)}>Rechercher</Button>
+          <div className="w-full p-2 border rounded bg-gray-100 text-gray-700">
+            {newAppointment.patient ? (
+              `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`
+            ) : (
+              <span className="text-gray-500">Aucun patient sélectionné</span>
+            )}
           </div>
+          <Button onClick={() => setShowModal(true)} className="w-full mt-2">
+            Rechercher
+          </Button>
         </div>
 
         <div className="mb-4">
@@ -158,12 +158,9 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
           </select>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-        >
+        <Button type="submit" className="w-full">
           Ajouter
-        </button>
+        </Button>
       </form>
 
       {showModal && (

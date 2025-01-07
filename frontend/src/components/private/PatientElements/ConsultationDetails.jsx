@@ -40,6 +40,27 @@ export default function ConsultationDetails({ consultation }) {
 
   const handleGenerateDiagnosis = async () => {
     try {
+      // Simulation d'appel à l'API pour générer un diagnostic
+      // const response = await axios.post("/consultation/diagnosis", {
+      //   gender: patient.gender,
+      //   age:
+      //     new Date().getFullYear() - new Date(patient.birthDate).getFullYear(),
+      //   weight: patient.weight,
+      //   height: patient.height,
+      //   occupation: patient.occupation,
+      //   antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
+      //   symptoms: {
+      //     plaint: consultation.patientComplaint,
+      //     aggravatingFactors: consultation.aggravatingFactors,
+      //     relievingFactors: consultation.relievingFactors,
+      //     associatedSymptoms: consultation.associatedSymptoms,
+      //   },
+      //   activities: patient.activities?.map((a) => a.activity) || [],
+      // });
+
+      // setDiagnosis(response.data.diagnosis);
+
+      // Simulation de réponse de diagnostic
       const simulatedDiagnosis =
         "Diagnostic simulé : lombalgie chronique probable.";
       setDiagnosis(simulatedDiagnosis);
@@ -49,16 +70,12 @@ export default function ConsultationDetails({ consultation }) {
     }
   };
 
-  useEffect(() => {
-    setDiagnosis(null);
-  }, [consultation]);
-
   return (
     <div>
       <Section
-        title={`Détails de la consultation du ${dayjs(
-          consultation.createdAt
-        ).format("DD/MM/YYYY")}`}
+        title={`Détails de la consultation du ${dayjs(consultation.date).format(
+          "DD/MM/YYYY"
+        )}`}
         onEdit={() => setIsEditing(!isEditing)}
         showCount={false}
       >
