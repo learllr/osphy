@@ -45,6 +45,23 @@ export default (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      painType: {
+        type: DataTypes.ENUM(
+          "Neuropathique",
+          "Nociceptive mécanique (périphérique)",
+          "Nociceptive inflammatoire (périphérique)",
+          "Centralisée"
+        ),
+        allowNull: true,
+      },
+      eva: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      diagnosis: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
       clinicalExamination: {
         type: DataTypes.TEXT,
         allowNull: true,

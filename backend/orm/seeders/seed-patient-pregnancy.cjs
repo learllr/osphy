@@ -4,7 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert("PatientPregnancies", [
       {
-        patientId: 2,
+        patientId: 1,
         gender: "Fille",
         deliveryMethod: "Voie basse",
         epidural: true,
@@ -12,7 +12,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        patientId: 4,
+        patientId: 1,
         gender: "Garçon",
         deliveryMethod: "Césarienne",
         epidural: false,

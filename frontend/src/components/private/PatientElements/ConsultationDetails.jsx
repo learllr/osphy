@@ -4,16 +4,19 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig.js";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
+import { useMutation } from "react-query";
 
-export default function ConsultationDetails({ consultation }) {
+export default function ConsultationDetails({
+  consultation,
+  patient,
+  onConsultationUpdated,
+}) {
   const [editableConsultation, setEditableConsultation] =
     useState(consultation);
-  const [diagnosis, setDiagnosis] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setEditableConsultation(consultation);
-    setDiagnosis(null);
   }, [consultation]);
 
   const handleFieldChange = (field, value) => {
@@ -38,37 +41,47 @@ export default function ConsultationDetails({ consultation }) {
     }
   };
 
-  const handleGenerateDiagnosis = async () => {
-    try {
-      // Simulation d'appel à l'API pour générer un diagnostic
-      // const response = await axios.post("/consultation/diagnosis", {
-      //   gender: patient.gender,
-      //   age:
-      //     new Date().getFullYear() - new Date(patient.birthDate).getFullYear(),
-      //   weight: patient.weight,
-      //   height: patient.height,
-      //   occupation: patient.occupation,
-      //   antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
-      //   symptoms: {
-      //     plaint: consultation.patientComplaint,
-      //     aggravatingFactors: consultation.aggravatingFactors,
-      //     relievingFactors: consultation.relievingFactors,
-      //     associatedSymptoms: consultation.associatedSymptoms,
-      //   },
-      //   activities: patient.activities?.map((a) => a.activity) || [],
-      // });
+  const generateDiagnosisMutation = useMutation({
+    mutationFn: async () => {
+      const age =
+        new Date().getFullYear() - new Date(patient.birthDate).getFullYear();
 
-      // setDiagnosis(response.data.diagnosis);
+      const response = await axios.post("/consultation/diagnosis", {
+        id: editableConsultation.id,
+        gender: patient.gender,
+        age,
+        weight: patient.weight,
+        height: patient.height,
+        occupation: patient.occupation,
+        antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
+        symptoms: {
+          plaint: editableConsultation.patientComplaint,
+          aggravatingFactors: editableConsultation.aggravatingFactors,
+          relievingFactors: editableConsultation.relievingFactors,
+          associatedSymptoms: editableConsultation.associatedSymptoms,
+        },
+        activities: patient.activities?.map((a) => a.activity) || [],
+      });
 
-      // Simulation de réponse de diagnostic
-      const simulatedDiagnosis =
-        "Diagnostic simulé : lombalgie chronique probable.";
-      setDiagnosis(simulatedDiagnosis);
-    } catch (error) {
+      return response.data;
+    },
+    onSuccess: async (data) => {
+      const updatedConsultation = {
+        ...editableConsultation,
+        diagnosis: data.diagnosis,
+      };
+
+      setEditableConsultation(updatedConsultation);
+
+      // Notifier le parent avec la consultation complète mise à jour
+      if (onConsultationUpdated) {
+        onConsultationUpdated(updatedConsultation);
+      }
+    },
+    onError: (error) => {
       console.error("Erreur lors de la génération du diagnostic :", error);
-      alert("Impossible de générer le diagnostic.");
-    }
-  };
+    },
+  });
 
   return (
     <div>
@@ -117,22 +130,77 @@ export default function ConsultationDetails({ consultation }) {
                   handleFieldChange("associatedSymptoms", value)
                 }
               />
+              <DetailItem
+                label="Type de douleur"
+                value={editableConsultation.painType}
+                isEditing={isEditing}
+                options={[
+                  "Neuropathique",
+                  "Nociceptive mécanique (périphérique)",
+                  "Nociceptive inflammatoire (périphérique)",
+                  "Centralisée",
+                ]}
+                onChange={(value) => handleFieldChange("painType", value)}
+              />
+              <DetailItem
+                label="Échelle EVA (0-10)"
+                value={editableConsultation.eva}
+                isEditing={isEditing}
+                type="number"
+                min={0}
+                max={10}
+                onChange={(value) => handleFieldChange("eva", value)}
+              />
             </div>
           </div>
 
           <div className="text-center my-6">
             <Button
-              onClick={handleGenerateDiagnosis}
-              className="text-white px-6 py-2 rounded-lg w-full"
+              onClick={() => generateDiagnosisMutation.mutate()}
+              className={`text-white px-6 py-2 rounded-lg w-full ${
+                generateDiagnosisMutation.isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={generateDiagnosisMutation.isLoading}
             >
-              Générer le diagnostic différentiel/examen clinique à adopter
+              {generateDiagnosisMutation.isLoading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    ></path>
+                  </svg>
+                  Chargement...
+                </span>
+              ) : (
+                "Générer le diagnostic différentiel/examen clinique à adopter"
+              )}
             </Button>
           </div>
 
-          {diagnosis && (
+          {editableConsultation.diagnosis && (
             <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-              {diagnosis.split("\n").map((line, index) => (
-                <p key={index} className="text-gray-700 font-semibold">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                Diagnostic
+              </h3>
+              {editableConsultation.diagnosis.split("\n").map((line, index) => (
+                <p key={index} className="text-gray-700">
                   {line}
                 </p>
               ))}

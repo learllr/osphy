@@ -33,7 +33,6 @@ export default function AccountManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     update(user.id, formData);
-    console.log("Informations mises à jour avec succès.");
   };
 
   return (

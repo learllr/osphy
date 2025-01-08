@@ -55,6 +55,7 @@ export const deleteConsultationById = async (req, res) => {
 export const generateDiagnosis = async (req, res) => {
   try {
     const {
+      id,
       gender,
       age,
       weight,
@@ -80,23 +81,38 @@ export const generateDiagnosis = async (req, res) => {
           symptoms.aggravatingFactors
         }, facteurs soulageants : ${
           symptoms.relievingFactors
-        }, symptômes associés : ${symptoms.associatedSymptoms}
+        }, symptômes associés : ${
+          symptoms.associatedSymptoms
+        }, type de douleur : ${symptoms.painType}, échelle EVA : ${symptoms.eva}
         - Activités : ${activities.join(", ")}
 
         Donne-moi les diagnostics potentiels et l'examen clinique à adopter.
         `,
       },
     ];
+
     console.log(messages);
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      store: true,
       messages,
     });
 
     const diagnosis = completion.choices[0].message.content;
 
-    res.status(200).json({ diagnosis });
+    const updated = await ConsultationDAO.updateConsultationById(id, {
+      diagnosis,
+    });
+
+    if (updated) {
+      res.status(200).json({
+        message: "Diagnostic généré et enregistré avec succès.",
+        diagnosis,
+      });
+    } else {
+      res.status(404).json({
+        message: "Consultation non trouvée. Diagnostic non enregistré.",
+      });
+    }
   } catch (error) {
     console.error("Erreur avec l'API OpenAI :", error);
     res

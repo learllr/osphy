@@ -48,6 +48,21 @@ export default function PatientDetails() {
     });
   };
 
+  const handleConsultationUpdated = (updatedConsultation) => {
+    setConsultations((prev) =>
+      prev.map((c) =>
+        c.id === updatedConsultation.id ? updatedConsultation : c
+      )
+    );
+
+    if (
+      selectedConsultation &&
+      selectedConsultation.id === updatedConsultation.id
+    ) {
+      setSelectedConsultation(updatedConsultation);
+    }
+  };
+
   if (!patient) {
     return <div>Chargement...</div>;
   }
@@ -69,7 +84,11 @@ export default function PatientDetails() {
         </div>
         <div className="w-5/12 p-2">
           {selectedConsultation ? (
-            <ConsultationDetails consultation={selectedConsultation} />
+            <ConsultationDetails
+              consultation={selectedConsultation}
+              patient={patient}
+              onConsultationUpdated={handleConsultationUpdated}
+            />
           ) : (
             <p className="p-8">Aucune consultation sélectionnée.</p>
           )}
