@@ -9,6 +9,7 @@ export default function PatientInfo({ patient }) {
   const [appointments, setAppointments] = useState([]);
   const [editingSections, setEditingSections] = useState({});
   const [editedPatient, setEditedPatient] = useState({});
+  const [statusFilter, setStatusFilter] = useState("Tous");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -42,6 +43,13 @@ export default function PatientInfo({ patient }) {
       console.error("Erreur lors de la mise à jour :", error);
     }
   };
+
+  const filteredAppointments =
+    statusFilter === "Tous"
+      ? appointments
+      : appointments.filter(
+          (appointment) => appointment.status === statusFilter
+        );
 
   return (
     <div>
@@ -156,10 +164,30 @@ export default function PatientInfo({ patient }) {
           )}
         </Section>
 
-        <Section title="Rendez-vous à venir" count={appointments.length}>
-          {appointments.length > 0 ? (
+        <Section
+          title="Rendez-vous à venir"
+          count={filteredAppointments.length}
+        >
+          <div className="mb-4">
+            <label htmlFor="statusFilter" className="mr-2">
+              Filtrer par statut :
+            </label>
+            <select
+              id="statusFilter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
+            >
+              <option value="Tous">Tous</option>
+              <option value="Confirmé">Confirmé</option>
+              <option value="En attente">En attente</option>
+              <option value="Annulé">Annulé</option>
+            </select>
+          </div>
+
+          {filteredAppointments.length > 0 ? (
             <ul>
-              {appointments.map((appointment) => (
+              {filteredAppointments.map((appointment) => (
                 <li key={appointment.id} className="mb-2 flex items-center">
                   <span
                     className={`w-2 h-2 rounded-full mr-2 ${
@@ -184,7 +212,7 @@ export default function PatientInfo({ patient }) {
               ))}
             </ul>
           ) : (
-            <p>Aucun rendez-vous à venir.</p>
+            <p>Aucun rendez-vous correspondant.</p>
           )}
         </Section>
 
