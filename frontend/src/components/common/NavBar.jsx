@@ -79,7 +79,10 @@ export default function NavBar() {
     <>
       <nav className="bg-white shadow-sm">
         <div className="container mx-auto flex justify-between items-center py-4">
-          <Link to="/" className="text-xl font-semibold text-gray-800 flex">
+          <Link
+            to={isAuthenticated ? "/patients" : "/"}
+            className="text-xl font-semibold text-gray-800 flex"
+          >
             <div className="flex items-center gap-4 hover:text-zinc-700">
               <img
                 src="/logos/skeleton.png"
