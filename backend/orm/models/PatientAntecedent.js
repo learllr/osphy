@@ -22,6 +22,13 @@ export default (sequelize) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
+      category: {
+        type: DataTypes.ENUM("Traumatique", "Médical", "Chirurgical"),
+        allowNull: false,
+        validate: {
+          isIn: [["Traumatique", "Médical", "Chirurgical"]],
+        },
+      },
       year: {
         type: DataTypes.INTEGER,
         allowNull: true,

@@ -10,6 +10,7 @@ export default function PatientInfo({ patient }) {
   const [editingSections, setEditingSections] = useState({});
   const [editedPatient, setEditedPatient] = useState({});
   const [statusFilter, setStatusFilter] = useState("Tous");
+  const [selectedCategory, setSelectedCategory] = useState("Tous");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -50,6 +51,32 @@ export default function PatientInfo({ patient }) {
       : appointments.filter(
           (appointment) => appointment.status === statusFilter
         );
+
+  const groupedAntecedents = {
+    Traumatique:
+      patient.antecedents?.filter(
+        (antecedent) => antecedent.category === "Traumatique"
+      ) || [],
+    Médical:
+      patient.antecedents?.filter(
+        (antecedent) => antecedent.category === "Médical"
+      ) || [],
+    Chirurgical:
+      patient.antecedents?.filter(
+        (antecedent) => antecedent.category === "Chirurgical"
+      ) || [],
+  };
+
+  const getFilteredAntecedents = () => {
+    if (selectedCategory === "Tous") {
+      return groupedAntecedents;
+    }
+    return {
+      [selectedCategory]: groupedAntecedents[selectedCategory],
+    };
+  };
+
+  const filteredAntecedents = getFilteredAntecedents();
 
   return (
     <div>
@@ -235,19 +262,45 @@ export default function PatientInfo({ patient }) {
         </Section>
 
         <Section title="Antécédents" count={patient.antecedents?.length || 0}>
-          {patient.antecedents && patient.antecedents.length > 0 ? (
-            <ul>
-              {patient.antecedents
-                .slice()
-                .sort((a, b) => a.year - b.year)
-                .map((antecedent) => (
-                  <li key={antecedent.id}>
-                    <strong>{antecedent.antecedent}</strong> ({antecedent.year})
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p>Aucun antécédent enregistré.</p>
+          {/* Filtre par catégorie */}
+          <div className="mb-4">
+            <label htmlFor="categoryFilter" className="mr-2">
+              Filtrer par catégorie :
+            </label>
+            <select
+              id="categoryFilter"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
+            >
+              <option value="Tous">Tous</option>
+              <option value="Traumatique">Traumatique</option>
+              <option value="Médical">Médical</option>
+              <option value="Chirurgical">Chirurgical</option>
+            </select>
+          </div>
+
+          {Object.entries(filteredAntecedents).map(
+            ([category, antecedents]) => (
+              <div key={category} className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">{category}</h3>
+                {antecedents.length > 0 ? (
+                  <ul>
+                    {antecedents
+                      .slice()
+                      .sort((a, b) => a.year - b.year)
+                      .map((antecedent) => (
+                        <li key={antecedent.id}>
+                          <strong>{antecedent.antecedent}</strong> (
+                          {antecedent.year})
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p>Aucun antécédent dans cette catégorie.</p>
+                )}
+              </div>
+            )
           )}
         </Section>
 
