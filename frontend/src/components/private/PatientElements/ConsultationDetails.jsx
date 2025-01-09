@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import { useMutation } from "react-query";
 import axios from "../../../axiosConfig.js";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
-import { useMutation } from "react-query";
 
 export default function ConsultationDetails({
   consultation,
@@ -73,7 +73,6 @@ export default function ConsultationDetails({
 
       setEditableConsultation(updatedConsultation);
 
-      // Notifier le parent avec la consultation complète mise à jour
       if (onConsultationUpdated) {
         onConsultationUpdated(updatedConsultation);
       }

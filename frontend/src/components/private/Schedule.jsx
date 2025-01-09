@@ -1,10 +1,10 @@
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
-import Body from "../common/Body.jsx";
 import axios from "../../axiosConfig.js";
+import Body from "../common/Body.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
-import dayjs from "dayjs";
 
 export default function Schedule() {
   const [patients, setPatients] = useState([]);
@@ -125,7 +125,7 @@ export default function Schedule() {
     <Body>
       <div>
         <div className="flex flex-col lg:flex-row gap-6 mx-6">
-          <div className="w-full lg:w-1/5 bg-white p-6 rounded-lg shadow-md">
+          <div className="w-full lg:w-1/5 bg-white p-6 border border-gray-300 rounded">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Ajouter un rendez-vous
             </h2>
@@ -134,7 +134,7 @@ export default function Schedule() {
               onAppointmentAdd={handleAddAppointment}
             />
           </div>
-          <div className="w-full lg:w-4/5 bg-white p-6 rounded-lg shadow-md">
+          <div className="w-full lg:w-4/5 bg-white p-6 border border-gray-300 rounded">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">
               Calendrier des rendez-vous
             </h2>

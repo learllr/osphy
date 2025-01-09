@@ -50,7 +50,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
         patientId: selectedPatient.id,
         start: startDate.format(),
         end: endDate.format(),
-        status: newAppointment.status,
+        status: "En attente",
       });
 
       onAppointmentAdd({
@@ -79,7 +79,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
   };
 
   return (
-    <div className="p-2 bg-white w-full">
+    <div className="bg-white w-full text-sm">
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">Patient :</label>
@@ -141,21 +141,6 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             required
             className="w-full p-2 border rounded"
           />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Statut :</label>
-          <select
-            name="status"
-            value={newAppointment.status}
-            onChange={handleInputChange}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="En attente">En attente</option>
-            <option value="Confirmé">Confirmé</option>
-            <option value="Annulé">Annulé</option>
-          </select>
         </div>
 
         <Button type="submit" className="w-full">

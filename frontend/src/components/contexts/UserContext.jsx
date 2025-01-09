@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import axios from "../../axiosConfig.js";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import axios from "../../axiosConfig.js";
 
 const UserContext = createContext();
 
@@ -19,24 +19,36 @@ export const UserProvider = ({ children }) => {
   }, [queryClient]);
 
   const { data: userProfile } = useQuery("userProfile", fetchUserProfile, {
-    enabled: isAuthenticated,
+    enabled: !!localStorage.getItem("token"),
     onSuccess: (data) => {
       setUser(data);
       setIsAuthenticated(true);
     },
-    onError: () => {
-      setUser(null);
-      setIsAuthenticated(false);
+    onError: (error) => {
+      console.error("Erreur lors de la récupération du profil :", error);
+      handleUnauthorized(error.response?.status);
     },
   });
 
   async function fetchUserProfile() {
-    const token = localStorage.getItem("token");
-    const response = await axios.get("/user/profile", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
+
+  const handleUnauthorized = (status) => {
+    if (status === 403 || status === 401) {
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  };
 
   const signupUser = async (userData) => {
     try {
