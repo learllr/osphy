@@ -4,7 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert("Patients", [
       {
-        userId: 1,
+        userId: 3,
         gender: "Homme",
         lastName: "DOE",
         firstName: "John",
@@ -23,7 +23,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        userId: 1,
+        userId: 3,
         gender: "Femme",
         lastName: "SMITH",
         firstName: "Jane",
@@ -42,7 +42,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        userId: 1,
+        userId: 3,
         gender: "Homme",
         lastName: "BROWN",
         firstName: "Michael",
@@ -61,7 +61,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        userId: 1,
+        userId: 3,
         gender: "Femme",
         lastName: "JOHNSON",
         firstName: "Emma",
