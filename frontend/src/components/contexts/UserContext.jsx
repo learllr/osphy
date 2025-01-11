@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
 import axios from "../../axiosConfig.js";
 
 const UserContext = createContext();
@@ -10,6 +11,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -27,6 +29,8 @@ export const UserProvider = ({ children }) => {
     onError: (error) => {
       console.error("Erreur lors de la récupération du profil :", error);
       handleUnauthorized(error.response?.status);
+      navigate("/");
+      logoutUser();
     },
   });
 

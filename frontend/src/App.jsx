@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Login from "./components/authentification/Login.jsx";
 import Signup from "./components/authentification/Signup.jsx";
 import PatientDetails from "./components/private/PatientElements/PatientDetails.jsx";
@@ -34,70 +34,60 @@ export default function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/plans" element={<PricingPlans />} />
-        <Route
-          path="/plans/classic"
-          element={<PricingPlans planType="classic" />}
-        />
-        <Route
-          path="/plans/premium"
-          element={<PricingPlans planType="premium" />}
-        />
-        <Route path="*" element={<h1>404 Not Found</h1>} />
-        <Route
-          path="/patients"
-          element={
-            <PrivateRoute>
-              <Patients />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/schedule"
-          element={
-            <PrivateRoute>
-              <Schedule />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/manage-account"
-          element={
-            <PrivateRoute>
-              <AccountManagement />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/patient/:id"
-          element={
-            <PrivateRoute>
-              <PatientDetails />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <PrivateRoute>
-              <Settings />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+    <Routes>
+      {/* Routes publiques */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/plans" element={<PricingPlans />} />
+      <Route path="/plans/:planType" element={<PricingPlans />} />
 
-      {/* <div className="fixed bottom-2 left-2 bg-black text-white text-xs p-2 rounded-md">
-        <span className="block sm:hidden">MOBILE (sm)</span>
-        <span className="hidden sm:block md:hidden">TABLETTE (md)</span>
-        <span className="hidden md:block">ORDI (lg)</span>
-      </div> */}
-    </Router>
+      {/* Routes privées */}
+      <Route
+        path="/patients"
+        element={
+          <PrivateRoute>
+            <Patients />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/schedule"
+        element={
+          <PrivateRoute>
+            <Schedule />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/manage-account"
+        element={
+          <PrivateRoute>
+            <AccountManagement />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/patient/:id"
+        element={
+          <PrivateRoute>
+            <PatientDetails />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <Settings />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Route 404 */}
+      <Route path="*" element={<h1>404 - Page non trouvée</h1>} />
+    </Routes>
   );
 }

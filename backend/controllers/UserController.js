@@ -1,6 +1,5 @@
 import { hash } from "bcrypt";
 import UserDAO from "../dao/UserDAO.js";
-import UserSettingDAO from "../dao/UserSettingDAO.js";
 
 export const getProfile = async (req, res) => {
   try {

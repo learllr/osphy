@@ -31,13 +31,14 @@ export const getAppointmentsByPatientId = async (req, res) => {
 };
 
 export const createAppointment = async (req, res) => {
-  const { patientId, start, end, status } = req.body;
+  const { patientId, type, start, end, status } = req.body;
   const userId = req.user.id;
 
   try {
     const newAppointment = await AppointmentDAO.createAppointment({
       userId,
       patientId,
+      type,
       start,
       end,
       status: status || "En attente",

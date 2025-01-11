@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class Appointment extends Model {}
@@ -31,6 +31,18 @@ export default (sequelize) => {
         },
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
+      },
+      type: {
+        type: DataTypes.ENUM(
+          "Suivi",
+          "Première consultation",
+          "Urgence",
+          "Bilan",
+          "Pédiatrique",
+          "Autre"
+        ),
+        allowNull: false,
+        defaultValue: "Suivi",
       },
       start: {
         type: DataTypes.DATE,

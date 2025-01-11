@@ -75,13 +75,14 @@ export default function Schedule() {
 
     const updatedAppointment = {
       id: newAppointment.id,
-      title: `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`,
+      name: `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`,
       start: newAppointment.start,
       end: newAppointment.end,
       extendedProps: {
         status: newAppointment.status,
         icon: statusIcon,
         backgroundColor,
+        type: newAppointment.type,
       },
     };
 
@@ -102,13 +103,14 @@ export default function Schedule() {
 
           return {
             id: appointment.id,
-            title: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
+            name: `${appointment.patient.firstName} ${appointment.patient.lastName}`,
             start: appointment.start,
             end: appointment.end,
             extendedProps: {
               status: appointment.status,
               icon: statusIcon,
               backgroundColor,
+              type: appointment.type,
             },
           };
         });

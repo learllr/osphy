@@ -2,42 +2,42 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import axios from "../../../axiosConfig.js";
 import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
 
 dayjs.extend(utc);
 
 export default function AddAppointment({ patients, onAppointmentAdd }) {
-  const [newAppointment, setNewAppointment] = useState({
-    start: "",
-    end: "",
-    type: "Consultation",
-    patient: null,
-    status: "En attente",
+  const { register, handleSubmit, setValue, watch, reset } = useForm({
+    defaultValues: {
+      start: "",
+      end: "",
+      type: "Suivi",
+      patient: null,
+      status: "En attente",
+    },
   });
 
   const [showModal, setShowModal] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewAppointment((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const patient = watch("patient");
+
+  const handlePatientSelect = (selectedPatient) => {
+    setValue("patient", selectedPatient);
+    setShowModal(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    const { start, end, patient, type } = data;
 
-    const selectedPatient = newAppointment.patient;
-
-    if (!selectedPatient) {
+    if (!patient) {
       alert("Veuillez sélectionner un patient.");
       return;
     }
 
-    const startDate = dayjs(newAppointment.start).utc();
-    const endDate = dayjs(newAppointment.end).utc();
+    const startDate = dayjs(start).utc();
+    const endDate = dayjs(end).utc();
 
     if (!startDate.isBefore(endDate)) {
       alert("La date de fin doit être après la date de début.");
@@ -46,8 +46,9 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
 
     try {
       const response = await axios.post("/appointment", {
-        userId: selectedPatient.userId,
-        patientId: selectedPatient.id,
+        userId: patient.userId,
+        patientId: patient.id,
+        type,
         start: startDate.format(),
         end: endDate.format(),
         status: "En attente",
@@ -55,37 +56,23 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
 
       onAppointmentAdd({
         ...response.data,
-        patient: selectedPatient,
+        patient,
       });
 
-      setNewAppointment({
-        start: "",
-        end: "",
-        type: "Consultation",
-        patient: null,
-        status: "En attente",
-      });
+      reset();
     } catch (error) {
       console.error("Erreur lors de la création du rendez-vous :", error);
     }
   };
 
-  const handlePatientSelect = (patient) => {
-    setNewAppointment((prev) => ({
-      ...prev,
-      patient: patient,
-    }));
-    setShowModal(false);
-  };
-
   return (
     <div className="bg-white w-full text-sm">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">Patient :</label>
           <div className="w-full p-2 border rounded bg-gray-100 text-gray-700">
-            {newAppointment.patient ? (
-              `${newAppointment.patient.firstName} ${newAppointment.patient.lastName}`
+            {patient ? (
+              `${patient.firstName} ${patient.lastName}`
             ) : (
               <span className="text-gray-500">Aucun patient sélectionné</span>
             )}
@@ -100,17 +87,15 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
             Type de rendez-vous :
           </label>
           <select
-            name="type"
-            value={newAppointment.type}
-            onChange={handleInputChange}
+            {...register("type", { required: true })}
             className="w-full p-2 border rounded"
-            required
           >
             <option value="Suivi">Suivi</option>
             <option value="Première consultation">Première consultation</option>
             <option value="Urgence">Urgence</option>
             <option value="Bilan">Bilan</option>
             <option value="Pédiatrique">Pédiatrique</option>
+            <option value="Consultation">Consultation</option>
             <option value="Autre">Autre</option>
           </select>
         </div>
@@ -121,10 +106,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
           </label>
           <input
             type="datetime-local"
-            name="start"
-            value={newAppointment.start}
-            onChange={handleInputChange}
-            required
+            {...register("start", { required: true })}
             className="w-full p-2 border rounded"
           />
         </div>
@@ -135,10 +117,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
           </label>
           <input
             type="datetime-local"
-            name="end"
-            value={newAppointment.end}
-            onChange={handleInputChange}
-            required
+            {...register("end", { required: true })}
             className="w-full p-2 border rounded"
           />
         </div>
