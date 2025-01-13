@@ -92,7 +92,7 @@ export default function CalendarView({ events, onDelete, onEdit }) {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
+          right: "timeGridWeek,dayGridMonth,timeGridDay",
         }}
         views={{
           dayGridMonth: { buttonText: "Mois" },
