@@ -262,7 +262,6 @@ export default function PatientInfo({ patient }) {
         </Section>
 
         <Section title="Antécédents" count={patient.antecedents?.length || 0}>
-          {/* Filtre par catégorie */}
           <div className="mb-4">
             <label htmlFor="categoryFilter" className="mr-2">
               Filtrer par catégorie :
@@ -420,19 +419,80 @@ export default function PatientInfo({ patient }) {
           onEdit={() => toggleEditSection("sleep")}
         >
           {editingSections.sleep ? (
-            <DetailItem
-              label="Qualité du sommeil"
-              value={editedPatient.sleep?.sleepQuality}
-              isEditing={editingSections.sleep}
-              onChange={(value) =>
-                handleInputChange("sleep.sleepQuality", value)
-              }
-            />
+            <>
+              <DetailItem
+                label="Qualité du sommeil"
+                value={editedPatient.sleep?.sleepQuality}
+                isEditing={editingSections.sleep}
+                type="select"
+                options={[
+                  { value: "Bon", label: "Bon" },
+                  { value: "Moyen", label: "Moyen" },
+                  { value: "Mauvais", label: "Mauvais" },
+                ]}
+                onChange={(value) =>
+                  handleInputChange("sleep.sleepQuality", value)
+                }
+              />
+              <DetailItem
+                label="Durée du sommeil"
+                value={editedPatient.sleep?.sleepDuration}
+                isEditing={editingSections.sleep}
+                type="select"
+                options={[
+                  { value: "<5h", label: "<5h" },
+                  { value: "5-6h", label: "5-6h" },
+                  { value: "7-8h", label: "7-8h" },
+                  { value: ">8h", label: ">8h" },
+                ]}
+                onChange={(value) =>
+                  handleInputChange("sleep.sleepDuration", value)
+                }
+              />
+              <DetailItem
+                label="Sommeil réparateur"
+                value={
+                  editedPatient.sleep?.restorativeSleep === true
+                    ? "Oui"
+                    : editedPatient.sleep?.restorativeSleep === false
+                    ? "Non"
+                    : ""
+                }
+                isEditing={editingSections.sleep}
+                type="select"
+                options={[
+                  { value: true, label: "Oui" },
+                  { value: false, label: "Non" },
+                ]}
+                onChange={(value) =>
+                  handleInputChange(
+                    "sleep.restorativeSleep",
+                    value === "true" ? true : false
+                  )
+                }
+              />
+            </>
           ) : (
-            <DetailItem
-              label="Qualité du sommeil"
-              value={patient.sleep?.sleepQuality || "Non renseigné"}
-            />
+            <>
+              <DetailItem
+                label="Qualité du sommeil"
+                value={patient.sleep?.sleepQuality || "Non renseigné"}
+              />
+              <DetailItem
+                label="Durée du sommeil"
+                value={patient.sleep?.sleepDuration || "Non renseigné"}
+              />
+              <DetailItem
+                label="Sommeil réparateur"
+                value={
+                  patient.sleep?.restorativeSleep === true
+                    ? "Oui"
+                    : patient.sleep?.restorativeSleep === false
+                    ? "Non"
+                    : "Non renseigné"
+                }
+              />
+            </>
           )}
         </Section>
       </div>
