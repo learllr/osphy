@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import UserDAO from "../dao/UserDAO.js";
-import AuthentificationDAO from "../dao/AuthentificationDAO.js";
-import UserSettingDAO from "../dao/UserSettingDAO.js";
-import NewsletterDAO from "../dao/NewsletterDAO.js";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import { generateUniqueIdentifier } from "../../shared/utils/randomUtils.js";
+import AuthentificationDAO from "../dao/AuthentificationDAO.js";
+import NewsletterDAO from "../dao/NewsletterDAO.js";
+import UserDAO from "../dao/UserDAO.js";
 
 dotenv.config();
 
@@ -14,7 +14,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const signup = async (req, res) => {
   try {
     const {
-      identifier,
       firstName,
       lastName,
       email,
@@ -29,8 +28,11 @@ export const signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const identifier = await generateUniqueIdentifier(
+      AuthentificationDAO.findUserByIdentifier.bind(AuthentificationDAO)
+    );
 
-    const user = await UserDAO.create({
+    const user = await UserDAO.createUser({
       identifier,
       firstName,
       lastName,

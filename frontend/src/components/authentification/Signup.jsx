@@ -11,17 +11,16 @@ import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
-} from "../../../utils/textUtils.js";
+} from "../../../../shared/utils/textUtils.js";
 import Body from "../common/Body.jsx";
 import { useAlert } from "../contexts/AlertContext";
 import { useUser } from "../contexts/UserContext";
 
 export default function Signup() {
-  const navigate = useNavigate();
   const { signupUser, loginUser } = useUser();
   const { showAlert } = useAlert();
   const { register, handleSubmit, setValue } = useForm({
@@ -46,7 +45,7 @@ export default function Signup() {
         newsletterAccepted: data.newsletterAccepted,
         termsAccepted: data.termsAccepted,
       };
-      return await signupUser({ userData });
+      return await signupUser(userData);
     },
     {
       onSuccess: async (result, variables) => {
@@ -55,9 +54,7 @@ export default function Signup() {
             variables.email,
             variables.password
           );
-          if (loginResult.success) {
-            navigate("/");
-          } else {
+          if (!loginResult.success) {
             showAlert(loginResult.message, "destructive");
           }
         } else {

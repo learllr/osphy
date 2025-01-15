@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class User extends Model {}
@@ -16,13 +16,6 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-      },
-      avatarPath: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-          isUrl: true,
-        },
       },
       firstName: {
         type: DataTypes.STRING,

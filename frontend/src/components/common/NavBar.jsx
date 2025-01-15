@@ -10,7 +10,7 @@ import {
 import { CheckCircle, Menu, Star, X } from "lucide-react";
 import React, { useState } from "react";
 import { FiLogOut, FiSettings } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PatientSearch from "../common/PatientSearch";
 import { useUser } from "../contexts/UserContext";
 import LogoutDialog from "../dialogs/LogoutDialog";
@@ -62,7 +62,6 @@ export default function NavBar() {
   const { user, isAuthenticated, logoutUser } = useUser();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   const openLogoutDialog = () => setShowLogoutDialog(true);
   const closeLogoutDialog = () => setShowLogoutDialog(false);
@@ -70,7 +69,6 @@ export default function NavBar() {
   const handleLogout = () => {
     closeLogoutDialog();
     logoutUser();
-    navigate("/");
   };
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);

@@ -13,4 +13,8 @@ export default class AuthentificationDAO {
       { where: { id: userId } }
     );
   }
+
+  static async findUserByIdentifier(identifier) {
+    return await User.findOne({ where: { identifier } });
+  }
 }

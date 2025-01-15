@@ -1,17 +1,17 @@
-import React, { useState } from "react";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
-import { FaMars, FaVenus, FaSearch } from "react-icons/fa";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
 import { useQuery } from "react-query";
-import { useAlert } from "../contexts/AlertContext";
-import axios from "../../axiosConfig.js";
-import { calculateAge } from "../../../utils/dateUtils.js";
+import { useNavigate } from "react-router-dom";
+import { calculateAge } from "../../../../shared/utils/dateUtils.js";
 import {
-  highlightText,
   capitalizeFirstLetter,
   formatToUpperCase,
-} from "../../../utils/textUtils.js";
+  highlightText,
+} from "../../../../shared/utils/textUtils.js";
+import axios from "../../axiosConfig.js";
+import { useAlert } from "../contexts/AlertContext";
 
 export default function PatientSearch() {
   const { register, watch, setValue } = useForm({

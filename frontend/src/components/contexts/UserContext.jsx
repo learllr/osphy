@@ -78,6 +78,7 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
       queryClient.invalidateQueries("userProfile");
+      navigate("/patients");
       return { success: true, message: "Connexion réussie !" };
     } catch (error) {
       setIsAuthenticated(false);
@@ -95,6 +96,7 @@ export const UserProvider = ({ children }) => {
       setIsAuthenticated(false);
       setUser(null);
       queryClient.clear();
+      navigate("/");
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error);
     }

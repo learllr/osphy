@@ -1,10 +1,3 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import Body from "../common/Body.jsx";
-import { useUser } from "../contexts/UserContext.jsx";
-import { useAlert } from "../contexts/AlertContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,15 +8,19 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import ResetPasswordDialog from "../dialogs/ResetPasswordDialog.jsx";
 import { UserRound } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { Link } from "react-router-dom";
+import Body from "../common/Body.jsx";
+import { useAlert } from "../contexts/AlertContext";
+import { useUser } from "../contexts/UserContext.jsx";
+import ResetPasswordDialog from "../dialogs/ResetPasswordDialog.jsx";
 
 export default function Login() {
-  const { user, loginUser } = useUser();
+  const { loginUser } = useUser();
   const { showAlert } = useAlert();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -35,9 +32,7 @@ export default function Login() {
     ({ email, password }) => loginUser(email, password),
     {
       onSuccess: (result) => {
-        if (result.success) {
-          navigate(from);
-        } else {
+        if (!result.success) {
           showAlert(result.message, "destructive");
         }
       },
@@ -51,14 +46,8 @@ export default function Login() {
     mutation.mutate(data);
   };
 
-  useEffect(() => {
-    if (user) {
-      navigate(from);
-    }
-  }, [user, navigate, from]);
-
   return (
-    <Body >
+    <Body>
       <section className="flex flex-1 items-center justify-center">
         <div className="container">
           <div className="flex flex-col gap-4 items-center">
