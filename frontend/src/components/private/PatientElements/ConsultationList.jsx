@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
-import { highlightText } from "../../../../utils/textUtils.js";
+import { highlightText } from "../../../../../shared/utils/textUtils.js";
 import axios from "../../../axiosConfig.js";
 import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
 

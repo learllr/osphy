@@ -14,12 +14,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
 import { useQuery } from "react-query";
-import { calculateAge } from "../../../utils/dateUtils.js";
+import { calculateAge } from "../../../../shared/utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
   highlightText,
-} from "../../../utils/textUtils.js";
+} from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig";
 import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
 

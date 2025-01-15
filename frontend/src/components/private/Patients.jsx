@@ -5,12 +5,12 @@ import React, { useState } from "react";
 import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
-import { calculateAge } from "../../../utils/dateUtils.js";
+import { calculateAge } from "../../../../shared/utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
   highlightText,
-} from "../../../utils/textUtils.js";
+} from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import { useUser } from "../contexts/UserContext";

@@ -15,7 +15,7 @@ import { useMutation, useQueryClient } from "react-query";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
-} from "../../../utils/textUtils.js";
+} from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig";
 import { useAlert } from "../contexts/AlertContext";
 

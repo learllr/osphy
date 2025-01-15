@@ -1,21 +1,21 @@
 "use client";
 
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import Combobox from "../private/Design/Combobox.jsx";
-import Body from "../common/Body.jsx";
 import axios from "axios";
-import { useAlert } from "../contexts/AlertContext.jsx";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
-} from "../../../utils/textUtils.js";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+} from "../../../../shared/utils/textUtils.js";
+import Body from "../common/Body.jsx";
+import { useAlert } from "../contexts/AlertContext.jsx";
+import Combobox from "../private/Design/Combobox.jsx";
 
 export default function Contact() {
   const { showAlert } = useAlert();
