@@ -8,6 +8,8 @@ export default function DetailItem({
   onChange,
   type = "text",
   options = [],
+  min,
+  max,
 }) {
   return (
     <div className="flex mb-1">
@@ -30,14 +32,31 @@ export default function DetailItem({
           ) : (
             <Input
               type={type}
-              value={value || ""}
-              onChange={(e) => onChange(e.target.value)}
+              value={value !== null && value !== undefined ? value : ""}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+
+                if (type === "number") {
+                  const numericValue =
+                    inputValue === "" ? "" : Number(inputValue);
+                  if (
+                    numericValue === "" ||
+                    (numericValue >= min && numericValue <= max)
+                  ) {
+                    onChange(numericValue);
+                  }
+                } else {
+                  onChange(inputValue);
+                }
+              }}
+              min={type === "number" ? min : undefined}
+              max={type === "number" ? max : undefined}
               className="bg-gray-100 px-4 py-2 rounded-md"
             />
           )
         ) : (
           <span className="px-4 py-2 rounded-md text-gray-700">
-            {value || "Non renseigné"}
+            {value !== null && value !== undefined ? value : "Non renseigné"}
           </span>
         )}
       </span>
