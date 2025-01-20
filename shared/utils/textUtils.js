@@ -16,3 +16,5 @@ export const highlightText = (text, query) => {
     )
     .join("");
 };
+
+export const sanitizeInput = (value) => (value === "" ? null : value);

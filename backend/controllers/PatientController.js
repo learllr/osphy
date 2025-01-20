@@ -1,3 +1,4 @@
+import { sanitizeInput } from "../../shared/utils/textUtils.js";
 import PatientDAO from "../dao/PatientDAO.js";
 
 export const getAllPatients = async (req, res) => {
@@ -96,20 +97,20 @@ export const update = async (req, res) => {
     }
 
     const updatedPatient = await PatientDAO.updatePatient(patient, {
-      gender,
-      lastName,
-      firstName,
-      birthDate,
-      address,
-      postalCode,
-      city,
-      mobilePhone,
-      email,
-      occupation,
-      weight,
-      height,
-      handedness,
-      additionalInfo,
+      gender: sanitizeInput(gender),
+      lastName: sanitizeInput(lastName),
+      firstName: sanitizeInput(firstName),
+      birthDate: sanitizeInput(birthDate),
+      address: sanitizeInput(address),
+      postalCode: sanitizeInput(postalCode),
+      city: sanitizeInput(city),
+      mobilePhone: sanitizeInput(mobilePhone),
+      email: sanitizeInput(email),
+      occupation: sanitizeInput(occupation),
+      weight: sanitizeInput(weight),
+      height: sanitizeInput(height),
+      handedness: sanitizeInput(handedness),
+      additionalInfo: sanitizeInput(additionalInfo),
     });
 
     res.status(200).json(updatedPatient);

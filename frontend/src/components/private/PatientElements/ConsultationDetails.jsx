@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import axios from "../../../axiosConfig.js";
+import { useOnClickOutside } from "../../hooks/useOnClickOutside.js";
 import DetailItem from "../Design/DetailItem.jsx";
 import Section from "../Design/Section.jsx";
 
@@ -14,6 +15,9 @@ export default function ConsultationDetails({
   const [editableConsultation, setEditableConsultation] =
     useState(consultation);
   const [isEditing, setIsEditing] = useState(false);
+  const sectionRef = useRef(null);
+
+  useOnClickOutside(sectionRef, () => setIsEditing(false));
 
   useEffect(() => {
     setEditableConsultation(consultation);
@@ -83,7 +87,7 @@ export default function ConsultationDetails({
   });
 
   return (
-    <div>
+    <div ref={sectionRef}>
       <Section
         title={`Détails de la consultation du ${dayjs(consultation.date).format(
           "DD/MM/YYYY"
