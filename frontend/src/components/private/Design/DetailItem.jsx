@@ -12,7 +12,7 @@ export default function DetailItem({
   max,
 }) {
   return (
-    <div className="flex mb-1">
+    <div className="flex mb-1 text-sm">
       <strong className="w-1/3 text-gray-600 flex items-center">{label}</strong>
       <span className="w-2/3 flex items-center">
         {isEditing ? (
@@ -25,7 +25,7 @@ export default function DetailItem({
               <option value="">Sélectionnez</option>
               {options.map((option, idx) => (
                 <option key={idx} value={option.value}>
-                  {option.label}
+                  {option}
                 </option>
               ))}
             </select>
@@ -35,28 +35,31 @@ export default function DetailItem({
               value={value !== null && value !== undefined ? value : ""}
               onChange={(e) => {
                 const inputValue = e.target.value;
-
                 if (type === "number") {
                   const numericValue =
                     inputValue === "" ? "" : Number(inputValue);
                   if (
                     numericValue === "" ||
-                    (numericValue >= min && numericValue <= max)
+                    (min !== undefined && numericValue < min) ||
+                    (max !== undefined && numericValue > max)
                   ) {
-                    onChange(numericValue);
+                    return;
                   }
+                  onChange(numericValue);
                 } else {
                   onChange(inputValue);
                 }
               }}
-              min={type === "number" ? min : undefined}
-              max={type === "number" ? max : undefined}
+              min={min}
+              max={max}
               className="bg-gray-100 px-4 py-2 rounded-md"
             />
           )
         ) : (
           <span className="px-4 py-2 rounded-md text-gray-700">
-            {value !== null && value !== undefined ? value : "Non renseigné"}
+            {value !== null && value !== undefined && value !== ""
+              ? value
+              : "Non renseigné"}
           </span>
         )}
       </span>
