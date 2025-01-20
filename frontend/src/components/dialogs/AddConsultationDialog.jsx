@@ -82,7 +82,14 @@ export default function AddConsultationDialog({
           </div>
 
           <DialogFooter className="flex justify-end mt-6">
-            <Button variant="secondary" onClick={onClose}>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => {
+                reset();
+                onClose();
+              }}
+            >
               Annuler
             </Button>
             <Button type="submit" disabled={mutation.isLoading}>

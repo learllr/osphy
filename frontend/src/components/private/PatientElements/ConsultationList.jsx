@@ -79,7 +79,7 @@ export default function ConsultationList({
             </li>
           ))
         ) : (
-          <li>Aucune consultation enregistrée.</li>
+          <li className="text-sm">Aucune consultation enregistrée.</li>
         )}
       </ul>
 
