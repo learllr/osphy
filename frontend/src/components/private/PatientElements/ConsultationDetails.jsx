@@ -32,10 +32,14 @@ export default function ConsultationDetails({
 
   const handleSaveChanges = async () => {
     try {
-      await axios.put(
+      const updatedConsultation = await axios.put(
         `/consultation/${editableConsultation.id}`,
         editableConsultation
       );
+
+      if (onConsultationUpdated) {
+        onConsultationUpdated(editableConsultation);
+      }
       setIsEditing(false);
     } catch (error) {
       console.error(

@@ -69,7 +69,7 @@ export default function PatientSearch() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative text-sm">
       <form
         onSubmit={(e) => e.preventDefault()}
         className="flex items-center border-2 border-gray-700 rounded-full"

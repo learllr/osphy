@@ -48,23 +48,20 @@ export default function PatientDetails() {
     });
   };
 
-  const handleConsultationUpdated = (updatedConsultation) => {
-    setConsultations((prev) =>
-      prev.map((c) =>
-        c.id === updatedConsultation.id ? updatedConsultation : c
-      )
-    );
-
-    if (
-      selectedConsultation &&
-      selectedConsultation.id === updatedConsultation.id
-    ) {
-      setSelectedConsultation(updatedConsultation);
+  const handleConsultationUpdated = async (updatedConsultation) => {
+    try {
+      const response = await axios.get(`/consultation/${id}`);
+      setConsultations(response.data);
+      setSelectedConsultation(
+        response.data.find((c) => c.id === updatedConsultation.id)
+      );
+    } catch (error) {
+      console.error("Erreur lors de la récupération des consultations:", error);
     }
   };
 
   if (!patient) {
-    return <div>Chargement...</div>;
+    return <div className="p-8">Chargement...</div>;
   }
 
   return (
@@ -90,7 +87,7 @@ export default function PatientDetails() {
               onConsultationUpdated={handleConsultationUpdated}
             />
           ) : (
-            <p className="p-8">Aucune consultation sélectionnée.</p>
+            <p className="p-8 text-sm">Aucune consultation sélectionnée.</p>
           )}
         </div>
       </div>
