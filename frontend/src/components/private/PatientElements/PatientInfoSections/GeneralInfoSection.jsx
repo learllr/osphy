@@ -8,6 +8,7 @@ import Section from "../../Design/Section.jsx";
 
 export default function GeneralInfoSection({ patient }) {
   const [editablePatient, setEditablePatient] = useState(patient);
+  const [backupPatient, setBackupPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
 
@@ -31,12 +32,10 @@ export default function GeneralInfoSection({ patient }) {
       return response.data;
     },
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries("patients");
+        setEditablePatient(data);
         setIsEditing(false);
-      },
-      onError: (error) => {
-        console.error("Erreur lors de la mise à jour du patient:", error);
       },
     }
   );
@@ -45,79 +44,91 @@ export default function GeneralInfoSection({ patient }) {
     updatePatientMutation.mutate(editablePatient);
   };
 
+  const handleCancel = () => {
+    setEditablePatient(backupPatient);
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setBackupPatient(editablePatient);
+    setIsEditing(true);
+  };
+
+  const patientFields = [
+    { label: "Nom", field: "lastName", type: "text" },
+    { label: "Prénom", field: "firstName", type: "text" },
+    {
+      label: "Date de naissance",
+      field: "birthDate",
+      type: "date",
+      format: (value) =>
+        value
+          ? isEditing
+            ? dayjs(value).format("YYYY-MM-DD")
+            : dayjs(value).format("DD/MM/YYYY")
+          : "",
+    },
+    {
+      label: "Sexe",
+      field: "gender",
+      type: "select",
+      options: ["Homme", "Femme"],
+    },
+    { label: "Adresse", field: "address", type: "text" },
+    { label: "Téléphone", field: "mobilePhone", type: "text" },
+    { label: "Email", field: "email", type: "email" },
+    { label: "Profession", field: "occupation", type: "text" },
+    { label: "Taille", field: "height", type: "number", min: 0, max: 300 },
+    { label: "Poids", field: "weight", type: "number", min: 0, max: 300 },
+    {
+      label: "Latéralité",
+      field: "handedness",
+      type: "select",
+      options: ["Droitier", "Gaucher", "Ambidextre"],
+    },
+    { label: "Autres informations", field: "additionalInfo", type: "text" },
+  ];
+
   return (
     <Section
       title="Informations générales"
       showCount={false}
-      onEdit={() => setIsEditing(!isEditing)}
+      onEdit={handleEditClick}
     >
-      {[
-        { label: "Nom", field: "lastName", type: "text" },
-        { label: "Prénom", field: "firstName", type: "text" },
-        {
-          label: "Date de naissance",
-          field: "birthDate",
-          type: "date",
-          format: (value) =>
-            isEditing
-              ? dayjs(value).format("YYYY-MM-DD")
-              : dayjs(value).format("DD/MM/YYYY"),
-        },
-        {
-          label: "Sexe",
-          field: "gender",
-          type: "select",
-          options: ["Homme", "Femme"],
-        },
-        { label: "Adresse", field: "address", type: "text" },
-        { label: "Téléphone", field: "mobilePhone", type: "text" },
-        { label: "Email", field: "email", type: "email" },
-        { label: "Profession", field: "occupation", type: "text" },
-        { label: "Taille", field: "height", type: "number", min: 0, max: 300 },
-        { label: "Poids", field: "weight", type: "number", min: 0, max: 300 },
-        {
-          label: "Latéralité",
-          field: "handedness",
-          type: "select",
-          options: ["Droitier", "Gaucher", "Ambidextre"],
-        },
-        { label: "Autres informations", field: "additionalInfo", type: "text" },
-      ].map(({ label, field, type, options, format }) => (
-        <DetailItem
-          key={field}
-          label={label}
-          value={
-            isEditing
-              ? editablePatient[field] ?? ""
-              : format
-              ? format(editablePatient[field])
-              : editablePatient[field]
-          }
-          isEditing={isEditing}
-          onChange={(value) => handleFieldChange(field, value)}
-          type={type}
-          options={options}
-        />
-      ))}
+      {patientFields.map(({ label, field, type, options, format }) => {
+        const value = editablePatient[field] ?? "Non renseigné";
+        return (
+          <DetailItem
+            key={field}
+            label={label}
+            value={
+              isEditing
+                ? format
+                  ? format(value)
+                  : value
+                : format
+                ? format(value)
+                : value
+            }
+            isEditing={isEditing}
+            onChange={(newValue) => handleFieldChange(field, newValue)}
+            type={type}
+            options={options}
+          />
+        );
+      })}
 
       {isEditing && (
         <div className="flex gap-4 mt-4">
           <Button
             onClick={handleSaveChanges}
-            className="bg-green-500 text-white"
             disabled={updatePatientMutation.isLoading}
           >
             {updatePatientMutation.isLoading
               ? "Enregistrement..."
               : "Enregistrer"}
           </Button>
-          <Button
-            onClick={() => {
-              setEditablePatient(patient);
-              setIsEditing(false);
-            }}
-            className="bg-gray-300 text-gray-700"
-          >
+          <Button onClick={handleCancel} variant="secondary">
             Annuler
           </Button>
         </div>

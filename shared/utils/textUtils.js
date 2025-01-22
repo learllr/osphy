@@ -17,4 +17,13 @@ export const highlightText = (text, query) => {
     .join("");
 };
 
-export const sanitizeInput = (value) => (value === "" ? null : value);
+export const sanitizeInput = (value) => {
+  if (value === "" || value === "Non renseigné") {
+    return null;
+  }
+
+  if (value === "Oui") return true;
+  if (value === "Non") return false;
+
+  return value;
+};

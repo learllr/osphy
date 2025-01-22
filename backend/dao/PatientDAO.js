@@ -96,4 +96,47 @@ export default class PatientDAO {
   static async deletePatient(patient) {
     return await patient.destroy();
   }
+
+  /*
+  ----- Informations du patient -----
+  */
+
+  static async findGynecologyByPatientId(patientId) {
+    return await PatientGynecology.findOne({
+      where: { patientId },
+    });
+  }
+
+  static async updateGynecology(patientId, gynecologyData) {
+    return await PatientGynecology.update(gynecologyData, {
+      where: { patientId },
+    });
+  }
+
+  static async createGynecology(patientId, gynecologyData) {
+    return await PatientGynecology.create({
+      patientId,
+      ...gynecologyData,
+    });
+  }
+
+  static async findSleepByPatientId(patientId) {
+    return await PatientSleep.findOne({
+      where: { patientId },
+    });
+  }
+
+  static async updateSleep(patientId, sleepData) {
+    return await PatientSleep.update(sleepData, {
+      where: { patientId },
+      returning: true,
+    });
+  }
+
+  static async createSleep(patientId, sleepData) {
+    return await PatientSleep.create({
+      patientId,
+      ...sleepData,
+    });
+  }
 }

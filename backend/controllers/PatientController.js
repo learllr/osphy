@@ -141,3 +141,86 @@ export const deletePatientByIdAndUserId = async (req, res) => {
       .json({ message: "Erreur lors de la suppression du patient." });
   }
 };
+
+/*
+----- Informations du patient -----
+*/
+
+export const updatePatientGynecology = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { period, menopause, contraception, followUp } = req.body;
+
+    const updatedGynecologyData = {
+      period: sanitizeInput(period),
+      menopause: sanitizeInput(menopause),
+      contraception: sanitizeInput(contraception),
+      followUp: sanitizeInput(followUp),
+    };
+
+    const patient = await PatientDAO.findPatientByIdAndUserId(id, userId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient non trouvé." });
+    }
+
+    const existingGynecology = await PatientDAO.findGynecologyByPatientId(
+      patient.id
+    );
+
+    let updatedGynecology;
+    if (existingGynecology) {
+      updatedGynecology = await PatientDAO.updateGynecology(
+        patient.id,
+        updatedGynecologyData
+      );
+    } else {
+      updatedGynecology = await PatientDAO.createGynecology(
+        patient.id,
+        updatedGynecologyData
+      );
+    }
+
+    res.status(200).json(updatedGynecology);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la gynécologie:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour de la gynécologie." });
+  }
+};
+
+export const updatePatientSleep = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { sleepQuality, sleepDuration, restorativeSleep } = req.body;
+
+    const updatedSleepData = {
+      sleepQuality: sanitizeInput(sleepQuality),
+      sleepDuration: sanitizeInput(sleepDuration),
+      restorativeSleep: sanitizeInput(restorativeSleep),
+    };
+
+    const patient = await PatientDAO.findPatientByIdAndUserId(id, userId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient non trouvé." });
+    }
+
+    const existingSleepData = await PatientDAO.findSleepByPatientId(patient.id);
+
+    let updatedSleep;
+    if (existingSleepData) {
+      updatedSleep = await PatientDAO.updateSleep(patient.id, updatedSleepData);
+    } else {
+      updatedSleep = await PatientDAO.createSleep(patient.id, updatedSleepData);
+    }
+
+    res.status(200).json(updatedSleep);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du sommeil:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la mise à jour du sommeil." });
+  }
+};

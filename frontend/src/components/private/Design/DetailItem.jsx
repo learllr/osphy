@@ -11,20 +11,38 @@ export default function DetailItem({
   min,
   max,
 }) {
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    if (type === "number") {
+      const numericValue = inputValue === "" ? "" : Number(inputValue);
+      if (
+        (min !== undefined && numericValue < min) ||
+        (max !== undefined && numericValue > max)
+      ) {
+        return;
+      }
+      onChange(numericValue);
+    } else {
+      onChange(inputValue);
+    }
+  };
+
   return (
-    <div className="flex mb-1 text-sm">
-      <strong className="w-1/3 text-gray-600 flex items-center">{label}</strong>
-      <span className="w-2/3 flex items-center">
+    <div className="flex text-sm mb-1">
+      <strong className="w-2/5 text-gray-600 flex items-center">{label}</strong>
+      <span className="w-3/5 flex items-center">
         {isEditing ? (
           type === "select" ? (
             <select
               className="w-full bg-gray-100 px-4 py-2 rounded-md border text-gray-700"
-              value={value || ""}
-              onChange={(e) => onChange(e.target.value)}
+              value={value ?? ""}
+              onChange={(e) =>
+                onChange(e.target.value === "" ? null : e.target.value)
+              }
             >
-              <option value="">Sélectionnez</option>
+              <option value="">Non renseigné</option>
               {options.map((option, idx) => (
-                <option key={idx} value={option.value}>
+                <option key={idx} value={option}>
                   {option}
                 </option>
               ))}
@@ -32,24 +50,8 @@ export default function DetailItem({
           ) : (
             <Input
               type={type}
-              value={value !== null && value !== undefined ? value : ""}
-              onChange={(e) => {
-                const inputValue = e.target.value;
-                if (type === "number") {
-                  const numericValue =
-                    inputValue === "" ? "" : Number(inputValue);
-                  if (
-                    numericValue === "" ||
-                    (min !== undefined && numericValue < min) ||
-                    (max !== undefined && numericValue > max)
-                  ) {
-                    return;
-                  }
-                  onChange(numericValue);
-                } else {
-                  onChange(inputValue);
-                }
-              }}
+              value={value ?? ""}
+              onChange={handleInputChange}
               min={min}
               max={max}
               className="bg-gray-100 px-4 py-2 rounded-md"
@@ -57,9 +59,7 @@ export default function DetailItem({
           )
         ) : (
           <span className="px-4 py-2 rounded-md text-gray-700">
-            {value !== null && value !== undefined && value !== ""
-              ? value
-              : "Non renseigné"}
+            {value || "Non renseigné"}
           </span>
         )}
       </span>

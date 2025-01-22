@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class PatientGynecology extends Model {}
@@ -24,13 +24,11 @@ export default (sequelize) => {
       },
       period: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        allowNull: true,
       },
       menopause: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        allowNull: true,
       },
       contraception: {
         type: DataTypes.ENUM(
@@ -52,9 +50,8 @@ export default (sequelize) => {
         allowNull: true,
       },
       followUp: {
-        type: DataTypes.ENUM("Oui", "Non"),
-        allowNull: false,
-        defaultValue: "Non",
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
       },
     },
     {
