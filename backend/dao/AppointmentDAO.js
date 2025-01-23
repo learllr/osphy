@@ -13,6 +13,10 @@ export default class AppointmentDAO {
           attributes: ["firstName", "lastName", "birthDate", "gender"],
         },
       ],
+      order: [
+        ["date", "ASC"],
+        ["startTime", "ASC"],
+      ],
     });
   }
 
@@ -26,11 +30,39 @@ export default class AppointmentDAO {
           attributes: ["firstName", "lastName", "birthDate", "gender"],
         },
       ],
-      order: [["start", "ASC"]],
+      order: [
+        ["date", "ASC"],
+        ["startTime", "ASC"],
+      ],
     });
   }
 
   static async createAppointment(appointmentData) {
-    return await Appointment.create(appointmentData);
+    return await Appointment.create({
+      userId: appointmentData.userId,
+      patientId: appointmentData.patientId,
+      type: appointmentData.type,
+      date: appointmentData.date,
+      startTime: appointmentData.startTime,
+      endTime: appointmentData.endTime,
+      status: appointmentData.status || "En attente",
+    });
+  }
+
+  static async updateAppointment(id, appointmentData) {
+    const appointment = await Appointment.findByPk(id);
+    if (!appointment) {
+      return null;
+    }
+
+    await appointment.update({
+      date: appointmentData.date,
+      startTime: appointmentData.startTime,
+      endTime: appointmentData.endTime,
+      status: appointmentData.status,
+      comment: appointmentData.comment,
+    });
+
+    return appointment;
   }
 }

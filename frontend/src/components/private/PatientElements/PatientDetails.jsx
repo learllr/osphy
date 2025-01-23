@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../../../axiosConfig.js";
 import Body from "../../common/Body.jsx";
+import LoadingScreen from "../../common/Loading/LoadingScreen.jsx";
 import ConsultationDetails from "./ConsultationDetails.jsx";
 import ConsultationList from "./ConsultationList.jsx";
 import PatientInfo from "./PatientInfo.jsx";
+import GeneralInfoSection from "./PatientInfoSections/GeneralInfoSection.jsx";
 
 export default function PatientDetails() {
   const { id } = useParams();
@@ -61,13 +63,7 @@ export default function PatientDetails() {
   };
 
   if (!patient) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 border-4 border-primary border-solid border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -82,19 +78,26 @@ export default function PatientDetails() {
             onConsultationDeleted={handleConsultationDeleted}
           />
         </div>
-        <div className="w-5/12 p-2">
-          <PatientInfo patient={patient} />
-        </div>
-        <div className="w-5/12 p-2">
-          {selectedConsultation ? (
-            <ConsultationDetails
-              consultation={selectedConsultation}
-              patient={patient}
-              onConsultationUpdated={handleConsultationUpdated}
-            />
-          ) : (
-            <p className="p-8 text-sm">Aucune consultation sélectionnée.</p>
-          )}
+        <div className="flex flex-col w-full">
+          <div className="flex">
+            <div className="w-1/2 p-1">
+              <GeneralInfoSection patient={patient} />
+            </div>
+            <div className="w-1/2 p-1">
+              {selectedConsultation ? (
+                <ConsultationDetails
+                  consultation={selectedConsultation}
+                  patient={patient}
+                  onConsultationUpdated={handleConsultationUpdated}
+                />
+              ) : (
+                <p className="p-8 text-sm">Aucune consultation sélectionnée.</p>
+              )}
+            </div>
+          </div>
+          <div className="w-full p-1">
+            <PatientInfo patient={patient} />
+          </div>
         </div>
       </div>
     </Body>

@@ -163,7 +163,6 @@ export default function Patients() {
           </div>
 
           {paginatedPatients.map((patient) => {
-            const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
             const age = calculateAge(patient.birthDate);
 
             return (
@@ -199,7 +198,7 @@ export default function Patients() {
                     <div className="text-sm text-gray-500">
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: highlightText(birthDate, searchQuery),
+                          __html: highlightText(patient.birthDate, searchQuery),
                         }}
                       />{" "}
                       (

@@ -44,19 +44,20 @@ export default (sequelize) => {
         allowNull: false,
         defaultValue: "Suivi",
       },
-      start: {
-        type: DataTypes.DATE,
+      date: {
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
           isDate: true,
         },
       },
-      end: {
-        type: DataTypes.DATE,
+      startTime: {
+        type: DataTypes.TIME,
         allowNull: false,
-        validate: {
-          isDate: true,
-        },
+      },
+      endTime: {
+        type: DataTypes.TIME,
+        allowNull: false,
       },
       status: {
         type: DataTypes.ENUM("Annulé", "En attente", "Confirmé"),

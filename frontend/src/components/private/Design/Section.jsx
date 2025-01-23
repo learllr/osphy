@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import React from "react";
 import { FaEdit } from "react-icons/fa";
 
@@ -8,6 +7,7 @@ export default function Section({
   onEdit,
   showCount = true,
   count,
+  hideEditButton = false,
 }) {
   return (
     <div className="bg-white p-6 rounded-md border border-gray-200 relative">
@@ -15,13 +15,15 @@ export default function Section({
         <h2 className="text-xl font-semibold text-gray-700">
           {title} {showCount && `(${count})`}
         </h2>
-        <Button
-          onClick={onEdit}
-          className="p-2 text-primary bg-white hover:bg-white hover:text-primary/90"
-          aria-label={`Modifier ${title}`}
-        >
-          <FaEdit size={20} />
-        </Button>
+        {!hideEditButton && (
+          <button
+            onClick={onEdit}
+            className="text-primary bg-white hover:bg-white hover:text-primary/90"
+            aria-label={`Modifier ${title}`}
+          >
+            <FaEdit size={16} />
+          </button>
+        )}
       </div>
       {children}
     </div>

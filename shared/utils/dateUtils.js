@@ -1,14 +1,17 @@
-import dayjs from "dayjs";
-
 export const calculateAge = (birthDate) => {
-  const now = dayjs();
-  const birth = dayjs(birthDate);
-  const years = now.diff(birth, "year");
+  const [day, month, year] = birthDate.split("/").map(Number);
+  const birth = new Date(year, month - 1, day);
+  const now = new Date();
 
-  if (years > 1) {
-    return `${years} ans`;
-  } else {
-    const months = now.diff(birth, "month");
-    return `${months} mois`;
+  let ageYears = now.getFullYear() - birth.getFullYear();
+  const ageMonths = now.getMonth() + 1 - (birth.getMonth() + 1) + ageYears * 12;
+
+  if (
+    now.getMonth() < birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())
+  ) {
+    ageYears--;
   }
+
+  return ageYears > 1 ? `${ageYears} ans` : `${ageMonths} mois`;
 };

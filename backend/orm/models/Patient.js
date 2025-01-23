@@ -43,12 +43,8 @@ export default (sequelize) => {
         },
       },
       birthDate: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        validate: {
-          isDate: true,
-          isBefore: new Date().toISOString().split("T")[0],
-        },
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       address: {
         type: DataTypes.STRING,

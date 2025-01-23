@@ -11,8 +11,9 @@ dayjs.extend(utc);
 export default function AddAppointment({ patients, onAppointmentAdd }) {
   const { register, handleSubmit, setValue, watch, reset } = useForm({
     defaultValues: {
-      start: "",
-      end: "",
+      date: "",
+      startTime: "",
+      endTime: "",
       type: "Suivi",
       patient: null,
       status: "En attente",
@@ -29,18 +30,20 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
   };
 
   const onSubmit = async (data) => {
-    const { start, end, patient, type } = data;
+    const { date, startTime, endTime, patient, type } = data;
 
     if (!patient) {
       alert("Veuillez sélectionner un patient.");
       return;
     }
 
-    const startDate = dayjs(start).utc();
-    const endDate = dayjs(end).utc();
+    if (!date || !startTime || !endTime) {
+      alert("Veuillez remplir tous les champs de date et d'heure.");
+      return;
+    }
 
-    if (!startDate.isBefore(endDate)) {
-      alert("La date de fin doit être après la date de début.");
+    if (dayjs(`${date}T${startTime}`).isAfter(dayjs(`${date}T${endTime}`))) {
+      alert("L'heure de fin doit être après l'heure de début.");
       return;
     }
 
@@ -49,8 +52,9 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
         userId: patient.userId,
         patientId: patient.id,
         type,
-        start: startDate.format(),
-        end: endDate.format(),
+        date,
+        startTime,
+        endTime,
         status: "En attente",
       });
 
@@ -102,22 +106,29 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
 
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">
-            Date de début du rendez-vous :
+            Date du rendez-vous :
           </label>
           <input
-            type="datetime-local"
-            {...register("start", { required: true })}
+            type="date"
+            {...register("date", { required: true })}
             className="w-full p-2 border rounded"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">
-            Date de fin du rendez-vous :
-          </label>
+          <label className="block text-gray-700 mb-1">Heure de début :</label>
           <input
-            type="datetime-local"
-            {...register("end", { required: true })}
+            type="time"
+            {...register("startTime", { required: true })}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-1">Heure de fin :</label>
+          <input
+            type="time"
+            {...register("endTime", { required: true })}
             className="w-full p-2 border rounded"
           />
         </div>

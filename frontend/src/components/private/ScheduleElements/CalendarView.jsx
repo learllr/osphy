@@ -8,7 +8,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import DetailItem from "../../private/Design/DetailItem.jsx";
 
 dayjs.extend(utc);
@@ -18,58 +18,47 @@ export default function CalendarView({ events, onDelete, onEdit }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editableEvent, setEditableEvent] = useState(null);
 
-  const eventsWithLocalTime = events.map((event) => ({
-    ...event,
-    start: dayjs.utc(event.start).local().format(),
-    end: dayjs.utc(event.end).local().format(),
-    backgroundColor: event.extendedProps.backgroundColor,
-    textColor: "#ffffff",
-  }));
+  const formatEventTime = (time) =>
+    time ? dayjs(`1970-01-01T${time}`).format("HH:mm") : "";
 
-  const renderEventContent = (eventInfo) => {
-    return (
-      <div
-        className="flex items-center p-1 rounded"
-        style={{
-          backgroundColor: eventInfo.event.extendedProps.backgroundColor,
-          color: eventInfo.event.extendedProps.textColor || "#ffffff",
-        }}
-      >
-        {eventInfo.event.extendedProps.icon}
-        <span className="ml-1">{eventInfo.event.extendedProps.name}</span>
-      </div>
-    );
-  };
+  const eventsWithLocalTime = useMemo(
+    () =>
+      events.map(({ date, startTime, endTime, ...rest }) => ({
+        ...rest,
+        start: dayjs(`${date}T${startTime}`).format(),
+        end: dayjs(`${date}T${endTime}`).format(),
+        backgroundColor: rest.extendedProps?.backgroundColor || "#000000",
+        textColor: "#ffffff",
+      })),
+    [events]
+  );
+  console.log(eventsWithLocalTime);
 
-  const onEventClick = (event) => {
-    const { name, status, type, start, end, id } = event.extendedProps;
-    setSelectedEvent({
+  const handleEventSelection = useCallback((event) => {
+    const { name, status, type, date, startTime, endTime, id } =
+      event.extendedProps;
+
+    const formattedEvent = {
       id,
       name: name || "Non spécifié",
       status: status || "Non spécifié",
       type: type || "Non spécifié",
-      start: dayjs(start).format("DD/MM/YYYY HH:mm"),
-      end: dayjs(end).format("DD/MM/YYYY HH:mm"),
-    });
-    setEditableEvent({
-      id,
-      name: name || "",
-      status: status || "",
-      type: type || "",
-      start: dayjs(start).format("YYYY-MM-DDTHH:mm"),
-      end: dayjs(end).format("YYYY-MM-DDTHH:mm"),
-    });
-    setIsEditing(false);
-  };
+      date: dayjs(date).format("DD/MM/YYYY"),
+      startTime: formatEventTime(startTime),
+      endTime: formatEventTime(endTime),
+    };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+    setSelectedEvent(formattedEvent);
+    setEditableEvent({ ...formattedEvent });
+    setIsEditing(false);
+  }, []);
+
+  const handleChange = (field, value) => {
+    setEditableEvent((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
-    if (onEdit && editableEvent) {
-      onEdit(editableEvent);
-    }
+    if (onEdit && editableEvent) onEdit(editableEvent);
     setIsEditing(false);
   };
 
@@ -80,9 +69,35 @@ export default function CalendarView({ events, onDelete, onEdit }) {
     }
   };
 
-  const handleChange = (field, value) => {
-    setEditableEvent({ ...editableEvent, [field]: value });
-  };
+  const eventFields = [
+    { label: "Nom du patient", field: "name" },
+    {
+      label: "Type",
+      field: "type",
+      type: "select",
+      options: [
+        { label: "Suivi", value: "Suivi" },
+        { label: "Première consultation", value: "Première consultation" },
+        { label: "Urgence", value: "Urgence" },
+        { label: "Bilan", value: "Bilan" },
+        { label: "Pédiatrique", value: "Pédiatrique" },
+        { label: "Autre", value: "Autre" },
+      ],
+    },
+    {
+      label: "Statut",
+      field: "status",
+      type: "select",
+      options: [
+        { label: "Confirmé", value: "Confirmé" },
+        { label: "En attente", value: "En attente" },
+        { label: "Annulé", value: "Annulé" },
+      ],
+    },
+    { label: "Date", field: "date", type: "date" },
+    { label: "Heure de début", field: "startTime", type: "time" },
+    { label: "Heure de fin", field: "endTime", type: "time" },
+  ];
 
   return (
     <div className="text-sm">
@@ -92,7 +107,7 @@ export default function CalendarView({ events, onDelete, onEdit }) {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "timeGridWeek,dayGridMonth,timeGridDay",
+          right: "timeGridDay,timeGridWeek,dayGridMonth",
         }}
         views={{
           dayGridMonth: { buttonText: "Mois" },
@@ -100,12 +115,35 @@ export default function CalendarView({ events, onDelete, onEdit }) {
           timeGridDay: { buttonText: "Jour" },
         }}
         events={eventsWithLocalTime}
-        eventContent={renderEventContent}
+        eventContent={({ event }) => (
+          <div
+            className="flex flex-col items-start p-1 rounded text-xs leading-tight"
+            style={{
+              backgroundColor: event.extendedProps.backgroundColor,
+              color: event.extendedProps.textColor || "#ffffff",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <div className="flex items-center">
+              {event.extendedProps.icon}
+              <span className="ml-1 font-bold truncate">
+                {event.extendedProps.type}
+              </span>
+            </div>
+            <div className="truncate">
+              <span>{event.extendedProps.name}</span>
+            </div>
+          </div>
+        )}
         selectable={true}
         locale={frLocale}
         timeZone="Europe/Paris"
         height={"90vh"}
-        eventClick={(info) => onEventClick(info.event)}
+        eventClick={(info) => handleEventSelection(info.event)}
+        weekNumbers={true}
+        nowIndicator={true}
       />
 
       <Dialog.Root
@@ -124,63 +162,24 @@ export default function CalendarView({ events, onDelete, onEdit }) {
           <Separator />
           {editableEvent && (
             <div className="space-y-1 mt-5">
-              <DetailItem
-                label="Nom du patient"
-                value={editableEvent.name}
-                isEditing={isEditing}
-                onChange={(value) => handleChange("name", value)}
-              />
-              <DetailItem
-                label="Type"
-                value={editableEvent.type}
-                isEditing={isEditing}
-                onChange={(value) => handleChange("type", value)}
-                type="select"
-                options={[
-                  { label: "Suivi", value: "Suivi" },
-                  {
-                    label: "Première consultation",
-                    value: "Première consultation",
-                  },
-                  { label: "Urgence", value: "Urgence" },
-                  { label: "Bilan", value: "Bilan" },
-                  { label: "Pédiatrique", value: "Pédiatrique" },
-                  { label: "Autre", value: "Autre" },
-                ]}
-              />
-              <DetailItem
-                label="Statut"
-                value={editableEvent.status}
-                isEditing={isEditing}
-                onChange={(value) => handleChange("status", value)}
-                type="select"
-                options={[
-                  { label: "Confirmé", value: "Confirmé" },
-                  { label: "En attente", value: "En attente" },
-                  { label: "Annulé", value: "Annulé" },
-                ]}
-              />
-              <DetailItem
-                label="Date de début"
-                value={editableEvent.start}
-                isEditing={isEditing}
-                onChange={(value) => handleChange("start", value)}
-                type="datetime-local"
-              />
-              <DetailItem
-                label="Date de fin"
-                value={editableEvent.end}
-                isEditing={isEditing}
-                onChange={(value) => handleChange("end", value)}
-                type="datetime-local"
-              />
+              {eventFields.map(({ label, field, type, options }) => (
+                <DetailItem
+                  key={field}
+                  label={label}
+                  value={editableEvent[field]}
+                  isEditing={isEditing}
+                  onChange={(value) => handleChange(field, value)}
+                  type={type}
+                  options={options}
+                />
+              ))}
             </div>
           )}
           <div className="flex space-x-4 mt-6">
             {isEditing ? (
               <Button onClick={handleSave}>Enregistrer</Button>
             ) : (
-              <Button onClick={handleEdit}>Modifier</Button>
+              <Button onClick={() => setIsEditing(true)}>Modifier</Button>
             )}
             <Button variant="destructive" onClick={handleDelete}>
               Supprimer
