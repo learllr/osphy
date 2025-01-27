@@ -45,10 +45,10 @@ export default (sequelize) => {
         defaultValue: "Suivi",
       },
       date: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isDate: true,
+          is: /^\d{2}\/\d{2}\/\d{4}$/,
         },
       },
       startTime: {

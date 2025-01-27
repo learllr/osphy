@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const calculateAge = (birthDate) => {
   const [day, month, year] = birthDate.split("/").map(Number);
   const birth = new Date(year, month - 1, day);
@@ -14,4 +16,16 @@ export const calculateAge = (birthDate) => {
   }
 
   return ageYears > 1 ? `${ageYears} ans` : `${ageMonths} mois`;
+};
+
+export const formatEventTime = (time) =>
+  time ? dayjs(`1970-01-01T${time}`).format("HH:mm") : "";
+
+export const isEventInThePast = (event) => {
+  const eventDateTime = dayjs(
+    `${event.date} ${event.startTime}`,
+    "DD/MM/YYYY HH:mm"
+  );
+
+  return eventDateTime.isBefore(dayjs());
 };

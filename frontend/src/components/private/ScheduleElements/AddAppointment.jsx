@@ -42,7 +42,11 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
       return;
     }
 
-    if (dayjs(`${date}T${startTime}`).isAfter(dayjs(`${date}T${endTime}`))) {
+    if (
+      dayjs(`${date} ${startTime}`, "DD/MM/YYYY HH:mm").isAfter(
+        dayjs(`${date} ${endTime}`, "DD/MM/YYYY HH:mm")
+      )
+    ) {
       alert("L'heure de fin doit être après l'heure de début.");
       return;
     }

@@ -1,22 +1,35 @@
 import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import axios from "../../../../axiosConfig.js";
 import Section from "../../Design/Section.jsx";
 
+dayjs.extend(customParseFormat);
+
 export default function AppointmentInfoSection({ patientId }) {
   const [appointments, setAppointments] = useState([]);
+  const [originalAppointments, setOriginalAppointments] = useState([]);
+  const [tempDate, setTempDate] = useState({});
   const [statusFilter, setStatusFilter] = useState("Tous");
   const [showPastAppointments, setShowPastAppointments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [modifiedAppointments, setModifiedAppointments] = useState(new Set());
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get(`/appointment/${patientId}`);
-        setAppointments(response.data);
+        const formattedAppointments = response.data.map((appt) => ({
+          ...appt,
+          date: dayjs(appt.date, "DD/MM/YYYY").format("DD/MM/YYYY"),
+          startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
+          endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
+        }));
+        setAppointments(formattedAppointments);
+        setOriginalAppointments(formattedAppointments);
       } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous:", error);
       }
@@ -26,19 +39,55 @@ export default function AppointmentInfoSection({ patientId }) {
   }, [patientId]);
 
   const handleEdit = () => {
+    setOriginalAppointments([...appointments]);
     setIsEditing(true);
   };
 
   const handleInputChange = (id, field, value) => {
-    setAppointments((prevAppointments) =>
-      prevAppointments.map((appointment) =>
+    setAppointments((prev) =>
+      prev.map((appointment) =>
         appointment.id === id ? { ...appointment, [field]: value } : appointment
       )
     );
+    setModifiedAppointments((prev) => new Set(prev).add(id));
+  };
+
+  const handleDateChange = (id, value) => {
+    setTempDate((prev) => ({ ...prev, [id]: value }));
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+      handleInputChange(id, "date", value);
+    }
   };
 
   const handleSaveChanges = async () => {
     setLoading(true);
+
+    const pastModifiedAppointments = appointments.filter((appointment) => {
+      const originalAppointment = originalAppointments.find(
+        (orig) => orig.id === appointment.id
+      );
+
+      const newDateTime = dayjs(
+        `${appointment.date} ${appointment.startTime}`,
+        "DD/MM/YYYY HH:mm"
+      );
+      const isPast = newDateTime.isBefore(dayjs());
+
+      return (
+        isPast &&
+        originalAppointment &&
+        (originalAppointment.date !== appointment.date ||
+          originalAppointment.startTime !== appointment.startTime)
+      );
+    });
+
+    if (pastModifiedAppointments.length > 0) {
+      alert(
+        "Attention : Certains rendez-vous ont une date passée, ils seront tout de même enregistrés."
+      );
+    }
+
     try {
       await Promise.all(
         appointments.map((appointment) =>
@@ -46,6 +95,7 @@ export default function AppointmentInfoSection({ patientId }) {
         )
       );
       setIsEditing(false);
+      setModifiedAppointments(new Set());
     } catch (error) {
       console.error("Erreur lors de la mise à jour des rendez-vous:", error);
     } finally {
@@ -54,29 +104,46 @@ export default function AppointmentInfoSection({ patientId }) {
   };
 
   const handleCancel = () => {
+    setAppointments([...originalAppointments]);
+    setTempDate({});
     setIsEditing(false);
+    setModifiedAppointments(new Set());
   };
 
-  const handleDelete = async (id) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce rendez-vous ?")) {
-      try {
-        await axios.delete(`/appointment/${id}`);
-        setAppointments(appointments.filter((appt) => appt.id !== id));
-      } catch (error) {
-        console.error("Erreur lors de la suppression du rendez-vous:", error);
+  const handleDelete = (id) => {
+    setAppointments((prev) => prev.filter((appt) => appt.id !== id));
+    setModifiedAppointments((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(id);
+      return newSet;
+    });
+  };
+
+  const filteredAppointments = appointments.filter((appointment) => {
+    const statusMatch =
+      statusFilter === "Tous" || appointment.status === statusFilter;
+
+    const isModified = modifiedAppointments.has(appointment.id);
+
+    const appointmentDateTime = dayjs(
+      `${appointment.date} ${appointment.startTime}`,
+      "DD/MM/YYYY HH:mm"
+    );
+    const isPastAppointment = appointmentDateTime.isBefore(dayjs());
+
+    if (isEditing) {
+      return (
+        statusMatch &&
+        (isModified || showPastAppointments || !isPastAppointment)
+      );
+    } else {
+      if (showPastAppointments) {
+        return statusMatch && isPastAppointment;
+      } else {
+        return statusMatch && !isPastAppointment;
       }
     }
-  };
-
-  const filteredAppointments = appointments
-    .filter((appointment) =>
-      statusFilter === "Tous" ? true : appointment.status === statusFilter
-    )
-    .filter((appointment) =>
-      showPastAppointments
-        ? dayjs(appointment.start).isBefore(dayjs())
-        : dayjs(appointment.start).isAfter(dayjs())
-    );
+  });
 
   return (
     <Section
@@ -115,108 +182,73 @@ export default function AppointmentInfoSection({ patientId }) {
 
       {filteredAppointments.length > 0 ? (
         <ul className="text-sm">
-          {filteredAppointments.map((appointment) => {
-            const isPast = dayjs(appointment.start).isBefore(dayjs());
-
-            return (
-              <li
-                key={appointment.id}
-                className="mb-2 flex items-center w-full"
-              >
-                {isEditing && !isPast ? (
-                  <>
-                    <input
-                      type="date"
-                      value={dayjs(appointment.start).format("YYYY-MM-DD")}
-                      onChange={(e) =>
-                        handleInputChange(
-                          appointment.id,
-                          "start",
-                          dayjs(e.target.value).toISOString()
-                        )
-                      }
-                      className="border rounded px-2 py-1"
-                    />
-                    <input
-                      type="time"
-                      value={dayjs(appointment.start).format("HH:mm")}
-                      onChange={(e) =>
-                        handleInputChange(
-                          appointment.id,
-                          "start",
-                          dayjs(appointment.start)
-                            .hour(Number(e.target.value.split(":")[0]))
-                            .minute(Number(e.target.value.split(":")[1]))
-                            .toISOString()
-                        )
-                      }
-                      className="border rounded ml-1 px-2 py-1"
-                    />
-                    <input
-                      type="time"
-                      value={dayjs(appointment.end).format("HH:mm")}
-                      onChange={(e) =>
-                        handleInputChange(
-                          appointment.id,
-                          "end",
-                          dayjs(appointment.end)
-                            .hour(Number(e.target.value.split(":")[0]))
-                            .minute(Number(e.target.value.split(":")[1]))
-                            .toISOString()
-                        )
-                      }
-                      className="border rounded ml-1 px-2 py-1"
-                    />
-                    <input
-                      type="text"
-                      value={appointment.comment || ""}
-                      onChange={(e) =>
-                        handleInputChange(
-                          appointment.id,
-                          "comment",
-                          e.target.value
-                        )
-                      }
-                      className="ml-1 border rounded px-2 py-1 w-full"
-                      placeholder="Commentaire"
-                    />
-                    <button
-                      onClick={() => handleDelete(appointment.id)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                      aria-label="Supprimer le rendez-vous"
-                    >
-                      <FaTrash size={16} />
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <span
-                      className={`w-2 h-2 rounded-full mr-2 ${
-                        appointment.status === "Confirmé"
-                          ? "bg-green-500"
-                          : appointment.status === "En attente"
-                          ? "bg-orange-500"
-                          : "bg-red-500"
-                      }`}
-                    ></span>
-                    {dayjs(appointment.start).format("DD/MM/YYYY")}{" "}
-                    <span className="text-gray-500 ml-1">
-                      ({dayjs(appointment.start).format("HH:mm")} -{" "}
-                      {dayjs(appointment.end).format("HH:mm")})
-                    </span>
-                    {appointment.comment && (
-                      <span className="ml-4 text-gray-600 italic">
-                        {appointment.comment}
-                      </span>
-                    )}
-                  </>
-                )}
-              </li>
-            );
-          })}
+          {filteredAppointments.map((appointment) => (
+            <li key={appointment.id} className="mb-2 flex items-center w-full">
+              {isEditing ? (
+                <>
+                  <input
+                    type="text"
+                    value={tempDate[appointment.id] || appointment.date}
+                    onChange={(e) =>
+                      handleDateChange(appointment.id, e.target.value)
+                    }
+                    className="border rounded px-2 py-1"
+                    placeholder="JJ/MM/AAAA"
+                  />
+                  <input
+                    type="time"
+                    value={appointment.startTime}
+                    onChange={(e) =>
+                      handleInputChange(
+                        appointment.id,
+                        "startTime",
+                        e.target.value
+                      )
+                    }
+                    className="border rounded ml-1 px-2 py-1"
+                  />
+                  <input
+                    type="time"
+                    value={appointment.endTime}
+                    onChange={(e) =>
+                      handleInputChange(
+                        appointment.id,
+                        "endTime",
+                        e.target.value
+                      )
+                    }
+                    className="border rounded ml-1 px-2 py-1"
+                  />
+                  <button
+                    onClick={() => handleDelete(appointment.id)}
+                    className="ml-2 text-red-500 hover:text-red-700"
+                    aria-label="Supprimer le rendez-vous"
+                  >
+                    <FaTrash size={16} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span
+                    className={`w-2 h-2 rounded-full mr-2 ${
+                      appointment.status === "Confirmé"
+                        ? "bg-green-500"
+                        : appointment.status === "En attente"
+                        ? "bg-orange-500"
+                        : "bg-red-500"
+                    }`}
+                  ></span>
+                  {appointment.date}{" "}
+                  <span className="text-gray-500 ml-1">
+                    ({appointment.startTime} - {appointment.endTime})
+                  </span>
+                </>
+              )}
+            </li>
+          ))}
         </ul>
       ) : (
-        <p>Aucun rendez-vous correspondant.</p>
+        <p className="text-sm">Aucun rendez-vous correspondant.</p>
       )}
 
       {isEditing && (

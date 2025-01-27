@@ -1,12 +1,14 @@
 "use strict";
 
+const dayjs = require("dayjs");
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert("Appointments", [
       {
         userId: 1,
         patientId: 1,
-        date: "2027-03-15",
+        date: dayjs().subtract(7, "day").format("DD/MM/YYYY"),
         startTime: "10:00",
         endTime: "11:00",
         status: "Annulé",
@@ -17,7 +19,7 @@ module.exports = {
       {
         userId: 1,
         patientId: 1,
-        date: "2028-06-22",
+        date: dayjs().add(5, "day").format("DD/MM/YYYY"),
         startTime: "14:00",
         endTime: "15:00",
         status: "Confirmé",
@@ -28,7 +30,7 @@ module.exports = {
       {
         userId: 1,
         patientId: 1,
-        date: "2029-09-05",
+        date: dayjs().add(3, "day").format("DD/MM/YYYY"),
         startTime: "09:00",
         endTime: "10:00",
         status: "En attente",
@@ -38,10 +40,10 @@ module.exports = {
       },
       {
         userId: 1,
-        patientId: 2,
-        date: "2024-10-28",
-        startTime: "09:00",
-        endTime: "10:00",
+        patientId: 1,
+        date: dayjs().add(1, "day").format("DD/MM/YYYY"),
+        startTime: "11:00",
+        endTime: "12:00",
         status: "Confirmé",
         type: "Bilan",
         createdAt: new Date(),
@@ -49,10 +51,10 @@ module.exports = {
       },
       {
         userId: 1,
-        patientId: 3,
-        date: "2024-10-30",
-        startTime: "11:00",
-        endTime: "12:00",
+        patientId: 1,
+        date: dayjs().format("DD/MM/YYYY"),
+        startTime: "15:00",
+        endTime: "16:00",
         status: "En attente",
         type: "Pédiatrique",
         createdAt: new Date(),
@@ -60,10 +62,10 @@ module.exports = {
       },
       {
         userId: 1,
-        patientId: 4,
-        date: "2024-11-01",
-        startTime: "15:00",
-        endTime: "16:00",
+        patientId: 1,
+        date: dayjs().add(2, "day").format("DD/MM/YYYY"),
+        startTime: "10:30",
+        endTime: "11:30",
         status: "Confirmé",
         type: "Autre",
         createdAt: new Date(),
@@ -71,10 +73,10 @@ module.exports = {
       },
       {
         userId: 1,
-        patientId: 5,
-        date: "2024-11-03",
-        startTime: "10:30",
-        endTime: "11:30",
+        patientId: 6,
+        date: dayjs().add(4, "day").format("DD/MM/YYYY"),
+        startTime: "09:00",
+        endTime: "10:00",
         status: "Annulé",
         type: "Suivi",
         createdAt: new Date(),

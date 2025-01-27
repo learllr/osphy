@@ -65,4 +65,15 @@ export default class AppointmentDAO {
 
     return appointment;
   }
+
+  static async deleteAppointment(id) {
+    const appointment = await db.Appointment.findByPk(id);
+
+    if (!appointment) {
+      return null;
+    }
+
+    await appointment.destroy();
+    return true;
+  }
 }

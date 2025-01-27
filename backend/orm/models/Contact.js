@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class Contact extends Model {}

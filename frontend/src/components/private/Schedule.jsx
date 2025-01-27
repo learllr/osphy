@@ -1,10 +1,14 @@
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useState } from "react";
-import { FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import React, { useEffect, useState } from "react";
+import { determineBackgroundColor } from "../../../../shared/utils/colorUtils.js";
+import { determineStatusIcon } from "../../../../shared/utils/iconUtils.js";
 import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
+
+dayjs.extend(customParseFormat);
 
 export default function Schedule() {
   const [patients, setPatients] = useState([]);
@@ -26,40 +30,6 @@ export default function Schedule() {
     );
   }, []);
 
-  const determineBackgroundColor = useCallback((patient, birthDate) => {
-    if (!dayjs(birthDate).isValid()) {
-      console.warn("Date de naissance invalide pour:", patient);
-      return "#d1d5db";
-    }
-
-    const ageInMonths = dayjs().diff(dayjs(birthDate), "month");
-    const colors = {
-      Homme:
-        ageInMonths < 216
-          ? "#3B82F6" // Bleu clair pour enfant garçon
-          : "#1E40AF", // Bleu foncé pour adulte homme
-      Femme:
-        ageInMonths < 216
-          ? "#F472B6" // Rose clair pour enfant fille
-          : "#9D174D", // Rose foncé pour adulte femme
-      default:
-        ageInMonths < 216
-          ? "#6B7280" // Gris clair pour enfant neutre
-          : "#374151", // Gris foncé pour adulte neutre
-    };
-
-    return colors[patient.gender] || colors.default;
-  }, []);
-
-  const determineStatusIcon = (status) =>
-    ({
-      Confirmé: (
-        <FaCheckCircle className="text-green-500 bg-white rounded-lg" />
-      ),
-      "En attente": <FaClock className="text-yellow-500 bg-white rounded-lg" />,
-      Annulé: <FaTimesCircle className="text-red-500 bg-white rounded-lg" />,
-    }[status] || null);
-
   const formatAppointment = (appointment) => {
     const { patient, status, id, date, startTime, endTime, type } = appointment;
     if (!patient?.birthDate) {
@@ -67,19 +37,25 @@ export default function Schedule() {
       return null;
     }
 
+    const formattedDate = dayjs(date, "DD/MM/YYYY", true).format("DD/MM/YYYY");
+    const formattedStartTime = dayjs(startTime, "HH:mm:ss").format("HH:mm");
+    const formattedEndTime = dayjs(endTime, "HH:mm:ss").format("HH:mm");
+
     return {
       id,
       name: `${patient.firstName} ${patient.lastName}`,
-      date,
-      startTime,
-      endTime,
+      date: formattedDate,
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
       extendedProps: {
+        id,
         status,
+        date: formattedDate,
         icon: determineStatusIcon(status),
         backgroundColor: determineBackgroundColor(patient, patient.birthDate),
         type,
-        startTime,
-        endTime,
+        startTime: formattedStartTime,
+        endTime: formattedEndTime,
       },
     };
   };
@@ -89,9 +65,23 @@ export default function Schedule() {
     if (formatted) setAppointments((prev) => [...prev, formatted]);
   };
 
+  const handleDeleteAppointment = async (appointmentId) => {
+    if (!appointmentId) return;
+
+    try {
+      await axios.delete(`/appointment/${appointmentId}`);
+      setAppointments((prev) =>
+        prev.filter((appointment) => appointment.id !== appointmentId)
+      );
+    } catch (error) {
+      console.error("Erreur lors de la suppression du rendez-vous :", error);
+      alert("Échec de la suppression du rendez-vous.");
+    }
+  };
+
   return (
     <Body>
-      <div className="flex flex-col lg:flex-row gap-6 mx-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="w-full lg:w-1/5 bg-white p-6 border border-gray-300 rounded">
           <h2 className="text-xl font-semibold mb-4 text-gray-700">
             Ajouter un rendez-vous
@@ -105,7 +95,10 @@ export default function Schedule() {
           <h2 className="text-xl font-semibold mb-4 text-gray-700">
             Calendrier des rendez-vous
           </h2>
-          <CalendarView events={appointments} />
+          <CalendarView
+            events={appointments}
+            onDelete={handleDeleteAppointment}
+          />
         </div>
       </div>
     </Body>
