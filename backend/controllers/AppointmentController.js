@@ -31,7 +31,8 @@ export const getAppointmentsByPatientId = async (req, res) => {
 };
 
 export const createAppointment = async (req, res) => {
-  const { patientId, type, date, startTime, endTime, status } = req.body;
+  const { patientId, type, date, startTime, endTime, status, comment } =
+    req.body;
   const userId = req.user.id;
 
   try {
@@ -42,6 +43,7 @@ export const createAppointment = async (req, res) => {
       date,
       startTime,
       endTime,
+      comment,
       status: status || "En attente",
     });
 

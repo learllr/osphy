@@ -28,6 +28,7 @@ export default function AppointmentInfoSection({ patientId }) {
           date: dayjs(appt.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
           startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
           endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
+          comment: appt.comment || "",
         }));
         setAppointments(formattedAppointments);
         setOriginalAppointments(formattedAppointments);
@@ -126,6 +127,7 @@ export default function AppointmentInfoSection({ patientId }) {
             startTime: appointment.startTime,
             endTime: appointment.endTime,
             status: appointment.status,
+            comment: appointment.comment,
           })
         );
 

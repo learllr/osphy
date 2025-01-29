@@ -46,6 +46,7 @@ export default class AppointmentDAO {
       startTime: appointmentData.startTime,
       endTime: appointmentData.endTime,
       status: appointmentData.status || "En attente",
+      comment: appointmentData.comment,
     });
   }
 

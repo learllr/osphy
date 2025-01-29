@@ -14,30 +14,40 @@ export default function AppointmentItem({
     : "";
 
   return (
-    <li className="mb-2 flex items-center w-full">
+    <li className="mb-2 flex flex-col md:flex-row items-start md:items-center w-full">
       {isEditing ? (
         <>
-          <input
-            type="date"
-            value={appointment.date || ""}
-            onChange={(e) => handleDateChange(appointment.id, e.target.value)}
-            className="border rounded px-2 py-1"
-          />
-          <input
-            type="time"
-            value={appointment.startTime || ""}
+          <div className="flex gap-2 w-full md:w-auto">
+            <input
+              type="date"
+              value={appointment.date || ""}
+              onChange={(e) => handleDateChange(appointment.id, e.target.value)}
+              className="border rounded px-2 py-1 w-full md:w-auto"
+            />
+            <input
+              type="time"
+              value={appointment.startTime || ""}
+              onChange={(e) =>
+                handleInputChange(appointment.id, "startTime", e.target.value)
+              }
+              className="border rounded px-2 py-1 w-full md:w-auto"
+            />
+            <input
+              type="time"
+              value={appointment.endTime || ""}
+              onChange={(e) =>
+                handleInputChange(appointment.id, "endTime", e.target.value)
+              }
+              className="border rounded px-2 py-1 w-full md:w-auto"
+            />
+          </div>
+          <textarea
+            value={appointment.comment || ""}
             onChange={(e) =>
-              handleInputChange(appointment.id, "startTime", e.target.value)
+              handleInputChange(appointment.id, "comment", e.target.value)
             }
-            className="border rounded ml-2 px-2 py-1"
-          />
-          <input
-            type="time"
-            value={appointment.endTime || ""}
-            onChange={(e) =>
-              handleInputChange(appointment.id, "endTime", e.target.value)
-            }
-            className="border rounded ml-2 px-2 py-1"
+            placeholder="Ajouter un commentaire"
+            className="border rounded px-2 py-1 mt-2 w-full ml-2"
           />
           <button
             onClick={() => handleDelete(appointment.id)}
@@ -49,19 +59,26 @@ export default function AppointmentItem({
         </>
       ) : (
         <>
-          <span
-            className={`w-2 h-2 rounded-full mr-2 ${
-              appointment.status === "Confirmé"
-                ? "bg-green-500"
-                : appointment.status === "En attente"
-                ? "bg-orange-500"
-                : "bg-red-500"
-            }`}
-          ></span>
-          {formattedDate}{" "}
-          <span className="text-gray-500 ml-2">
-            ({appointment.startTime} - {appointment.endTime})
-          </span>
+          <div className="flex items-center w-full">
+            <span
+              className={`w-2 h-2 rounded-full mr-2 ${
+                appointment.status === "Confirmé"
+                  ? "bg-green-500"
+                  : appointment.status === "En attente"
+                  ? "bg-orange-500"
+                  : "bg-red-500"
+              }`}
+            ></span>
+            {formattedDate}{" "}
+            <span className="text-gray-600 ml-2">
+              ({appointment.startTime} - {appointment.endTime})
+            </span>
+            {appointment.comment && (
+              <p className="text-sm text-gray-500 ml-2 italic">
+                {appointment.comment}
+              </p>
+            )}
+          </div>
         </>
       )}
     </li>
