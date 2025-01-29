@@ -12,7 +12,6 @@ dayjs.extend(customParseFormat);
 export default function AppointmentInfoSection({ patientId }) {
   const [appointments, setAppointments] = useState([]);
   const [originalAppointments, setOriginalAppointments] = useState([]);
-  const [tempDate, setTempDate] = useState({});
   const [statusFilter, setStatusFilter] = useState("Tous");
   const [showPastAppointments, setShowPastAppointments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -26,7 +25,7 @@ export default function AppointmentInfoSection({ patientId }) {
         const response = await axios.get(`/appointment/${patientId}`);
         const formattedAppointments = response.data.map((appt) => ({
           ...appt,
-          date: dayjs(appt.date, "DD/MM/YYYY").format("DD/MM/YYYY"),
+          date: dayjs(appt.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
           startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
           endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
         }));
@@ -55,9 +54,12 @@ export default function AppointmentInfoSection({ patientId }) {
   };
 
   const handleDateChange = (id, value) => {
-    const formattedDate = dayjs(value, "YYYY-MM-DD").format("DD/MM/YYYY");
-    setTempDate((prev) => ({ ...prev, [id]: formattedDate }));
-    handleInputChange(id, "date", formattedDate);
+    setAppointments((prev) =>
+      prev.map((appointment) =>
+        appointment.id === id ? { ...appointment, date: value } : appointment
+      )
+    );
+    setModifiedAppointments((prev) => new Set(prev).add(id));
   };
 
   const handleDelete = (id) => {
@@ -70,22 +72,78 @@ export default function AppointmentInfoSection({ patientId }) {
     });
   };
 
+  const handleAddAppointment = () => {
+    const newAppointment = {
+      id: null,
+      patientId,
+      date: dayjs().format("YYYY-MM-DD"),
+      startTime: "",
+      endTime: "",
+      status: "En attente",
+    };
+    setAppointments((prev) => [...prev, newAppointment]);
+    setModifiedAppointments((prev) => new Set(prev).add(newAppointment.id));
+  };
+
   const handleSaveChanges = async () => {
     setLoading(true);
     try {
+      const pastAddedAppointments = appointments.filter((appointment) => {
+        const appointmentDateTime = dayjs(
+          `${appointment.date} ${appointment.startTime}`,
+          "YYYY-MM-DD HH:mm"
+        );
+        return appointment.id === null && appointmentDateTime.isBefore(dayjs());
+      });
+
+      if (pastAddedAppointments.length > 0) {
+        alert(
+          "Attention : Certains rendez-vous ajoutés ont une date passée et apparaîtront dans 'Rendez-vous passés'."
+        );
+      }
+
       await Promise.all(
         appointmentsToDelete.map((id) => axios.delete(`/appointment/${id}`))
       );
 
-      await Promise.all(
-        appointments.map((appointment) =>
-          axios.put(`/appointment/${appointment.id}`, appointment)
-        )
-      );
+      const updates = appointments
+        .filter((appointment) => appointment.id !== null)
+        .map((appointment) =>
+          axios.put(`/appointment/${appointment.id}`, {
+            ...appointment,
+            date: dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
+          })
+        );
+
+      const newAppointments = appointments
+        .filter((appointment) => appointment.id === null)
+        .map((appointment) =>
+          axios.post(`/appointment`, {
+            patientId: appointment.patientId,
+            date: dayjs(appointment.date, "YYYY-MM-DD").isValid()
+              ? dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+              : "",
+            startTime: appointment.startTime,
+            endTime: appointment.endTime,
+            status: appointment.status,
+          })
+        );
+
+      await Promise.all([...updates, ...newAppointments]);
 
       setIsEditing(false);
       setModifiedAppointments(new Set());
       setAppointmentsToDelete([]);
+
+      const response = await axios.get(`/appointment/${patientId}`);
+      const formattedAppointments = response.data.map((appt) => ({
+        ...appt,
+        date: dayjs(appt.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+        startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
+        endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
+      }));
+      setAppointments(formattedAppointments);
+      setOriginalAppointments(formattedAppointments);
     } catch (error) {
       console.error("Erreur lors de la mise à jour des rendez-vous:", error);
     } finally {
@@ -95,7 +153,6 @@ export default function AppointmentInfoSection({ patientId }) {
 
   const handleCancel = () => {
     setAppointments([...originalAppointments]);
-    setTempDate({});
     setIsEditing(false);
     setModifiedAppointments(new Set());
     setAppointmentsToDelete([]);
@@ -104,23 +161,24 @@ export default function AppointmentInfoSection({ patientId }) {
   const filteredAppointments = appointments.filter((appointment) => {
     const statusMatch =
       statusFilter === "Tous" || appointment.status === statusFilter;
-    const isModified = modifiedAppointments.has(appointment.id);
     const appointmentDateTime = dayjs(
       `${appointment.date} ${appointment.startTime}`,
-      "DD/MM/YYYY HH:mm"
+      "YYYY-MM-DD HH:mm"
     );
     const isPastAppointment = appointmentDateTime.isBefore(dayjs());
+
     if (isEditing) {
+      // En mode édition, on affiche les rendez-vous futurs ou ceux qui sont en cours de modification
       return (
         statusMatch &&
-        (isModified || showPastAppointments || !isPastAppointment)
+        (!isPastAppointment || modifiedAppointments.has(appointment.id))
       );
     } else {
-      if (showPastAppointments) {
-        return statusMatch && isPastAppointment;
-      } else {
-        return statusMatch && !isPastAppointment;
-      }
+      // Hors mode édition, on affiche soit les passés, soit les futurs
+      return (
+        statusMatch &&
+        (showPastAppointments ? isPastAppointment : !isPastAppointment)
+      );
     }
   });
 
@@ -139,12 +197,11 @@ export default function AppointmentInfoSection({ patientId }) {
       />
       {filteredAppointments.length > 0 ? (
         <ul className="text-sm">
-          {filteredAppointments.map((appointment) => (
+          {filteredAppointments.map((appointment, index) => (
             <AppointmentItem
-              key={appointment.id}
+              key={index}
               appointment={appointment}
               isEditing={isEditing}
-              tempDate={tempDate}
               handleDateChange={handleDateChange}
               handleInputChange={handleInputChange}
               handleDelete={handleDelete}
@@ -155,14 +212,25 @@ export default function AppointmentInfoSection({ patientId }) {
         <p className="text-sm">Aucun rendez-vous correspondant.</p>
       )}
       {isEditing && (
-        <div className="mt-4 flex gap-2">
-          <Button onClick={handleSaveChanges} disabled={loading}>
-            {loading ? "Enregistrement..." : "Enregistrer"}
-          </Button>
-          <Button onClick={handleCancel} variant="secondary" disabled={loading}>
-            Annuler
-          </Button>
-        </div>
+        <>
+          <div className="mt-4 flex gap-2">
+            <Button onClick={handleAddAppointment} variant="outline">
+              Ajouter un rendez-vous
+            </Button>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Button onClick={handleSaveChanges} disabled={loading}>
+              {loading ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+            <Button
+              onClick={handleCancel}
+              variant="secondary"
+              disabled={loading}
+            >
+              Annuler
+            </Button>
+          </div>
+        </>
       )}
     </Section>
   );

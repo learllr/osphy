@@ -5,17 +5,12 @@ import { FaTrash } from "react-icons/fa";
 export default function AppointmentItem({
   appointment,
   isEditing,
-  tempDate,
   handleDateChange,
   handleInputChange,
   handleDelete,
 }) {
-  const formattedDate = tempDate[appointment.id]
-    ? dayjs(tempDate[appointment.id], "DD/MM/YYYY").isValid()
-      ? dayjs(tempDate[appointment.id], "DD/MM/YYYY").format("YYYY-MM-DD")
-      : ""
-    : dayjs(appointment.date, "DD/MM/YYYY").isValid()
-    ? dayjs(appointment.date, "DD/MM/YYYY").format("YYYY-MM-DD")
+  const formattedDate = dayjs(appointment.date, "YYYY-MM-DD").isValid()
+    ? dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY")
     : "";
 
   return (
@@ -24,25 +19,25 @@ export default function AppointmentItem({
         <>
           <input
             type="date"
-            value={formattedDate}
+            value={appointment.date || ""}
             onChange={(e) => handleDateChange(appointment.id, e.target.value)}
             className="border rounded px-2 py-1"
           />
           <input
             type="time"
-            value={appointment.startTime}
+            value={appointment.startTime || ""}
             onChange={(e) =>
               handleInputChange(appointment.id, "startTime", e.target.value)
             }
-            className="border rounded ml-1 px-2 py-1"
+            className="border rounded ml-2 px-2 py-1"
           />
           <input
             type="time"
-            value={appointment.endTime}
+            value={appointment.endTime || ""}
             onChange={(e) =>
               handleInputChange(appointment.id, "endTime", e.target.value)
             }
-            className="border rounded ml-1 px-2 py-1"
+            className="border rounded ml-2 px-2 py-1"
           />
           <button
             onClick={() => handleDelete(appointment.id)}
@@ -63,8 +58,8 @@ export default function AppointmentItem({
                 : "bg-red-500"
             }`}
           ></span>
-          {appointment.date}{" "}
-          <span className="text-gray-500 ml-1">
+          {formattedDate}{" "}
+          <span className="text-gray-500 ml-2">
             ({appointment.startTime} - {appointment.endTime})
           </span>
         </>

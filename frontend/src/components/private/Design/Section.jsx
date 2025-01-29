@@ -10,7 +10,7 @@ export default function Section({
   hideEditButton = false,
 }) {
   return (
-    <div className="bg-white p-6 rounded-md border border-gray-200 relative">
+    <div className="bg-white p-6 rounded-md border border-gray-200 relative text-sm">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-700">
           {title} {showCount && `(${count})`}
