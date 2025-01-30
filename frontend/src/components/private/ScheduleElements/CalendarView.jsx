@@ -30,7 +30,7 @@ export default function CalendarView({ events, onDelete, onEdit }) {
   const handleEventSelection = useCallback((event) => {
     if (!event.extendedProps) return;
 
-    const { name, status, type, date, startTime, endTime, id } =
+    const { name, status, type, date, startTime, endTime, id, patientId } =
       event.extendedProps || {};
 
     const formattedEvent = {
@@ -41,6 +41,7 @@ export default function CalendarView({ events, onDelete, onEdit }) {
       date: date ? dayjs(date, "DD/MM/YYYY").format("DD/MM/YYYY") : "Inconnue",
       startTime: dayjs(startTime, "HH:mm").format("HH:mm"),
       endTime: dayjs(endTime, "HH:mm").format("HH:mm"),
+      patientId: patientId || null,
     };
 
     setSelectedEvent(formattedEvent);

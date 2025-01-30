@@ -32,8 +32,9 @@ export default function Schedule() {
 
   const formatAppointment = (appointment) => {
     const { patient, status, id, date, startTime, endTime, type } = appointment;
-    if (!patient?.birthDate) {
-      console.error("Patient ou date de naissance manquants");
+
+    if (!patient?.birthDate || !patient?.id) {
+      console.error("Patient, ID ou date de naissance manquants");
       return null;
     }
 
@@ -49,6 +50,7 @@ export default function Schedule() {
       endTime: formattedEndTime,
       extendedProps: {
         id,
+        patientId: patient.id,
         status,
         date: formattedDate,
         icon: determineStatusIcon(status),

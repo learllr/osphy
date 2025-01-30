@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function DetailItem({
   label,
@@ -10,6 +11,7 @@ export default function DetailItem({
   options = [],
   min,
   max,
+  link = null,
 }) {
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
@@ -41,9 +43,9 @@ export default function DetailItem({
               }
             >
               <option value="">Non renseigné</option>
-              {options.map((option, idx) => (
-                <option key={idx} value={option}>
-                  {option}
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -57,6 +59,13 @@ export default function DetailItem({
               className="bg-gray-100 px-4 py-2 rounded-md"
             />
           )
+        ) : link ? (
+          <Link
+            to={link}
+            className="px-4 py-2 rounded-md text-blue-600 underline"
+          >
+            {value || "Non renseigné"}
+          </Link>
         ) : (
           <span className="px-4 py-2 rounded-md text-gray-700">
             {value || "Non renseigné"}

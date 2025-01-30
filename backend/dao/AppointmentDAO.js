@@ -10,7 +10,7 @@ export default class AppointmentDAO {
         {
           model: Patient,
           as: "patient",
-          attributes: ["firstName", "lastName", "birthDate", "gender"],
+          attributes: ["id", "firstName", "lastName", "birthDate", "gender"],
         },
       ],
       order: [
@@ -27,7 +27,7 @@ export default class AppointmentDAO {
         {
           model: Patient,
           as: "patient",
-          attributes: ["firstName", "lastName", "birthDate", "gender"],
+          attributes: ["id", "firstName", "lastName", "birthDate", "gender"],
         },
       ],
       order: [

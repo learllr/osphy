@@ -88,12 +88,17 @@ export default function AppointmentDialog({
                 onChange={(value) => handleChange(field, value)}
                 type={type}
                 options={options}
+                link={
+                  field === "name" && editableEvent.patientId
+                    ? `/patient/${editableEvent.patientId}`
+                    : null
+                }
               />
             ))}
           </div>
         )}
         <div className="flex space-x-4 mt-6">
-          {editableEvent && !isEventInThePast(editableEvent) ? (
+          {editableEvent && !isEventInThePast(editableEvent) && (
             <>
               {isEditing ? (
                 <Button onClick={handleSave}>Enregistrer</Button>
@@ -104,11 +109,8 @@ export default function AppointmentDialog({
                 Supprimer
               </Button>
             </>
-          ) : (
-            <p className="text-red-500 text-sm">
-              Ce rendez-vous est déjà passé.
-            </p>
           )}
+
           <Dialog.Close asChild>
             <Button variant="outline">Fermer</Button>
           </Dialog.Close>
