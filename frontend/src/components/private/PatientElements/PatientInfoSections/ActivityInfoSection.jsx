@@ -9,6 +9,7 @@ export default function ActivityInfoSection({ patientId, activities }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivities, setEditedActivities] = useState(activities || []);
   const [initialActivities, setInitialActivities] = useState(activities || []);
+  const [deletedActivities, setDeletedActivities] = useState([]);
 
   useEffect(() => {
     setEditedActivities(activities);
@@ -42,6 +43,7 @@ export default function ActivityInfoSection({ patientId, activities }) {
     setIsEditing((prev) => !prev);
     if (!isEditing) {
       setInitialActivities([...editedActivities]);
+      setDeletedActivities([]);
     }
   };
 
@@ -61,19 +63,31 @@ export default function ActivityInfoSection({ patientId, activities }) {
   };
 
   const handleDelete = (id) => {
-    setEditedActivities((prev) => prev.filter((a) => a.id !== id));
-    deleteActivityMutation.mutate(id);
+    if (!id) {
+      setEditedActivities((prev) => prev.filter((a) => a.id !== id));
+    } else {
+      setDeletedActivities((prev) => [...prev, id]);
+      setEditedActivities((prev) => prev.filter((a) => a.id !== id));
+    }
   };
 
   const handleSave = () => {
     editedActivities.forEach((activity) => {
-      if (activity.id) updateActivityMutation.mutate(activity);
+      if (activity.id && !deletedActivities.includes(activity.id)) {
+        updateActivityMutation.mutate(activity);
+      }
     });
+
+    deletedActivities.forEach((id) => {
+      deleteActivityMutation.mutate(id);
+    });
+
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedActivities([...initialActivities]);
+    setDeletedActivities([]);
     setIsEditing(false);
   };
 
