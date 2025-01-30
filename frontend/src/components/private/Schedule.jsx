@@ -34,30 +34,38 @@ export default function Schedule() {
     const { patient, status, id, date, startTime, endTime, type } = appointment;
 
     if (!patient?.birthDate || !patient?.id) {
-      console.error("Patient, ID ou date de naissance manquants");
       return null;
     }
 
-    const formattedDate = dayjs(date, "DD/MM/YYYY", true).format("DD/MM/YYYY");
-    const formattedStartTime = dayjs(startTime, "HH:mm:ss").format("HH:mm");
-    const formattedEndTime = dayjs(endTime, "HH:mm:ss").format("HH:mm");
+    const formattedDate = dayjs(date, "DD/MM/YYYY", true).isValid()
+      ? dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD")
+      : dayjs(date).format("YYYY-MM-DD");
+
+    const startDateTime = dayjs(
+      `${formattedDate} ${startTime}`,
+      "YYYY-MM-DD HH:mm:ss"
+    ).toISOString();
+
+    const endDateTime = dayjs(
+      `${formattedDate} ${endTime}`,
+      "YYYY-MM-DD HH:mm:ss"
+    ).toISOString();
 
     return {
       id,
       name: `${patient.firstName} ${patient.lastName}`,
-      date: formattedDate,
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
+      start: startDateTime,
+      end: endDateTime,
       extendedProps: {
         id,
         patientId: patient.id,
         status,
-        date: formattedDate,
         icon: determineStatusIcon(status),
         backgroundColor: determineBackgroundColor(patient, patient.birthDate),
         type,
-        startTime: formattedStartTime,
-        endTime: formattedEndTime,
+        startTime,
+        endTime,
+        date,
       },
     };
   };
@@ -76,7 +84,6 @@ export default function Schedule() {
         prev.filter((appointment) => appointment.id !== appointmentId)
       );
     } catch (error) {
-      console.error("Erreur lors de la suppression du rendez-vous :", error);
       alert("Échec de la suppression du rendez-vous.");
     }
   };

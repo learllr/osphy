@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
+import { isEventInThePast } from "../../../../../../shared/utils/dateUtils.js";
 import axios from "../../../../axiosConfig.js";
 import Section from "../../Design/Section.jsx";
 import AppointmentFilters from "./Appointment/AppointmentFilters.jsx";
@@ -23,12 +24,11 @@ export default function AppointmentInfoSection({ patientId }) {
     const fetchAppointments = async () => {
       try {
         const response = await axios.get(`/appointment/${patientId}`);
-        const formattedAppointments = response.data.map((appt) => ({
-          ...appt,
-          date: dayjs(appt.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
-          startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
-          endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
-          comment: appt.comment || "",
+        const formattedAppointments = response.data.map((appointment) => ({
+          ...appointment,
+          date: dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format(
+            "DD/MM/YYYY"
+          ),
         }));
         setAppointments(formattedAppointments);
         setOriginalAppointments(formattedAppointments);
@@ -55,9 +55,14 @@ export default function AppointmentInfoSection({ patientId }) {
   };
 
   const handleDateChange = (id, value) => {
+    const formattedDate = dayjs(value, ["YYYY-MM-DD", "DD/MM/YYYY"]).format(
+      "DD/MM/YYYY"
+    );
     setAppointments((prev) =>
       prev.map((appointment) =>
-        appointment.id === id ? { ...appointment, date: value } : appointment
+        appointment.id === id
+          ? { ...appointment, date: formattedDate }
+          : appointment
       )
     );
     setModifiedAppointments((prev) => new Set(prev).add(id));
@@ -77,7 +82,7 @@ export default function AppointmentInfoSection({ patientId }) {
     const newAppointment = {
       id: null,
       patientId,
-      date: dayjs().format("YYYY-MM-DD"),
+      date: dayjs().format("DD/MM/YYYY"),
       startTime: "",
       endTime: "",
       status: "En attente",
@@ -89,20 +94,6 @@ export default function AppointmentInfoSection({ patientId }) {
   const handleSaveChanges = async () => {
     setLoading(true);
     try {
-      const pastAddedAppointments = appointments.filter((appointment) => {
-        const appointmentDateTime = dayjs(
-          `${appointment.date} ${appointment.startTime}`,
-          "YYYY-MM-DD HH:mm"
-        );
-        return appointment.id === null && appointmentDateTime.isBefore(dayjs());
-      });
-
-      if (pastAddedAppointments.length > 0) {
-        alert(
-          "Attention : Certains rendez-vous ajoutés ont une date passée et apparaîtront dans 'Rendez-vous passés'."
-        );
-      }
-
       await Promise.all(
         appointmentsToDelete.map((id) => axios.delete(`/appointment/${id}`))
       );
@@ -112,7 +103,7 @@ export default function AppointmentInfoSection({ patientId }) {
         .map((appointment) =>
           axios.put(`/appointment/${appointment.id}`, {
             ...appointment,
-            date: dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
+            date: dayjs(appointment.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
           })
         );
 
@@ -121,9 +112,7 @@ export default function AppointmentInfoSection({ patientId }) {
         .map((appointment) =>
           axios.post(`/appointment`, {
             patientId: appointment.patientId,
-            date: dayjs(appointment.date, "YYYY-MM-DD").isValid()
-              ? dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY")
-              : "",
+            date: dayjs(appointment.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
             startTime: appointment.startTime,
             endTime: appointment.endTime,
             status: appointment.status,
@@ -138,11 +127,11 @@ export default function AppointmentInfoSection({ patientId }) {
       setAppointmentsToDelete([]);
 
       const response = await axios.get(`/appointment/${patientId}`);
-      const formattedAppointments = response.data.map((appt) => ({
-        ...appt,
-        date: dayjs(appt.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
-        startTime: dayjs(appt.startTime, "HH:mm:ss").format("HH:mm"),
-        endTime: dayjs(appt.endTime, "HH:mm:ss").format("HH:mm"),
+      const formattedAppointments = response.data.map((appointment) => ({
+        ...appointment,
+        date: dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format(
+          "DD/MM/YYYY"
+        ),
       }));
       setAppointments(formattedAppointments);
       setOriginalAppointments(formattedAppointments);
@@ -163,11 +152,11 @@ export default function AppointmentInfoSection({ patientId }) {
   const filteredAppointments = appointments.filter((appointment) => {
     const statusMatch =
       statusFilter === "Tous" || appointment.status === statusFilter;
-    const appointmentDateTime = dayjs(
-      `${appointment.date} ${appointment.startTime}`,
-      "YYYY-MM-DD HH:mm"
+
+    const isPastAppointment = isEventInThePast(
+      appointment.date,
+      appointment.startTime
     );
-    const isPastAppointment = appointmentDateTime.isBefore(dayjs());
 
     if (isEditing) {
       return (
@@ -184,7 +173,7 @@ export default function AppointmentInfoSection({ patientId }) {
 
   return (
     <Section
-      title="Rendez-vous à venir"
+      title="Rendez-vous"
       count={filteredAppointments.length}
       onEdit={handleEdit}
       hideEditButton={showPastAppointments}

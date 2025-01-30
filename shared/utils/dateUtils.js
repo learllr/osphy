@@ -21,11 +21,17 @@ export const calculateAge = (birthDate) => {
 export const formatEventTime = (time) =>
   time ? dayjs(`1970-01-01T${time}`).format("HH:mm") : "";
 
-export const isEventInThePast = (event) => {
-  const eventDateTime = dayjs(
-    `${event.date} ${event.startTime}`,
-    "DD/MM/YYYY HH:mm"
-  );
+export const isEventInThePast = (date, startTime = null) => {
+  let eventDateTime;
+
+  if (startTime) {
+    eventDateTime = dayjs(`${date} ${startTime}`, [
+      "DD/MM/YYYY HH:mm",
+      "YYYY-MM-DD HH:mm",
+    ]);
+  } else {
+    eventDateTime = dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"]).startOf("day");
+  }
 
   return eventDateTime.isBefore(dayjs());
 };

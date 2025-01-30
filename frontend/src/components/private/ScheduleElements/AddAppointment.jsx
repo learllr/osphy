@@ -1,12 +1,8 @@
 import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "../../../axiosConfig.js";
 import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
-
-dayjs.extend(utc);
 
 export default function AddAppointment({ patients, onAppointmentAdd }) {
   const { register, handleSubmit, setValue, watch, reset } = useForm({
@@ -43,9 +39,8 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     }
 
     if (
-      dayjs(`${date} ${startTime}`, "DD/MM/YYYY HH:mm").isAfter(
-        dayjs(`${date} ${endTime}`, "DD/MM/YYYY HH:mm")
-      )
+      new Date(`${date} ${startTime}`).getTime() >=
+      new Date(`${date} ${endTime}`).getTime()
     ) {
       alert("L'heure de fin doit être après l'heure de début.");
       return;

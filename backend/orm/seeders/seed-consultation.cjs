@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.bulkInsert("Consultations", [
       {
         patientId: 1,
-        date: "2023-01-15",
+        date: "2027-01-15",
         patientComplaint: "Douleur au dos",
         aggravatingFactors: "S'aggrave en position assise prolongée",
         relievingFactors: "S'améliore en se levant",
@@ -22,7 +22,7 @@ module.exports = {
       },
       {
         patientId: 1,
-        date: "2023-06-10",
+        date: "2026-06-10",
         patientComplaint: "Douleur à l'épaule droite",
         aggravatingFactors: "Douleur en levant le bras",
         relievingFactors: "Repos et glace",

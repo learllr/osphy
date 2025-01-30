@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import * as Dialog from "@radix-ui/react-dialog";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { isEventInThePast } from "../../../../shared/utils/dateUtils.js";
 import DetailItem from "../private/Design/DetailItem.jsx";
+
+dayjs.extend(customParseFormat);
 
 export default function AppointmentDialog({
   selectedEvent,
@@ -15,11 +19,30 @@ export default function AppointmentDialog({
   onDelete,
 }) {
   const handleChange = (field, value) => {
-    setEditableEvent((prev) => ({ ...prev, [field]: value }));
+    setEditableEvent((prev) => {
+      let formattedValue = value;
+
+      if (field === "date") {
+        formattedValue = dayjs(value, "YYYY-MM-DD").format("DD/MM/YYYY");
+      } else if (field === "startTime" || field === "endTime") {
+        formattedValue = dayjs(value, "HH:mm:ss").format("HH:mm");
+      }
+
+      return { ...prev, [field]: formattedValue };
+    });
   };
 
   const handleSave = () => {
-    if (onEdit && editableEvent) onEdit(editableEvent);
+    if (!editableEvent) return;
+
+    const updatedEvent = {
+      ...editableEvent,
+      date: dayjs(editableEvent.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+      startTime: dayjs(editableEvent.startTime, "HH:mm").format("HH:mm:ss"),
+      endTime: dayjs(editableEvent.endTime, "HH:mm").format("HH:mm:ss"),
+    };
+
+    onEdit(updatedEvent);
     setIsEditing(false);
   };
 
@@ -98,19 +121,19 @@ export default function AppointmentDialog({
           </div>
         )}
         <div className="flex space-x-4 mt-6">
-          {editableEvent && !isEventInThePast(editableEvent) && (
-            <>
-              {isEditing ? (
-                <Button onClick={handleSave}>Enregistrer</Button>
-              ) : (
-                <Button onClick={() => setIsEditing(true)}>Modifier</Button>
-              )}
-              <Button variant="destructive" onClick={handleDelete}>
-                Supprimer
-              </Button>
-            </>
-          )}
-
+          {editableEvent &&
+            !isEventInThePast(editableEvent.date, editableEvent.startTime) && (
+              <>
+                {isEditing ? (
+                  <Button onClick={handleSave}>Enregistrer</Button>
+                ) : (
+                  <Button onClick={() => setIsEditing(true)}>Modifier</Button>
+                )}
+                <Button variant="destructive" onClick={handleDelete}>
+                  Supprimer
+                </Button>
+              </>
+            )}
           <Dialog.Close asChild>
             <Button variant="outline">Fermer</Button>
           </Dialog.Close>

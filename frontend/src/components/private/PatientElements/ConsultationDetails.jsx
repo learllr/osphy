@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
+import { isEventInThePast } from "../../../../../shared/utils/dateUtils.js";
 import axios from "../../../axiosConfig.js";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside.js";
 import DetailItem from "../Design/DetailItem.jsx";
@@ -100,6 +100,8 @@ export default function ConsultationDetails({
     },
   });
 
+  const isPastConsultation = isEventInThePast(consultation.date);
+
   const fields = [
     { label: "Plainte", field: "patientComplaint", type: "text" },
     { label: "Facteurs aggravants", field: "aggravatingFactors", type: "text" },
@@ -132,11 +134,10 @@ export default function ConsultationDetails({
   return (
     <div ref={sectionRef}>
       <Section
-        title={`Détails de la consultation du ${dayjs(consultation.date).format(
-          "DD/MM/YYYY"
-        )}`}
+        title={`Détails de la consultation du ${consultation.date}`}
         onEdit={handleEditClick}
         showCount={false}
+        hideEditButton={isPastConsultation}
       >
         <div className="space-y-8">
           <div>

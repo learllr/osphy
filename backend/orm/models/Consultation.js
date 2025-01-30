@@ -1,4 +1,5 @@
 "use strict";
+import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
@@ -25,8 +26,15 @@ export default (sequelize) => {
       date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
-        validate: {
-          isDate: true,
+        get() {
+          const rawValue = this.getDataValue("date");
+          return rawValue ? dayjs(rawValue).format("DD/MM/YYYY") : null;
+        },
+        set(value) {
+          this.setDataValue(
+            "date",
+            dayjs(value, "DD/MM/YYYY").format("YYYY-MM-DD")
+          );
         },
       },
       patientComplaint: {

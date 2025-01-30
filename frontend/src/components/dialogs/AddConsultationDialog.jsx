@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import dayjs from "dayjs";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
@@ -23,7 +22,7 @@ export default function AddConsultationDialog({
 }) {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      date: dayjs().format("YYYY-MM-DD"),
+      date: new Date().toISOString().split("T")[0],
       patientComplaint: "",
     },
   });

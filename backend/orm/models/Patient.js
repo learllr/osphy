@@ -1,4 +1,5 @@
 "use strict";
+import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
@@ -43,8 +44,18 @@ export default (sequelize) => {
         },
       },
       birthDate: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATEONLY,
         allowNull: true,
+        get() {
+          const rawValue = this.getDataValue("birthDate");
+          return rawValue ? dayjs(rawValue).format("DD/MM/YYYY") : null;
+        },
+        set(value) {
+          this.setDataValue(
+            "birthDate",
+            dayjs(value, "DD/MM/YYYY").format("YYYY-MM-DD")
+          );
+        },
       },
       address: {
         type: DataTypes.STRING,

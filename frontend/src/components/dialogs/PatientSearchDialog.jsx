@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import dayjs from "dayjs";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
@@ -44,13 +43,13 @@ export default function PatientSearchDialog({ onSelect, onClose }) {
 
   const filteredPatients = patients.filter((patient) => {
     const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
-    const formattedBirthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+    const birthDate = patient.birthDate.toLowerCase();
     const age = calculateAge(patient.birthDate).toString();
     const gender = patient.gender.toLowerCase();
 
     const matchesSearchTerm =
       fullName.includes(searchTerm.toLowerCase()) ||
-      formattedBirthDate.includes(searchTerm) ||
+      birthDate.includes(searchTerm) ||
       age.includes(searchTerm);
 
     const matchesGenderFilter =
@@ -127,9 +126,6 @@ export default function PatientSearchDialog({ onSelect, onClose }) {
           <ul className="border rounded p-2">
             {filteredPatients.length > 0 ? (
               filteredPatients.map((patient) => {
-                const formattedBirthDate = dayjs(patient.birthDate).format(
-                  "DD/MM/YYYY"
-                );
                 const age = calculateAge(patient.birthDate);
                 const genderIcon =
                   patient.gender === "Homme" ? (
@@ -154,7 +150,7 @@ export default function PatientSearchDialog({ onSelect, onClose }) {
                           formatToUpperCase(patient.lastName),
                           searchTerm
                         )} - ${highlightText(
-                          formattedBirthDate,
+                          patient.birthDate,
                           searchTerm
                         )} (${highlightText(age.toString(), searchTerm)})`,
                       }}

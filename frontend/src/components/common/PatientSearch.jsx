@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
@@ -40,9 +39,7 @@ export default function PatientSearch() {
       ? patients.filter((patient) => {
           const fullName =
             `${patient.firstName} ${patient.lastName}`.toLowerCase();
-          const birthDate = dayjs(patient.birthDate)
-            .format("DD/MM/YYYY")
-            .toLowerCase();
+          const birthDate = patient.birthDate.toLowerCase();
           const age = calculateAge(patient.birthDate).toString();
           return (
             fullName.includes(searchQuery.toLowerCase()) ||
@@ -88,9 +85,6 @@ export default function PatientSearch() {
       {isDropdownVisible && filteredPatients.length > 0 && (
         <ul className="absolute bg-white text-black w-96 mt-1 max-h-60 overflow-y-auto rounded shadow-lg z-10">
           {filteredPatients.map((patient) => {
-            const formattedBirthDate = dayjs(patient.birthDate).format(
-              "DD/MM/YYYY"
-            );
             const age = calculateAge(patient.birthDate);
             const genderIcon =
               patient.gender === "Homme" ? (
@@ -115,7 +109,7 @@ export default function PatientSearch() {
                       formatToUpperCase(patient.lastName),
                       searchQuery
                     )} - ${highlightText(
-                      formattedBirthDate,
+                      patient.birthDate,
                       searchQuery
                     )} (${highlightText(age.toString(), searchQuery)})`,
                   }}

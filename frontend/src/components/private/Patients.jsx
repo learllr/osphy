@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import dayjs from "dayjs";
 import React, { useState } from "react";
 import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -71,7 +70,7 @@ export default function Patients() {
       const genderMatch =
         (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
         (genderFilters.femme && patient.gender.toLowerCase() === "femme");
-      const birthDate = dayjs(patient.birthDate).format("DD/MM/YYYY");
+      const birthDate = patient.birthDate; // Pas besoin de formatage ici
       const age = calculateAge(patient.birthDate);
 
       return (
@@ -198,7 +197,7 @@ export default function Patients() {
                     <div className="text-sm text-gray-500">
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: highlightText(patient.birthDate, searchQuery),
+                          __html: highlightText(patient.birthDate, searchQuery), // Pas de formatage nécessaire ici
                         }}
                       />{" "}
                       (

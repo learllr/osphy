@@ -1,6 +1,9 @@
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
+
+dayjs.extend(customParseFormat);
 
 export default function AppointmentItem({
   appointment,
@@ -9,8 +12,14 @@ export default function AppointmentItem({
   handleInputChange,
   handleDelete,
 }) {
-  const formattedDate = dayjs(appointment.date, "YYYY-MM-DD").isValid()
-    ? dayjs(appointment.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+  // Formatage de la date pour affichage
+  const formattedDate = appointment.date
+    ? dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("DD/MM/YYYY")
+    : "";
+
+  // Formatage de la date pour l'input type="date" (YYYY-MM-DD)
+  const dateForInput = appointment.date
+    ? dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD")
     : "";
 
   return (
@@ -20,7 +29,7 @@ export default function AppointmentItem({
           <div className="flex gap-2 w-full md:w-auto">
             <input
               type="date"
-              value={appointment.date || ""}
+              value={dateForInput}
               onChange={(e) => handleDateChange(appointment.id, e.target.value)}
               className="border rounded px-2 py-1 w-full md:w-auto"
             />

@@ -1,4 +1,5 @@
 "use strict";
+import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
@@ -45,19 +46,44 @@ export default (sequelize) => {
         defaultValue: "Suivi",
       },
       date: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATEONLY,
         allowNull: false,
-        validate: {
-          is: /^\d{2}\/\d{2}\/\d{4}$/,
+        get() {
+          const rawValue = this.getDataValue("date");
+          return rawValue ? dayjs(rawValue).format("DD/MM/YYYY") : null;
+        },
+        set(value) {
+          this.setDataValue(
+            "date",
+            dayjs(value, "DD/MM/YYYY").format("YYYY-MM-DD")
+          );
         },
       },
       startTime: {
         type: DataTypes.TIME,
         allowNull: false,
+        get() {
+          return this.getDataValue("startTime");
+        },
+        set(value) {
+          this.setDataValue(
+            "startTime",
+            dayjs(value, "HH:mm").format("HH:mm:ss")
+          );
+        },
       },
       endTime: {
         type: DataTypes.TIME,
         allowNull: false,
+        get() {
+          return this.getDataValue("endTime");
+        },
+        set(value) {
+          this.setDataValue(
+            "endTime",
+            dayjs(value, "HH:mm").format("HH:mm:ss")
+          );
+        },
       },
       status: {
         type: DataTypes.ENUM("Annulé", "En attente", "Confirmé"),

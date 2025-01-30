@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "../../../../axiosConfig.js";
@@ -64,8 +63,8 @@ export default function GeneralInfoSection({ patient }) {
       format: (value) =>
         value
           ? isEditing
-            ? dayjs(value).format("YYYY-MM-DD")
-            : dayjs(value).format("DD/MM/YYYY")
+            ? value
+            : new Date(value).toLocaleDateString("fr-FR")
           : "",
     },
     {
