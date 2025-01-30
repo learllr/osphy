@@ -13,7 +13,10 @@ export default function PatientInfo({ patient }) {
       <div className="space-y-6">
         <AppointmentInfoSection patientId={patient.id} />
 
-        <ActivityInfoSection activities={patient.activities} />
+        <ActivityInfoSection
+          patientId={patient.id}
+          activities={patient.activities}
+        />
 
         <AntecedentInfoSection antecedents={patient.antecedents} />
 
@@ -22,8 +25,8 @@ export default function PatientInfo({ patient }) {
         />
 
         <GynecologyInfoSection
-          patientGynecology={patient.gynecology}
           patientId={patient.id}
+          patientGynecology={patient.gynecology}
         />
 
         <PregnancyInfoSection pregnancies={patient.pregnancies} />

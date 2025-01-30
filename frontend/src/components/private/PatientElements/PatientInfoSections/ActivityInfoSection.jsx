@@ -1,15 +1,48 @@
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { useMutation } from "react-query";
+import axios from "../../../../axiosConfig.js";
 import Section from "../../Design/Section.jsx";
 
-export default function ActivityInfoSection({ activities }) {
+export default function ActivityInfoSection({ patientId, activities }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedActivities, setEditedActivities] = useState(activities || []);
+  const [initialActivities, setInitialActivities] = useState(activities || []);
+
+  useEffect(() => {
+    setEditedActivities(activities);
+    setInitialActivities(activities);
+  }, [activities]);
+
+  const updateActivityMutation = useMutation((activity) =>
+    axios.put(`/patient/${patientId}/activity/${activity.id}`, activity)
+  );
+
+  const addActivityMutation = useMutation(
+    (activity) => axios.post(`/patient/${patientId}/activity`, activity),
+    {
+      onSuccess: (response) => {
+        const newActivity = response.data;
+        setEditedActivities((prev) => [...prev, newActivity]);
+      },
+    }
+  );
+
+  const deleteActivityMutation = useMutation((id) =>
+    axios.delete(`/patient/${patientId}/activity/${id}`)
+  );
+
+  const isLoading =
+    updateActivityMutation.isLoading ||
+    addActivityMutation.isLoading ||
+    deleteActivityMutation.isLoading;
 
   const handleToggleEdit = () => {
     setIsEditing((prev) => !prev);
-    setEditedActivities(activities);
+    if (!isEditing) {
+      setInitialActivities([...editedActivities]);
+    }
   };
 
   const handleInputChange = (id, field, value) => {
@@ -20,24 +53,34 @@ export default function ActivityInfoSection({ activities }) {
     );
   };
 
+  const handleAddActivity = () => {
+    setEditedActivities((prev) => [
+      ...prev,
+      { id: Date.now(), patientId, activity: "", temporalInfo: "" },
+    ]);
+  };
+
+  const handleDelete = (id) => {
+    setEditedActivities((prev) => prev.filter((a) => a.id !== id));
+    deleteActivityMutation.mutate(id);
+  };
+
   const handleSave = () => {
-    console.log("Activités sauvegardées :", editedActivities);
+    editedActivities.forEach((activity) => {
+      if (activity.id) updateActivityMutation.mutate(activity);
+    });
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setEditedActivities(activities);
+    setEditedActivities([...initialActivities]);
     setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    console.log("supprimer");
   };
 
   return (
     <Section
       title="Activités"
-      count={activities?.length || 0}
+      count={editedActivities.length}
       onEdit={handleToggleEdit}
       hideEditButton={isEditing}
     >
@@ -52,7 +95,7 @@ export default function ActivityInfoSection({ activities }) {
                   onChange={(e) =>
                     handleInputChange(activity.id, "activity", e.target.value)
                   }
-                  className="flex-1 mr-2 border border-gray-300 rounded-md shadow-sm px-2 py-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="flex-1 mr-2 border border-gray-300 rounded-md shadow-sm px-2 py-1"
                 />
                 <input
                   type="text"
@@ -64,12 +107,12 @@ export default function ActivityInfoSection({ activities }) {
                       e.target.value
                     )
                   }
-                  className="flex-1 border border-gray-300 rounded-md shadow-sm px-2 py-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="flex-1 border border-gray-300 rounded-md shadow-sm px-2 py-1"
                 />
                 <button
                   onClick={() => handleDelete(activity.id)}
                   className="ml-2 text-red-500 hover:text-red-700"
-                  aria-label="Supprimer l'activité'"
+                  aria-label="Supprimer l'activité"
                 >
                   <FaTrash size={16} />
                 </button>
@@ -77,17 +120,32 @@ export default function ActivityInfoSection({ activities }) {
             ))}
           </ul>
           <div className="mt-4 flex gap-2">
-            <Button onClick={handleSave}>Enregistrer</Button>
-            <Button variant="secondary" onClick={handleCancel}>
+            <Button
+              onClick={handleAddActivity}
+              variant="outline"
+              disabled={isLoading}
+            >
+              Ajouter une activité
+            </Button>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <Button onClick={handleSave} disabled={isLoading}>
+              {isLoading ? "Enregistrement..." : "Enregistrer"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleCancel}
+              disabled={isLoading}
+            >
               Annuler
             </Button>
           </div>
         </div>
       ) : (
         <div>
-          {activities && activities.length > 0 ? (
+          {editedActivities.length > 0 ? (
             <ul>
-              {activities.map((activity) => (
+              {editedActivities.map((activity) => (
                 <li
                   key={activity.id}
                   className="flex items-center mb-2 space-x-2"

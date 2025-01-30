@@ -170,13 +170,11 @@ export default function AppointmentInfoSection({ patientId }) {
     const isPastAppointment = appointmentDateTime.isBefore(dayjs());
 
     if (isEditing) {
-      // En mode édition, on affiche les rendez-vous futurs ou ceux qui sont en cours de modification
       return (
         statusMatch &&
         (!isPastAppointment || modifiedAppointments.has(appointment.id))
       );
     } else {
-      // Hors mode édition, on affiche soit les passés, soit les futurs
       return (
         statusMatch &&
         (showPastAppointments ? isPastAppointment : !isPastAppointment)
@@ -191,12 +189,14 @@ export default function AppointmentInfoSection({ patientId }) {
       onEdit={handleEdit}
       hideEditButton={showPastAppointments}
     >
-      <AppointmentFilters
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        showPastAppointments={showPastAppointments}
-        setShowPastAppointments={setShowPastAppointments}
-      />
+      {!isEditing && (
+        <AppointmentFilters
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          showPastAppointments={showPastAppointments}
+          setShowPastAppointments={setShowPastAppointments}
+        />
+      )}
       {filteredAppointments.length > 0 ? (
         <ul className="text-sm">
           {filteredAppointments.map((appointment, index) => (

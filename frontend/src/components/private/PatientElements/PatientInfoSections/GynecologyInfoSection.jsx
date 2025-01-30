@@ -5,8 +5,8 @@ import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
 
 export default function GynecologyInfoSection({
-  patientGynecology,
   patientId,
+  patientGynecology,
 }) {
   const defaultGynecologyData = {
     period: null,

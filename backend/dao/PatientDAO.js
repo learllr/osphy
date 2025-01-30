@@ -98,7 +98,51 @@ export default class PatientDAO {
   }
 
   /*
-  ----- Informations du patient -----
+  ----- Activités du patient -----
+  */
+
+  static async findActivitiesByPatientId(patientId) {
+    return await PatientActivity.findAll({
+      where: { patientId },
+      attributes: ["id", "activity", "temporalInfo"],
+    });
+  }
+
+  static async findActivityById(activityId) {
+    return await PatientActivity.findOne({
+      where: { id: activityId },
+    });
+  }
+
+  static async createActivity(activityData) {
+    return await PatientActivity.create(activityData);
+  }
+
+  static async updateActivity(activityId, updatedData) {
+    const [updatedCount] = await PatientActivity.update(updatedData, {
+      where: { id: activityId },
+    });
+
+    if (updatedCount === 0) {
+      console.error("Aucune ligne mise à jour !");
+      return null;
+    }
+
+    const updatedActivity = await PatientActivity.findOne({
+      where: { id: activityId },
+    });
+
+    return updatedActivity;
+  }
+
+  static async deleteActivity(activityId) {
+    return await PatientActivity.destroy({
+      where: { id: activityId },
+    });
+  }
+
+  /*
+  ----- Gynécologie du patient -----
   */
 
   static async findGynecologyByPatientId(patientId) {
@@ -119,6 +163,10 @@ export default class PatientDAO {
       ...gynecologyData,
     });
   }
+
+  /*
+  ----- Sommeil du patient -----
+  */
 
   static async findSleepByPatientId(patientId) {
     return await PatientSleep.findOne({
