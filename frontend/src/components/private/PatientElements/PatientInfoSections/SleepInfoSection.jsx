@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import axios from "../../../../axiosConfig.js";
 import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
@@ -16,7 +17,29 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
   );
   const [backupSleep, setBackupSleep] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // useEffect(() => {
+  //   console.log(editableSleep);
+  // }, [editableSleep]);
+
+  const updateSleepMutation = useMutation({
+    mutationFn: async (updatedSleep) => {
+      const response = await axios.put(
+        `/patient/${patientId}/sleep`,
+        updatedSleep
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["patient", patientId, "sleep"]);
+      setIsEditing(false);
+    },
+    onError: () => {
+      alert("Échec de la mise à jour des données du sommeil.");
+    },
+  });
 
   useEffect(() => {
     setEditableSleep(patientSleep || defaultSleepData);
@@ -29,24 +52,8 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
     }));
   };
 
-  const handleSaveChanges = async () => {
-    setIsSaving(true);
-    try {
-      const response = await axios.put(
-        `/patient/${patientId}/sleep`,
-        editableSleep
-      );
-
-      if (response.status === 200) {
-        setIsEditing(false);
-      } else {
-        console.error("Échec de la mise à jour du sommeil :", response);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde :", error);
-    } finally {
-      setIsSaving(false);
-    }
+  const handleSaveChanges = () => {
+    updateSleepMutation.mutate(editableSleep);
   };
 
   const handleEditClick = () => {
@@ -104,13 +111,18 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
 
       {isEditing && (
         <div className="flex gap-4 mt-4">
-          <Button onClick={handleSaveChanges} disabled={isSaving}>
-            {isSaving ? "Enregistrement..." : "Enregistrer"}
+          <Button
+            onClick={handleSaveChanges}
+            disabled={updateSleepMutation.isLoading}
+          >
+            {updateSleepMutation.isLoading
+              ? "Enregistrement..."
+              : "Enregistrer"}
           </Button>
           <Button
             onClick={handleCancel}
             variant="secondary"
-            disabled={isSaving}
+            disabled={updateSleepMutation.isLoading}
           >
             Annuler
           </Button>

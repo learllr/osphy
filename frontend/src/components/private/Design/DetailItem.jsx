@@ -44,8 +44,8 @@ export default function DetailItem({
             >
               <option value="">Non renseigné</option>
               {options.map((option, index) => (
-                <option key={`${option.value}-${index}`} value={option.value}>
-                  {option.label}
+                <option key={index} value={option}>
+                  {option}
                 </option>
               ))}
             </select>
