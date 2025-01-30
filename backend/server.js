@@ -1,15 +1,15 @@
-import express from "express";
-import db from "./orm/models/index.js";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
 import { authenticateToken } from "./middlewares/authMiddleware.js";
-import authentificationRoutes from "./routes/authentificationRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import db from "./orm/models/index.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
-import patientRoutes from "./routes/patientRoutes.js";
+import authentificationRoutes from "./routes/authentificationRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
-import newsletterRoutes from "./routes/newsletterRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
+import patientRoutes from "./routes/patientRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
