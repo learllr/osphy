@@ -159,7 +159,7 @@ export const createPatientActivity = async (req, res) => {
 
     res.status(201).json(newActivity);
   } catch (error) {
-    console.error("Erreur lors de l'ajout d'une activité :", error);
+    console.error("❌ Erreur lors de l'ajout d'une activité:", error);
     res.status(500).json({ message: "Erreur lors de l'ajout de l'activité." });
   }
 };
@@ -237,7 +237,93 @@ export const deletePatientActivity = async (req, res) => {
 };
 
 /*
-  ----- Sommeil du patient -----
+----- Contre-indications du patient -----
+*/
+
+export const createPatientContraindication = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { contraindication, temporalInfo } = req.body;
+
+    const newContraindication = await PatientDAO.createContraindication({
+      patientId,
+      contraindication: sanitizeInput(contraindication),
+      temporalInfo: sanitizeInput(temporalInfo),
+    });
+
+    res.status(201).json(newContraindication);
+  } catch (error) {
+    console.error("Erreur lors de l'ajout d'une contre-indication:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de l'ajout de la contre-indication." });
+  }
+};
+
+export const getPatientContraindications = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const contraindications = await PatientDAO.findContraindicationsByPatientId(
+      patientId
+    );
+
+    res.status(200).json(contraindications);
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des contre-indications:",
+      error
+    );
+    res.status(500).json({
+      message: "Erreur lors de la récupération des contre-indications.",
+    });
+  }
+};
+
+export const updatePatientContraindication = async (req, res) => {
+  try {
+    const { contraindicationId } = req.params;
+    const { value, temporalInfo } = req.body;
+
+    const updatedContraindication = await PatientDAO.updateContraindication(
+      contraindicationId,
+      {
+        contraindication: sanitizeInput(value),
+        temporalInfo: sanitizeInput(temporalInfo),
+      }
+    );
+
+    res.status(200).json(updatedContraindication);
+  } catch (error) {
+    console.error(
+      "Erreur lors de la mise à jour de la contre-indication:",
+      error
+    );
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour de la contre-indication.",
+    });
+  }
+};
+
+export const deletePatientContraindication = async (req, res) => {
+  try {
+    const { contraindicationId } = req.params;
+
+    await PatientDAO.deleteContraindication(contraindicationId);
+    res.status(204).send();
+  } catch (error) {
+    console.error(
+      "Erreur lors de la suppression de la contre-indication:",
+      error
+    );
+    res.status(500).json({
+      message: "Erreur lors de la suppression de la contre-indication.",
+    });
+  }
+};
+
+/*
+  ----- Gynécologie du patient -----
   */
 
 export const updatePatientGynecology = async (req, res) => {

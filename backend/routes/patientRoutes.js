@@ -11,6 +11,10 @@ import {
   updatePatientActivity,
   updatePatientGynecology,
   updatePatientSleep,
+  createPatientContraindication,
+  getPatientContraindications,
+  updatePatientContraindication,
+  deletePatientContraindication,
 } from "../controllers/PatientController.js";
 
 const router = express.Router();
@@ -26,6 +30,18 @@ router.post("/:patientId/activity", createPatientActivity);
 router.get("/:patientId/activities", getPatientActivities);
 router.put("/:patientId/activity/:activityId", updatePatientActivity);
 router.delete("/:patientId/activity/:activityId", deletePatientActivity);
+
+// Contre-indications du patient
+router.post("/:patientId/contraindication", createPatientContraindication);
+router.get("/:patientId/contraindications", getPatientContraindications);
+router.put(
+  "/:patientId/contraindication/:contraindicationId",
+  updatePatientContraindication
+);
+router.delete(
+  "/:patientId/contraindication/:contraindicationId",
+  deletePatientContraindication
+);
 
 // Gynécologie du patient
 router.put("/:patientId/gynecology", updatePatientGynecology);

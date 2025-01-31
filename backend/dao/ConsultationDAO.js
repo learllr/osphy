@@ -15,6 +15,10 @@ export default class ConsultationDAO {
   }
 
   static async updateConsultationById(consultationId, updatedData) {
+    if (updatedData.diagnosis && typeof updatedData.diagnosis === "object") {
+      updatedData.diagnosis = JSON.stringify(updatedData.diagnosis);
+    }
+
     const [rowsUpdated] = await Consultation.update(updatedData, {
       where: { id: consultationId },
     });

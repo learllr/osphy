@@ -11,8 +11,6 @@ export default function PatientInfo({ patient }) {
   return (
     <div>
       <div className="space-y-6">
-        <AppointmentInfoSection patientId={patient.id} />
-
         <ActivityInfoSection
           patientId={patient.id}
           activities={patient.activities}
@@ -21,6 +19,7 @@ export default function PatientInfo({ patient }) {
         <AntecedentInfoSection antecedents={patient.antecedents} />
 
         <ContraindicationInfoSection
+          patientId={patient.id}
           contraindications={patient.contraindications}
         />
 
@@ -32,6 +31,8 @@ export default function PatientInfo({ patient }) {
         <PregnancyInfoSection pregnancies={patient.pregnancies} />
 
         <SleepInfoSection patientSleep={patient.sleep} patientId={patient.id} />
+
+        <AppointmentInfoSection patientId={patient.id} />
       </div>
     </div>
   );

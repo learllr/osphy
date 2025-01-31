@@ -67,7 +67,7 @@ export default (sequelize) => {
         allowNull: true,
       },
       diagnosis: {
-        type: DataTypes.TEXT,
+        type: DataTypes.JSON,
         allowNull: true,
       },
       clinicalExamination: {

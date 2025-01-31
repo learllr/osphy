@@ -142,6 +142,42 @@ export default class PatientDAO {
   }
 
   /*
+----- Contre-indications du patient -----
+*/
+
+  static async findContraindicationsByPatientId(patientId) {
+    return await PatientContraindication.findAll({
+      where: { patientId },
+      attributes: ["id", "contraindication", "temporalInfo"],
+    });
+  }
+
+  static async createContraindication(contraindicationData) {
+    return await PatientContraindication.create(contraindicationData);
+  }
+
+  static async updateContraindication(contraindicationId, updatedData) {
+    const [updatedCount] = await PatientContraindication.update(updatedData, {
+      where: { id: contraindicationId },
+    });
+
+    if (updatedCount === 0) {
+      console.error("Aucune ligne mise à jour !");
+      return null;
+    }
+
+    return await PatientContraindication.findOne({
+      where: { id: contraindicationId },
+    });
+  }
+
+  static async deleteContraindication(contraindicationId) {
+    return await PatientContraindication.destroy({
+      where: { id: contraindicationId },
+    });
+  }
+
+  /*
   ----- Gynécologie du patient -----
   */
 

@@ -15,5 +15,6 @@ router.delete("/:id", deleteConsultationById);
 router.put("/:id", updateConsultationById);
 
 router.post("/diagnosis", generateDiagnosis);
+router.put("/:id/diagnosis", updateConsultationById);
 
 export default router;

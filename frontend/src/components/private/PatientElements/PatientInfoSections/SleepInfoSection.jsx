@@ -20,10 +20,6 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
 
   const queryClient = useQueryClient();
 
-  // useEffect(() => {
-  //   console.log(editableSleep);
-  // }, [editableSleep]);
-
   const updateSleepMutation = useMutation({
     mutationFn: async (updatedSleep) => {
       const response = await axios.put(
