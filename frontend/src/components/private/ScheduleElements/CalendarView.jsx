@@ -65,6 +65,7 @@ export default function CalendarView({ events, onDelete, onEdit }) {
         setSelectedEvent={setSelectedEvent}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
+        onEdit={onEdit}
         onDelete={onDelete}
       />
     </div>

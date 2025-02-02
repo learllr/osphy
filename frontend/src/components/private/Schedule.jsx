@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import React, { useEffect, useState } from "react";
 import { determineBackgroundColor } from "../../../../shared/utils/colorUtils.js";
 import { determineStatusIcon } from "../../../../shared/utils/iconUtils.js";
@@ -6,7 +7,6 @@ import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
-import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
@@ -42,10 +42,6 @@ export default function Schedule() {
     if (!patient?.birthDate || !patient?.id) return null;
 
     const parsedDate = dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"], true);
-    if (!parsedDate.isValid()) {
-      console.error("Date invalide détectée dans formatAppointment :", date);
-      return null;
-    }
 
     const formattedDate = parsedDate.format("YYYY-MM-DD");
 
@@ -87,31 +83,28 @@ export default function Schedule() {
   const handleEditAppointment = async (updatedAppointment) => {
     if (!updatedAppointment || !updatedAppointment.id) return;
 
-    try {
-      const response = await axios.put(
-        `/appointment/${updatedAppointment.id}`,
-        {
-          ...updatedAppointment,
-          date: dayjs(
-            updatedAppointment.date,
-            ["DD/MM/YYYY", "YYYY-MM-DD"],
-            true
-          ).format("YYYY-MM-DD"),
-          startTime: dayjs(updatedAppointment.startTime, "HH:mm", true).format(
-            "HH:mm:ss"
-          ),
-          endTime: dayjs(updatedAppointment.endTime, "HH:mm", true).format(
-            "HH:mm:ss"
-          ),
-        }
-      );
+    const patient = patients.find((p) => p.id === updatedAppointment.patientId);
 
-      setAppointments((prev) =>
-        prev.map((appointment) =>
-          appointment.id === updatedAppointment.id
-            ? formatAppointment(response.data)
-            : appointment
-        )
+    const formattedAppointment = formatAppointment({
+      ...updatedAppointment,
+      patient,
+      date: updatedAppointment.date,
+      startTime: updatedAppointment.startTime,
+      endTime: updatedAppointment.endTime,
+    });
+
+    setAppointments((prev) =>
+      prev.map((appointment) =>
+        appointment.id === updatedAppointment.id
+          ? formattedAppointment
+          : appointment
+      )
+    );
+
+    try {
+      await axios.put(
+        `/appointment/${updatedAppointment.id}`,
+        formattedAppointment
       );
     } catch (error) {
       console.error("Erreur lors de la mise à jour du rendez-vous :", error);

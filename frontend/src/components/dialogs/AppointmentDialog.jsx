@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import { useEffect, useState } from "react";
 import { isEventInThePast } from "../../../../shared/utils/dateUtils.js";
-import DetailItem from "../private/Design/DetailItem.jsx";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import axios from "../../axiosConfig.js";
+import DetailItem from "../private/Design/DetailItem.jsx";
 
 dayjs.extend(customParseFormat);
 
@@ -25,19 +25,17 @@ export default function AppointmentDialog({
       setEditableEvent({
         ...selectedEvent,
         date: selectedEvent.date
-          ? dayjs(selectedEvent.date).isValid()
-            ? dayjs(selectedEvent.date).format("YYYY-MM-DD")
-            : "Date invalide"
+          ? dayjs(
+              selectedEvent.date,
+              ["DD/MM/YYYY", "YYYY-MM-DD"],
+              true
+            ).format("YYYY-MM-DD")
           : "",
         startTime: selectedEvent.startTime
-          ? dayjs(selectedEvent.startTime, "HH:mm:ss").isValid()
-            ? dayjs(selectedEvent.startTime, "HH:mm").format("HH:mm")
-            : "Heure invalide"
+          ? dayjs(selectedEvent.startTime, "HH:mm:ss").format("HH:mm")
           : "",
         endTime: selectedEvent.endTime
-          ? dayjs(selectedEvent.endTime, "HH:mm:ss").isValid()
-            ? dayjs(selectedEvent.endTime, "HH:mm").format("HH:mm")
-            : "Heure invalide"
+          ? dayjs(selectedEvent.endTime, "HH:mm:ss").format("HH:mm")
           : "",
       });
     } else {
@@ -48,9 +46,19 @@ export default function AppointmentDialog({
   const handleChange = (field, value) => {
     setEditableEvent((prev) => {
       if (!prev) return prev;
+
+      if (field === "date") {
+        const parsedDate = dayjs(value, ["YYYY-MM-DD", "DD/MM/YYYY"], true);
+
+        return {
+          ...prev,
+          date: parsedDate.isValid() ? parsedDate.format("YYYY-MM-DD") : value,
+        };
+      }
+
       return {
         ...prev,
-        [field]: field === "date" ? dayjs(value).format("YYYY-MM-DD") : value,
+        [field]: value,
       };
     });
   };
@@ -92,10 +100,11 @@ export default function AppointmentDialog({
   };
 
   const eventFields = [
-    { label: "Nom du patient", field: "name" },
+    { label: "Nom du patient", field: "name", editable: false },
     {
       label: "Type",
       field: "type",
+      type: "select",
       options: [
         "Suivi",
         "Première consultation",
@@ -104,11 +113,14 @@ export default function AppointmentDialog({
         "Pédiatrique",
         "Autre",
       ],
+      allowEmptyOption: false,
     },
     {
       label: "Statut",
       field: "status",
+      type: "select",
       options: ["Confirmé", "En attente", "Annulé"],
+      allowEmptyOption: false,
     },
     { label: "Date", field: "date", type: "date" },
     { label: "Heure de début", field: "startTime", type: "time" },
@@ -132,38 +144,46 @@ export default function AppointmentDialog({
         <Separator />
         {editableEvent && (
           <div className="space-y-1 mt-5">
-            {eventFields.map(({ label, field, type, options }) => (
-              <DetailItem
-                key={field}
-                label={label}
-                value={editableEvent[field] ?? ""}
-                isEditing={isEditing}
-                onChange={(value) => handleChange(field, value)}
-                type={type}
-                options={options}
-                link={
-                  field === "name" && editableEvent.patientId
-                    ? `/patient/${editableEvent.patientId}`
-                    : null
-                }
-              />
-            ))}
+            {eventFields.map(
+              ({ label, field, type, options, editable, allowEmptyOption }) => (
+                <DetailItem
+                  key={field}
+                  label={label}
+                  value={editableEvent[field] ?? ""}
+                  isEditing={isEditing}
+                  onChange={(value) => handleChange(field, value)}
+                  type={type}
+                  options={options}
+                  editable={editable}
+                  allowEmptyOption={allowEmptyOption}
+                  link={
+                    field === "name" && editableEvent.patientId
+                      ? `/patient/${editableEvent.patientId}`
+                      : null
+                  }
+                />
+              )
+            )}
           </div>
         )}
         <div className="flex space-x-4 mt-6">
-          {editableEvent &&
-            !isEventInThePast(editableEvent.date, editableEvent.startTime) && (
-              <>
-                {isEditing ? (
-                  <Button onClick={handleSave}>Enregistrer</Button>
-                ) : (
-                  <Button onClick={() => setIsEditing(true)}>Modifier</Button>
-                )}
-                <Button variant="destructive" onClick={handleDelete}>
-                  Supprimer
-                </Button>
-              </>
-            )}
+          {editableEvent && (
+            <>
+              {isEditing ||
+              !isEventInThePast(editableEvent.date, editableEvent.startTime) ? (
+                <>
+                  {isEditing ? (
+                    <Button onClick={handleSave}>Enregistrer</Button>
+                  ) : (
+                    <Button onClick={() => setIsEditing(true)}>Modifier</Button>
+                  )}
+                  <Button variant="destructive" onClick={handleDelete}>
+                    Supprimer
+                  </Button>
+                </>
+              ) : null}
+            </>
+          )}
           <Dialog.Close asChild>
             <Button variant="outline">Fermer</Button>
           </Dialog.Close>

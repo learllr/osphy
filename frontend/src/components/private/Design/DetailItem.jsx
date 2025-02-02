@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
+import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
-import dayjs from "dayjs";
 
 export default function DetailItem({
   label,
@@ -13,6 +13,8 @@ export default function DetailItem({
   min,
   max,
   link = null,
+  editable = true,
+  allowEmptyOption = true,
 }) {
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
@@ -41,7 +43,7 @@ export default function DetailItem({
     <div className="flex text-sm mb-1">
       <strong className="w-2/5 text-gray-600 flex items-center">{label}</strong>
       <span className="w-3/5 flex items-center">
-        {isEditing ? (
+        {isEditing && editable ? (
           type === "select" ? (
             <select
               className="w-full bg-gray-100 px-4 py-2 rounded-md border text-gray-700"
@@ -50,7 +52,7 @@ export default function DetailItem({
                 onChange(e.target.value === "" ? null : e.target.value)
               }
             >
-              <option value="">Non renseigné</option>
+              {allowEmptyOption && <option value="">Non renseigné</option>}
               {options.map((option, index) => (
                 <option key={index} value={option}>
                   {option}
