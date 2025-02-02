@@ -1,6 +1,9 @@
 "use strict";
 import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+
+dayjs.extend(customParseFormat);
 
 export default (sequelize) => {
   class Consultation extends Model {}

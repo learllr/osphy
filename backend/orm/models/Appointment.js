@@ -2,6 +2,10 @@
 import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
 
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+
+dayjs.extend(customParseFormat);
+
 export default (sequelize) => {
   class Appointment extends Model {}
 
@@ -49,16 +53,18 @@ export default (sequelize) => {
         type: DataTypes.DATEONLY,
         allowNull: false,
         get() {
-          const rawValue = this.getDataValue("date");
-          return rawValue ? dayjs(rawValue).format("DD/MM/YYYY") : null;
+          return this.getDataValue("date");
         },
         set(value) {
-          this.setDataValue(
-            "date",
-            dayjs(value, "DD/MM/YYYY").format("YYYY-MM-DD")
-          );
+          const parsedDate = dayjs(value, ["DD/MM/YYYY", "YYYY-MM-DD"], true);
+          if (parsedDate.isValid()) {
+            this.setDataValue("date", parsedDate.format("YYYY-MM-DD"));
+          } else {
+            console.error("Date invalide détectée :", value);
+          }
         },
       },
+
       startTime: {
         type: DataTypes.TIME,
         allowNull: false,

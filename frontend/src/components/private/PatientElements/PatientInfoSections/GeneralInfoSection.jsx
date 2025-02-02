@@ -54,8 +54,8 @@ export default function GeneralInfoSection({ patient }) {
   };
 
   const patientFields = [
-    { label: "Nom", field: "lastName", type: "text" },
-    { label: "Prénom", field: "firstName", type: "text" },
+    { label: "Nom", field: "lastName" },
+    { label: "Prénom", field: "firstName" },
     {
       label: "Date de naissance",
       field: "birthDate",
@@ -73,10 +73,10 @@ export default function GeneralInfoSection({ patient }) {
       type: "select",
       options: ["Homme", "Femme"],
     },
-    { label: "Adresse", field: "address", type: "text" },
-    { label: "Téléphone", field: "mobilePhone", type: "text" },
+    { label: "Adresse", field: "address" },
+    { label: "Téléphone", field: "mobilePhone" },
     { label: "Email", field: "email", type: "email" },
-    { label: "Profession", field: "occupation", type: "text" },
+    { label: "Profession", field: "occupation" },
     { label: "Taille", field: "height", type: "number", min: 0, max: 300 },
     { label: "Poids", field: "weight", type: "number", min: 0, max: 300 },
     {
@@ -85,7 +85,7 @@ export default function GeneralInfoSection({ patient }) {
       type: "select",
       options: ["Droitier", "Gaucher", "Ambidextre"],
     },
-    { label: "Autres informations", field: "additionalInfo", type: "text" },
+    { label: "Autres informations", field: "additionalInfo", type: "textarea" },
   ];
 
   return (

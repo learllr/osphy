@@ -9,13 +9,10 @@ import AppointmentDialog from "../../dialogs/AppointmentDialog.jsx";
 export default function CalendarView({ events, onDelete, onEdit }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editableEvent, setEditableEvent] = useState(null);
 
   const handleEventSelection = useCallback((event) => {
     if (!event.extendedProps) return;
-
     setSelectedEvent(event.extendedProps);
-    setEditableEvent(event.extendedProps);
     setIsEditing(false);
   }, []);
 
@@ -35,27 +32,30 @@ export default function CalendarView({ events, onDelete, onEdit }) {
           timeGridDay: { buttonText: "Jour" },
         }}
         events={events}
-        eventContent={({ event }) => (
-          <div
-            className="flex flex-col items-start p-1 rounded text-xs leading-tight"
-            style={{
-              backgroundColor: event.extendedProps.backgroundColor,
-              color: "#ffffff",
-            }}
-          >
-            <div className="flex items-center">
-              {event.extendedProps.icon}
-              <span className="ml-1 font-bold truncate">
-                {event.extendedProps.type}
-              </span>
+        eventContent={({ event }) => {
+          const { backgroundColor, icon, type, name } =
+            event.extendedProps || {};
+
+          return (
+            <div
+              className="flex flex-col items-start p-1 rounded text-xs leading-tight"
+              style={{
+                backgroundColor: backgroundColor || "#000",
+                color: "#ffffff",
+              }}
+            >
+              <div className="flex items-center">
+                {icon && <span>{icon}</span>}
+                {type && (
+                  <span className="ml-1 font-bold truncate">{type}</span>
+                )}
+              </div>
+              {name && <div className="truncate">{name}</div>}
             </div>
-            <div className="truncate">
-              <span>{event.extendedProps.name}</span>
-            </div>
-          </div>
-        )}
+          );
+        }}
         locale={frLocale}
-        timeZone="Europe/Paris"
+        timeZone="local"
         height={"90vh"}
         eventClick={(info) => handleEventSelection(info.event)}
       />
@@ -63,11 +63,8 @@ export default function CalendarView({ events, onDelete, onEdit }) {
       <AppointmentDialog
         selectedEvent={selectedEvent}
         setSelectedEvent={setSelectedEvent}
-        editableEvent={editableEvent}
-        setEditableEvent={setEditableEvent}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
-        onEdit={onEdit}
         onDelete={onDelete}
       />
     </div>

@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import React from "react";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default function DetailItem({
   label,
@@ -29,6 +30,13 @@ export default function DetailItem({
     }
   };
 
+  const displayValue =
+    type === "date" && !isEditing
+      ? value
+        ? dayjs(value, "YYYY-MM-DD").format("DD/MM/YYYY")
+        : "Non renseigné"
+      : value || "Non renseigné";
+
   return (
     <div className="flex text-sm mb-1">
       <strong className="w-2/5 text-gray-600 flex items-center">{label}</strong>
@@ -49,10 +57,17 @@ export default function DetailItem({
                 </option>
               ))}
             </select>
+          ) : type === "textarea" ? (
+            <textarea
+              value={value !== null && value !== "" ? value : ""}
+              onChange={handleInputChange}
+              className="bg-gray-100 px-4 py-2 rounded-md w-full min-h-[80px] border"
+              rows="3"
+            />
           ) : (
             <Input
               type={type}
-              value={value ?? ""}
+              value={value !== null && value !== "" ? value : ""}
               onChange={handleInputChange}
               min={min}
               max={max}
@@ -64,11 +79,11 @@ export default function DetailItem({
             to={link}
             className="px-4 py-2 rounded-md text-blue-600 underline"
           >
-            {value || "Non renseigné"}
+            {displayValue}
           </Link>
         ) : (
           <span className="px-4 py-2 rounded-md text-gray-700">
-            {value || "Non renseigné"}
+            {displayValue}
           </span>
         )}
       </span>

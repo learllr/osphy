@@ -75,10 +75,7 @@ export default function ContraindicationInfoSection({
     >
       <ItemList
         items={localData}
-        fields={[
-          { key: "value", type: "text" },
-          { key: "temporalInfo", type: "text" },
-        ]}
+        fields={[{ key: "value" }, { key: "temporalInfo" }]}
         onChange={handleFieldChange}
         onDelete={handleDelete}
         isEditing={isEditing}

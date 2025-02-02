@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
 import { determineBackgroundColor } from "../../../../shared/utils/colorUtils.js";
 import { determineStatusIcon } from "../../../../shared/utils/iconUtils.js";
@@ -7,8 +6,9 @@ import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
+import utc from "dayjs/plugin/utc";
 
-dayjs.extend(customParseFormat);
+dayjs.extend(utc);
 
 export default function Schedule() {
   const [patients, setPatients] = useState([]);
@@ -30,32 +30,41 @@ export default function Schedule() {
     );
   }, []);
 
-  const formatAppointment = (appointment) => {
-    const { patient, status, id, date, startTime, endTime, type } = appointment;
+  const formatAppointment = ({
+    patient,
+    status,
+    id,
+    date,
+    startTime,
+    endTime,
+    type,
+  }) => {
+    if (!patient?.birthDate || !patient?.id) return null;
 
-    if (!patient?.birthDate || !patient?.id) {
+    const parsedDate = dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"], true);
+    if (!parsedDate.isValid()) {
+      console.error("Date invalide détectée dans formatAppointment :", date);
       return null;
     }
 
-    const formattedDate = dayjs(date, "DD/MM/YYYY", true).isValid()
-      ? dayjs(date, "DD/MM/YYYY").format("YYYY-MM-DD")
-      : dayjs(date).format("YYYY-MM-DD");
+    const formattedDate = parsedDate.format("YYYY-MM-DD");
 
     const startDateTime = dayjs(
       `${formattedDate} ${startTime}`,
-      "YYYY-MM-DD HH:mm:ss"
-    ).toISOString();
-
+      "YYYY-MM-DD HH:mm:ss",
+      true
+    );
     const endDateTime = dayjs(
       `${formattedDate} ${endTime}`,
-      "YYYY-MM-DD HH:mm:ss"
-    ).toISOString();
+      "YYYY-MM-DD HH:mm:ss",
+      true
+    );
 
     return {
       id,
       name: `${patient.firstName} ${patient.lastName}`,
-      start: startDateTime,
-      end: endDateTime,
+      start: dayjs.utc(startDateTime).local().format(),
+      end: dayjs.utc(endDateTime).local().format(),
       extendedProps: {
         id,
         patientId: patient.id,
@@ -63,9 +72,9 @@ export default function Schedule() {
         icon: determineStatusIcon(status),
         backgroundColor: determineBackgroundColor(patient, patient.birthDate),
         type,
-        startTime,
-        endTime,
-        date,
+        startTime: startDateTime.format("HH:mm:ss"),
+        endTime: endDateTime.format("HH:mm:ss"),
+        date: formattedDate,
       },
     };
   };
@@ -73,6 +82,41 @@ export default function Schedule() {
   const handleAddAppointment = (newAppointment) => {
     const formatted = formatAppointment(newAppointment);
     if (formatted) setAppointments((prev) => [...prev, formatted]);
+  };
+
+  const handleEditAppointment = async (updatedAppointment) => {
+    if (!updatedAppointment || !updatedAppointment.id) return;
+
+    try {
+      const response = await axios.put(
+        `/appointment/${updatedAppointment.id}`,
+        {
+          ...updatedAppointment,
+          date: dayjs(
+            updatedAppointment.date,
+            ["DD/MM/YYYY", "YYYY-MM-DD"],
+            true
+          ).format("YYYY-MM-DD"),
+          startTime: dayjs(updatedAppointment.startTime, "HH:mm", true).format(
+            "HH:mm:ss"
+          ),
+          endTime: dayjs(updatedAppointment.endTime, "HH:mm", true).format(
+            "HH:mm:ss"
+          ),
+        }
+      );
+
+      setAppointments((prev) =>
+        prev.map((appointment) =>
+          appointment.id === updatedAppointment.id
+            ? formatAppointment(response.data)
+            : appointment
+        )
+      );
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du rendez-vous :", error);
+      alert("Échec de la mise à jour du rendez-vous.");
+    }
   };
 
   const handleDeleteAppointment = async (appointmentId) => {
@@ -106,6 +150,7 @@ export default function Schedule() {
           </h2>
           <CalendarView
             events={appointments}
+            onEdit={handleEditAppointment}
             onDelete={handleDeleteAppointment}
           />
         </div>

@@ -54,6 +54,7 @@ export default function ConsultationDetails({
   };
 
   const handleSaveChanges = async () => {
+    console.log("Données envoyées à l'API :", editableConsultation);
     try {
       await axios.put(
         `/consultation/${editableConsultation.id}`,
@@ -144,10 +145,22 @@ export default function ConsultationDetails({
   const isPastConsultation = isEventInThePast(consultation.date);
 
   const fields = [
-    { label: "Plainte", field: "patientComplaint", type: "text" },
-    { label: "Facteurs aggravants", field: "aggravatingFactors", type: "text" },
-    { label: "Facteurs soulageants", field: "relievingFactors", type: "text" },
-    { label: "Symptômes associés", field: "associatedSymptoms", type: "text" },
+    { label: "Plainte", field: "patientComplaint", type: "textarea" },
+    {
+      label: "Facteurs aggravants",
+      field: "aggravatingFactors",
+      type: "textarea",
+    },
+    {
+      label: "Facteurs soulageants",
+      field: "relievingFactors",
+      type: "textarea",
+    },
+    {
+      label: "Symptômes associés",
+      field: "associatedSymptoms",
+      type: "textarea",
+    },
     {
       label: "Type de douleur",
       field: "painType",
@@ -166,10 +179,18 @@ export default function ConsultationDetails({
       min: 0,
       max: 10,
     },
-    { label: "Examen clinique", field: "clinicalExamination", type: "text" },
-    { label: "Tests d'ostéopathie", field: "osteopathyTesting", type: "text" },
-    { label: "Traitement", field: "treatment", type: "text" },
-    { label: "Conseils", field: "advice", type: "text" },
+    {
+      label: "Examen clinique",
+      field: "clinicalExamination",
+      type: "textarea",
+    },
+    {
+      label: "Tests d'ostéopathie",
+      field: "osteopathyTesting",
+      type: "textarea",
+    },
+    { label: "Traitement", field: "treatment", type: "textarea" },
+    { label: "Conseils", field: "advice", type: "textarea" },
   ];
 
   return (
@@ -190,7 +211,7 @@ export default function ConsultationDetails({
                 <DetailItem
                   key={field}
                   label={label}
-                  value={editableConsultation[field] || "Non renseigné"}
+                  value={editableConsultation[field]}
                   isEditing={isEditing}
                   onChange={(value) => handleFieldChange(field, value)}
                   type={type}
@@ -220,51 +241,56 @@ export default function ConsultationDetails({
             )}
           </div>
 
-          {!isEditing && editableConsultation.diagnosis && (
-            <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                Diagnostics différentiels
-              </h3>
-              <p className="text-gray-700 mb-4">
-                {editableConsultation.diagnosis.summary}
-              </p>
+          {!isEditing &&
+            editableConsultation.diagnosis &&
+            editableConsultation.diagnosis.exams?.length > 0 && (
+              <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                  Diagnostics différentiels
+                </h3>
+                <p className="text-gray-700 mb-4">
+                  {editableConsultation.diagnosis.summary}
+                </p>
 
-              {editableConsultation.diagnosis?.differential_diagnosis && (
-                <div className="mt-3 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-                  <p className="text-gray-700">
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html:
-                          editableConsultation.diagnosis.differential_diagnosis,
-                      }}
-                    />
-                  </p>
-                </div>
-              )}
-
-              {editableConsultation.diagnosis?.exams &&
-                Array.isArray(editableConsultation.diagnosis.exams) && (
-                  <ul className="mt-2">
-                    {editableConsultation.diagnosis.exams.map((exam, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center space-x-2 mt-3"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={exam.checked}
-                          onChange={() => handleCheckboxChange(index)}
-                          className="form-checkbox h-5 w-5 text-blue-600"
-                        />
-                        <span className="text-gray-700">
-                          <strong>{exam.name}</strong> - {exam.description}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                {editableConsultation.diagnosis?.differential_diagnosis && (
+                  <div className="mt-3 p-4 bg-gray-100 border border-gray-300 rounded-lg">
+                    <p className="text-gray-700">
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            editableConsultation.diagnosis
+                              .differential_diagnosis,
+                        }}
+                      />
+                    </p>
+                  </div>
                 )}
-            </div>
-          )}
+
+                {editableConsultation.diagnosis?.exams &&
+                  Array.isArray(editableConsultation.diagnosis.exams) && (
+                    <ul className="mt-2">
+                      {editableConsultation.diagnosis.exams.map(
+                        (exam, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center space-x-2 mt-3"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={exam.checked}
+                              onChange={() => handleCheckboxChange(index)}
+                              className="form-checkbox h-4 w-4 text-primary flex-shrink-0"
+                            />
+                            <span className="text-gray-700">
+                              <strong>{exam.name}</strong> - {exam.description}
+                            </span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  )}
+              </div>
+            )}
 
           {isEditing && (
             <div className="flex gap-4 mt-4 justify-center">

@@ -2,48 +2,84 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useEffect, useState } from "react";
 import { isEventInThePast } from "../../../../shared/utils/dateUtils.js";
 import DetailItem from "../private/Design/DetailItem.jsx";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import axios from "../../axiosConfig.js";
 
 dayjs.extend(customParseFormat);
 
 export default function AppointmentDialog({
   selectedEvent,
   setSelectedEvent,
-  editableEvent,
-  setEditableEvent,
   isEditing,
   setIsEditing,
   onEdit,
   onDelete,
 }) {
+  const [editableEvent, setEditableEvent] = useState(null);
+
+  useEffect(() => {
+    if (selectedEvent) {
+      setEditableEvent({
+        ...selectedEvent,
+        date: selectedEvent.date
+          ? dayjs(selectedEvent.date).isValid()
+            ? dayjs(selectedEvent.date).format("YYYY-MM-DD")
+            : "Date invalide"
+          : "",
+        startTime: selectedEvent.startTime
+          ? dayjs(selectedEvent.startTime, "HH:mm:ss").isValid()
+            ? dayjs(selectedEvent.startTime, "HH:mm").format("HH:mm")
+            : "Heure invalide"
+          : "",
+        endTime: selectedEvent.endTime
+          ? dayjs(selectedEvent.endTime, "HH:mm:ss").isValid()
+            ? dayjs(selectedEvent.endTime, "HH:mm").format("HH:mm")
+            : "Heure invalide"
+          : "",
+      });
+    } else {
+      setEditableEvent(null);
+    }
+  }, [selectedEvent]);
+
   const handleChange = (field, value) => {
     setEditableEvent((prev) => {
-      let formattedValue = value;
-
-      if (field === "date") {
-        formattedValue = dayjs(value, "YYYY-MM-DD").format("DD/MM/YYYY");
-      } else if (field === "startTime" || field === "endTime") {
-        formattedValue = dayjs(value, "HH:mm:ss").format("HH:mm");
-      }
-
-      return { ...prev, [field]: formattedValue };
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [field]: field === "date" ? dayjs(value).format("YYYY-MM-DD") : value,
+      };
     });
   };
 
-  const handleSave = () => {
-    if (!editableEvent) return;
+  const handleSave = async () => {
+    if (!editableEvent || !editableEvent.id) return;
 
     const updatedEvent = {
       ...editableEvent,
-      date: dayjs(editableEvent.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
-      startTime: dayjs(editableEvent.startTime, "HH:mm").format("HH:mm:ss"),
-      endTime: dayjs(editableEvent.endTime, "HH:mm").format("HH:mm:ss"),
+      date: dayjs(
+        editableEvent.date,
+        ["DD/MM/YYYY", "YYYY-MM-DD"],
+        true
+      ).format("YYYY-MM-DD"),
+      startTime: dayjs(editableEvent.startTime, "HH:mm", true).format(
+        "HH:mm:ss"
+      ),
+      endTime: dayjs(editableEvent.endTime, "HH:mm", true).format("HH:mm:ss"),
     };
 
-    onEdit(updatedEvent);
-    setIsEditing(false);
+    try {
+      await axios.put(`/appointment/${editableEvent.id}`, updatedEvent);
+      if (onEdit) onEdit(updatedEvent);
+      setSelectedEvent(null);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour :", error);
+      alert("Erreur lors de la mise à jour du rendez-vous.");
+    }
   };
 
   const handleDelete = () => {
@@ -60,25 +96,19 @@ export default function AppointmentDialog({
     {
       label: "Type",
       field: "type",
-      type: "select",
       options: [
-        { label: "Suivi", value: "Suivi" },
-        { label: "Première consultation", value: "Première consultation" },
-        { label: "Urgence", value: "Urgence" },
-        { label: "Bilan", value: "Bilan" },
-        { label: "Pédiatrique", value: "Pédiatrique" },
-        { label: "Autre", value: "Autre" },
+        "Suivi",
+        "Première consultation",
+        "Urgence",
+        "Bilan",
+        "Pédiatrique",
+        "Autre",
       ],
     },
     {
       label: "Statut",
       field: "status",
-      type: "select",
-      options: [
-        { label: "Confirmé", value: "Confirmé" },
-        { label: "En attente", value: "En attente" },
-        { label: "Annulé", value: "Annulé" },
-      ],
+      options: ["Confirmé", "En attente", "Annulé"],
     },
     { label: "Date", field: "date", type: "date" },
     { label: "Heure de début", field: "startTime", type: "time" },
@@ -106,7 +136,7 @@ export default function AppointmentDialog({
               <DetailItem
                 key={field}
                 label={label}
-                value={editableEvent[field]}
+                value={editableEvent[field] ?? ""}
                 isEditing={isEditing}
                 onChange={(value) => handleChange(field, value)}
                 type={type}

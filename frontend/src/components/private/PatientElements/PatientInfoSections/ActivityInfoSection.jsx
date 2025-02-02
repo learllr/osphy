@@ -91,10 +91,7 @@ export default function ActivityInfoSection({ patientId, activities }) {
     >
       <ItemList
         items={editedActivities}
-        fields={[
-          { key: "activity", type: "text" },
-          { key: "temporalInfo", type: "text" },
-        ]}
+        fields={[{ key: "activity" }, { key: "temporalInfo" }]}
         onChange={handleInputChange}
         onDelete={handleDelete}
         onAdd={handleAddActivity}
