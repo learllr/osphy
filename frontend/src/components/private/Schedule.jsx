@@ -1,14 +1,10 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import React, { useEffect, useState } from "react";
-import { determineBackgroundColor } from "../../../../shared/utils/colorUtils.js";
+import { determineAppointmentBackgroundColor } from "../../../../shared/utils/colorUtils.js";
 import { determineStatusIcon } from "../../../../shared/utils/iconUtils.js";
 import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
-
-dayjs.extend(utc);
 
 export default function Schedule() {
   const [patients, setPatients] = useState([]);
@@ -41,35 +37,31 @@ export default function Schedule() {
   }) => {
     if (!patient?.birthDate || !patient?.id) return null;
 
-    const parsedDate = dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"], true);
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return null;
 
-    const formattedDate = parsedDate.format("YYYY-MM-DD");
+    const formattedDate = parsedDate.toISOString().split("T")[0];
 
-    const startDateTime = dayjs(
-      `${formattedDate} ${startTime}`,
-      "YYYY-MM-DD HH:mm:ss",
-      true
-    );
-    const endDateTime = dayjs(
-      `${formattedDate} ${endTime}`,
-      "YYYY-MM-DD HH:mm:ss",
-      true
-    );
+    const startDateTime = new Date(`${formattedDate}T${startTime}`);
+    const endDateTime = new Date(`${formattedDate}T${endTime}`);
 
     return {
       id,
       name: `${patient.firstName} ${patient.lastName}`,
-      start: dayjs.utc(startDateTime).local().format(),
-      end: dayjs.utc(endDateTime).local().format(),
+      start: startDateTime.toISOString(),
+      end: endDateTime.toISOString(),
       extendedProps: {
         id,
         patientId: patient.id,
         status,
         icon: determineStatusIcon(status),
-        backgroundColor: determineBackgroundColor(patient, patient.birthDate),
+        backgroundColor: determineAppointmentBackgroundColor(
+          patient,
+          patient.birthDate
+        ),
         type,
-        startTime: startDateTime.format("HH:mm:ss"),
-        endTime: endDateTime.format("HH:mm:ss"),
+        startTime: startTime,
+        endTime: endTime,
         date: formattedDate,
       },
     };

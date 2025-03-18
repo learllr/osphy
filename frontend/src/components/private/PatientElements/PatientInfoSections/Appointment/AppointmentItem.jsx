@@ -1,9 +1,9 @@
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import React from "react";
 import { FaTrash } from "react-icons/fa";
-
-dayjs.extend(customParseFormat);
+import {
+  formatDate,
+  formatDateFR,
+} from "../../../../../../../shared/utils/dateUtils";
 
 export default function AppointmentItem({
   appointment,
@@ -12,15 +12,9 @@ export default function AppointmentItem({
   handleInputChange,
   handleDelete,
 }) {
-  // Formatage de la date pour affichage
-  const formattedDate = appointment.date
-    ? dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("DD/MM/YYYY")
-    : "";
+  const formattedDate = appointment.date ? formatDateFR(appointment.date) : "";
 
-  // Formatage de la date pour l'input type="date" (YYYY-MM-DD)
-  const dateForInput = appointment.date
-    ? dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format("YYYY-MM-DD")
-    : "";
+  const dateForInput = appointment.date ? formatDate(appointment.date) : "";
 
   return (
     <li className="mb-2 flex flex-col md:flex-row items-start md:items-center w-full">

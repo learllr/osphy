@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
-import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
+import { formatDateFR } from "../../../../../shared/utils/dateUtils";
 
 export default function DetailItem({
   label,
@@ -33,11 +33,7 @@ export default function DetailItem({
   };
 
   const displayValue =
-    type === "date" && !isEditing
-      ? value
-        ? dayjs(value, "YYYY-MM-DD").format("DD/MM/YYYY")
-        : "Non renseigné"
-      : value || "Non renseigné";
+    type === "date" && !isEditing ? formatDateFR(value) : value || "-";
 
   return (
     <div className="flex text-sm mb-1">
@@ -52,7 +48,7 @@ export default function DetailItem({
                 onChange(e.target.value === "" ? null : e.target.value)
               }
             >
-              {allowEmptyOption && <option value="">Non renseigné</option>}
+              {allowEmptyOption && <option value="">-</option>}
               {options.map((option, index) => (
                 <option key={index} value={option}>
                   {option}

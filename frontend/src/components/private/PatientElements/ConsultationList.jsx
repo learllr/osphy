@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { formatDateFR } from "../../../../../shared/utils/dateUtils.js";
 import { highlightText } from "../../../../../shared/utils/textUtils.js";
 import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
 
@@ -16,9 +17,10 @@ export default function ConsultationList({
   const openAddDialog = () => setShowAddDialog(true);
   const closeAddDialog = () => setShowAddDialog(false);
 
-  const filteredConsultations = consultations.filter((consultation) =>
-    consultation.date.includes(searchQuery)
-  );
+  const filteredConsultations = consultations.filter((consultation) => {
+    const formattedDate = formatDateFR(consultation.date);
+    return formattedDate.includes(searchQuery);
+  });
 
   return (
     <>
@@ -47,7 +49,10 @@ export default function ConsultationList({
                 onClick={() => onConsultationClick(consultation)}
                 className="text-primary hover:text-primary/90"
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(consultation.date, searchQuery),
+                  __html: highlightText(
+                    formatDateFR(consultation.date),
+                    searchQuery
+                  ),
                 }}
               />
             </li>

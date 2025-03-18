@@ -1,24 +1,37 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { patientInfosFields } from "../../../../../../shared/constants/fields.js";
+import { formatDate } from "../../../../../../shared/utils/dateUtils.js";
 import axios from "../../../../axiosConfig.js";
 import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
 
+const formatPatientData = (patientData) => ({
+  ...patientData,
+  birthDate: patientData?.birthDate ? formatDate(patientData.birthDate) : "",
+});
+
 export default function GeneralInfoSection({ patient }) {
-  const [editablePatient, setEditablePatient] = useState(patient);
+  const [editablePatient, setEditablePatient] = useState(
+    formatPatientData(patient)
+  );
+
   const [backupPatient, setBackupPatient] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    setEditablePatient(patient);
+    setEditablePatient(formatPatientData(patient));
   }, [patient]);
 
   const handleFieldChange = (field, value) => {
     setEditablePatient((prev) => ({
       ...prev,
-      [field]: value,
+      [field]:
+        field === "birthDate" && !isNaN(Date.parse(value))
+          ? new Date(value).toISOString().split("T")[0]
+          : value,
     }));
   };
 
@@ -33,7 +46,7 @@ export default function GeneralInfoSection({ patient }) {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries("patients");
-        setEditablePatient(data);
+        setEditablePatient(formatPatientData(data));
         setIsEditing(false);
       },
     }
@@ -53,62 +66,20 @@ export default function GeneralInfoSection({ patient }) {
     setIsEditing(true);
   };
 
-  const patientFields = [
-    { label: "Nom", field: "lastName" },
-    { label: "Prénom", field: "firstName" },
-    {
-      label: "Date de naissance",
-      field: "birthDate",
-      type: "date",
-      format: (value) =>
-        value
-          ? isEditing
-            ? value
-            : new Date(value).toLocaleDateString("fr-FR")
-          : "",
-    },
-    {
-      label: "Sexe",
-      field: "gender",
-      type: "select",
-      options: ["Homme", "Femme"],
-    },
-    { label: "Adresse", field: "address" },
-    { label: "Téléphone", field: "mobilePhone" },
-    { label: "Email", field: "email", type: "email" },
-    { label: "Profession", field: "occupation" },
-    { label: "Taille", field: "height", type: "number", min: 0, max: 300 },
-    { label: "Poids", field: "weight", type: "number", min: 0, max: 300 },
-    {
-      label: "Latéralité",
-      field: "handedness",
-      type: "select",
-      options: ["Droitier", "Gaucher", "Ambidextre"],
-    },
-    { label: "Autres informations", field: "additionalInfo", type: "textarea" },
-  ];
-
   return (
     <Section
       title="Informations générales"
       showCount={false}
       onEdit={handleEditClick}
     >
-      {patientFields.map(({ label, field, type, options, format }) => {
-        const value = editablePatient[field] ?? "Non renseigné";
+      {patientInfosFields.map(({ label, field, type, options }) => {
+        const value = editablePatient[field] ?? "-";
+
         return (
           <DetailItem
             key={field}
             label={label}
-            value={
-              isEditing
-                ? format
-                  ? format(value)
-                  : value
-                : format
-                ? format(value)
-                : value
-            }
+            value={value}
             isEditing={isEditing}
             onChange={(newValue) => handleFieldChange(field, newValue)}
             type={type}

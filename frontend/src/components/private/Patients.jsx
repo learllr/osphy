@@ -4,7 +4,10 @@ import React, { useState } from "react";
 import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
-import { calculateAge } from "../../../../shared/utils/dateUtils.js";
+import {
+  calculateAge,
+  formatDateFR,
+} from "../../../../shared/utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
@@ -70,13 +73,13 @@ export default function Patients() {
       const genderMatch =
         (genderFilters.homme && patient.gender.toLowerCase() === "homme") ||
         (genderFilters.femme && patient.gender.toLowerCase() === "femme");
-      const birthDate = patient.birthDate; // Pas besoin de formatage ici
+      const birthDateFormatted = formatDateFR(patient.birthDate);
       const age = calculateAge(patient.birthDate);
 
       return (
         genderMatch &&
         (fullName.includes(searchQuery.toLowerCase()) ||
-          birthDate.includes(searchQuery) ||
+          birthDateFormatted.includes(searchQuery) ||
           `${age}`.includes(searchQuery))
       );
     })
@@ -197,7 +200,10 @@ export default function Patients() {
                     <div className="text-sm text-gray-500">
                       <span
                         dangerouslySetInnerHTML={{
-                          __html: highlightText(patient.birthDate, searchQuery), // Pas de formatage nécessaire ici
+                          __html: highlightText(
+                            formatDateFR(patient.birthDate),
+                            searchQuery
+                          ),
                         }}
                       />{" "}
                       (

@@ -18,7 +18,7 @@ export const highlightText = (text, query) => {
 };
 
 export const sanitizeInput = (value) => {
-  if (value === "" || value === "Non renseigné") {
+  if (value === "" || value === "-") {
     return null;
   }
 

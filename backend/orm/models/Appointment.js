@@ -1,10 +1,5 @@
 "use strict";
-import dayjs from "dayjs";
 import { DataTypes, Model } from "sequelize";
-
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-
-dayjs.extend(customParseFormat);
 
 export default (sequelize) => {
   class Appointment extends Model {}
@@ -52,44 +47,14 @@ export default (sequelize) => {
       date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
-        get() {
-          return this.getDataValue("date");
-        },
-        set(value) {
-          const parsedDate = dayjs(value, ["DD/MM/YYYY", "YYYY-MM-DD"], true);
-          if (parsedDate.isValid()) {
-            this.setDataValue("date", parsedDate.format("YYYY-MM-DD"));
-          } else {
-            console.error("Date invalide détectée :", value);
-          }
-        },
       },
-
       startTime: {
         type: DataTypes.TIME,
         allowNull: false,
-        get() {
-          return this.getDataValue("startTime");
-        },
-        set(value) {
-          this.setDataValue(
-            "startTime",
-            dayjs(value, "HH:mm").format("HH:mm:ss")
-          );
-        },
       },
       endTime: {
         type: DataTypes.TIME,
         allowNull: false,
-        get() {
-          return this.getDataValue("endTime");
-        },
-        set(value) {
-          this.setDataValue(
-            "endTime",
-            dayjs(value, "HH:mm").format("HH:mm:ss")
-          );
-        },
       },
       status: {
         type: DataTypes.ENUM("Annulé", "En attente", "Confirmé"),

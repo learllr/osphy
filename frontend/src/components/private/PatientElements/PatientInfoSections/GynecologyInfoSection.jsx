@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
+import { gynecologyFields } from "../../../../../../shared/constants/fields.js";
 import axios from "../../../../axiosConfig.js";
 import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
@@ -58,38 +59,8 @@ export default function GynecologyInfoSection({
     setIsEditing(false);
   };
 
-  const gynecologyFields = [
-    { label: "Règles", field: "period" },
-    { label: "Ménopause", field: "menopause" },
-    {
-      label: "Contraception",
-      field: "contraception",
-      options: [
-        "Aucune",
-        "Stérilet",
-        "Stérilet cuivre",
-        "Stérilet hormonal",
-        "Pilule",
-        "Pilule (PC ou COC)",
-        "Pilule (PP)",
-        "Ogino",
-        "Implant",
-        "Patch",
-        "Anneau",
-        "Préservatif",
-        "Retrait",
-        "Autre",
-      ],
-    },
-    { label: "Suivi gynécologique", field: "followUp" },
-  ];
-
   const formatValue = (value) =>
-    typeof value === "boolean"
-      ? value
-        ? "Oui"
-        : "Non"
-      : value || "Non renseigné";
+    typeof value === "boolean" ? (value ? "Oui" : "Non") : value || "-";
 
   const parseValue = (field, value) => {
     if (field === "contraception") {

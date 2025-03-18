@@ -1,14 +1,14 @@
-export const determineBackgroundColor = (patient, birthDate) => {
-  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(birthDate)) {
-    console.warn("Date de naissance invalide pour:", patient);
+export const determineAppointmentBackgroundColor = (patient, birthDate) => {
+  if (!birthDate || isNaN(Date.parse(birthDate))) {
     return "#d1d5db";
   }
 
-  const [day, month, year] = birthDate.split("/").map(Number);
-  const birth = new Date(year, month - 1, day);
+  const birth = new Date(birthDate);
+  const now = new Date();
+
   const ageInMonths =
-    (new Date().getFullYear() - birth.getFullYear()) * 12 +
-    (new Date().getMonth() - birth.getMonth());
+    (now.getFullYear() - birth.getFullYear()) * 12 +
+    (now.getMonth() - birth.getMonth());
 
   const colors = {
     Homme: ageInMonths < 216 ? "#3B82F6" : "#1E40AF",

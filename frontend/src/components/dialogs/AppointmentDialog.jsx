@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import * as Dialog from "@radix-ui/react-dialog";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import { useEffect, useState } from "react";
-import { isEventInThePast } from "../../../../shared/utils/dateUtils.js";
+import { appointmentFields } from "../../../../shared/constants/fields.js";
+import {
+  formatDate,
+  isEventInThePast,
+} from "../../../../shared/utils/dateUtils.js";
 import axios from "../../axiosConfig.js";
 import DetailItem from "../private/Design/DetailItem.jsx";
-
-dayjs.extend(customParseFormat);
 
 export default function AppointmentDialog({
   selectedEvent,
@@ -24,19 +24,11 @@ export default function AppointmentDialog({
     if (selectedEvent) {
       setEditableEvent({
         ...selectedEvent,
-        date: selectedEvent.date
-          ? dayjs(
-              selectedEvent.date,
-              ["DD/MM/YYYY", "YYYY-MM-DD"],
-              true
-            ).format("YYYY-MM-DD")
-          : "",
+        date: selectedEvent.date ? formatDate(selectedEvent.date) : "",
         startTime: selectedEvent.startTime
-          ? dayjs(selectedEvent.startTime, "HH:mm:ss").format("HH:mm")
+          ? selectedEvent.startTime.slice(0, 5)
           : "",
-        endTime: selectedEvent.endTime
-          ? dayjs(selectedEvent.endTime, "HH:mm:ss").format("HH:mm")
-          : "",
+        endTime: selectedEvent.endTime ? selectedEvent.endTime.slice(0, 5) : "",
       });
     } else {
       setEditableEvent(null);
@@ -48,11 +40,12 @@ export default function AppointmentDialog({
       if (!prev) return prev;
 
       if (field === "date") {
-        const parsedDate = dayjs(value, ["YYYY-MM-DD", "DD/MM/YYYY"], true);
-
+        const parsedDate = new Date(value);
         return {
           ...prev,
-          date: parsedDate.isValid() ? parsedDate.format("YYYY-MM-DD") : value,
+          date: !isNaN(parsedDate)
+            ? parsedDate.toISOString().split("T")[0]
+            : value,
         };
       }
 
@@ -68,15 +61,9 @@ export default function AppointmentDialog({
 
     const updatedEvent = {
       ...editableEvent,
-      date: dayjs(
-        editableEvent.date,
-        ["DD/MM/YYYY", "YYYY-MM-DD"],
-        true
-      ).format("YYYY-MM-DD"),
-      startTime: dayjs(editableEvent.startTime, "HH:mm", true).format(
-        "HH:mm:ss"
-      ),
-      endTime: dayjs(editableEvent.endTime, "HH:mm", true).format("HH:mm:ss"),
+      date: new Date(editableEvent.date).toISOString().split("T")[0],
+      startTime: `${editableEvent.startTime}:00`,
+      endTime: `${editableEvent.endTime}:00`,
     };
 
     try {
@@ -99,34 +86,6 @@ export default function AppointmentDialog({
     }
   };
 
-  const eventFields = [
-    { label: "Nom du patient", field: "name", editable: false },
-    {
-      label: "Type",
-      field: "type",
-      type: "select",
-      options: [
-        "Suivi",
-        "Première consultation",
-        "Urgence",
-        "Bilan",
-        "Pédiatrique",
-        "Autre",
-      ],
-      allowEmptyOption: false,
-    },
-    {
-      label: "Statut",
-      field: "status",
-      type: "select",
-      options: ["Confirmé", "En attente", "Annulé"],
-      allowEmptyOption: false,
-    },
-    { label: "Date", field: "date", type: "date" },
-    { label: "Heure de début", field: "startTime", type: "time" },
-    { label: "Heure de fin", field: "endTime", type: "time" },
-  ];
-
   return (
     <Dialog.Root
       open={!!selectedEvent}
@@ -144,7 +103,7 @@ export default function AppointmentDialog({
         <Separator />
         {editableEvent && (
           <div className="space-y-1 mt-5">
-            {eventFields.map(
+            {appointmentFields.map(
               ({ label, field, type, options, editable, allowEmptyOption }) => (
                 <DetailItem
                   key={field}

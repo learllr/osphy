@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { sleepFields } from "../../../../../../shared/constants/fields.js";
 import axios from "../../../../axiosConfig.js";
 import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
@@ -61,33 +62,6 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
     setEditableSleep(backupSleep);
     setIsEditing(false);
   };
-
-  const sleepFields = [
-    {
-      label: "Qualité du sommeil",
-      field: "sleepQuality",
-      type: "select",
-      options: ["Bon", "Moyen", "Mauvais"],
-      format: (value) => value || "Non renseigné",
-    },
-    {
-      label: "Durée du sommeil",
-      field: "sleepDuration",
-      type: "select",
-      options: ["<5h", "5-6h", "7-8h", ">8h"],
-      format: (value) => value || "Non renseigné",
-    },
-    {
-      label: "Sommeil réparateur",
-      field: "restorativeSleep",
-      type: "select",
-      options: ["Oui", "Non"],
-      format: (value) =>
-        value === true ? "Oui" : value === false ? "Non" : "Non renseigné",
-      parse: (value) =>
-        value === "Oui" ? true : value === "Non" ? false : null,
-    },
-  ];
 
   return (
     <Section title="Sommeil" showCount={false} onEdit={handleEditClick}>

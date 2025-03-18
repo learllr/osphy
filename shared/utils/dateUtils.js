@@ -1,37 +1,48 @@
-import dayjs from "dayjs";
-
 export const calculateAge = (birthDate) => {
-  const [day, month, year] = birthDate.split("/").map(Number);
-  const birth = new Date(year, month - 1, day);
+  if (!birthDate || isNaN(Date.parse(birthDate))) return "";
+
+  const birth = new Date(birthDate);
   const now = new Date();
 
   let ageYears = now.getFullYear() - birth.getFullYear();
-  const ageMonths = now.getMonth() + 1 - (birth.getMonth() + 1) + ageYears * 12;
+  let ageMonths =
+    (now.getFullYear() - birth.getFullYear()) * 12 +
+    (now.getMonth() - birth.getMonth());
 
-  if (
-    now.getMonth() < birth.getMonth() ||
-    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())
-  ) {
+  if (now.getDate() < birth.getDate()) {
+    ageMonths--;
+  }
+
+  if (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate())) {
     ageYears--;
   }
 
   return ageYears > 1 ? `${ageYears} ans` : `${ageMonths} mois`;
 };
 
-export const formatEventTime = (time) =>
-  time ? dayjs(`1970-01-01T${time}`).format("HH:mm") : "";
-
 export const isEventInThePast = (date, startTime = null) => {
-  let eventDateTime;
+  if (!date) return false;
 
+  let eventDateTime;
   if (startTime) {
-    eventDateTime = dayjs(`${date} ${startTime}`, [
-      "DD/MM/YYYY HH:mm",
-      "YYYY-MM-DD HH:mm",
-    ]);
+    eventDateTime = new Date(`${date}T${startTime}:00`);
   } else {
-    eventDateTime = dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"]).startOf("day");
+    eventDateTime = new Date(date);
   }
 
-  return eventDateTime.isBefore(dayjs());
+  return eventDateTime < new Date();
 };
+
+export function formatDate(date) {
+  if (!date || isNaN(Date.parse(date))) return "";
+  return new Date(date).toISOString().split("T")[0];
+}
+
+export function formatDateFR(date) {
+  if (!date || isNaN(Date.parse(date))) return "";
+  return new Date(date).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}

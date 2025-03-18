@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { useEffect, useState } from "react";
-import { isEventInThePast } from "../../../../../../shared/utils/dateUtils.js";
+import {
+  formatDate,
+  formatDateFR,
+  isEventInThePast,
+} from "../../../../../../shared/utils/dateUtils.js";
 import axios from "../../../../axiosConfig.js";
 import Section from "../../Design/Section.jsx";
 import AppointmentFilters from "./Appointment/AppointmentFilters.jsx";
 import AppointmentItem from "./Appointment/AppointmentItem.jsx";
-
-dayjs.extend(customParseFormat);
 
 export default function AppointmentInfoSection({ patientId }) {
   const [appointments, setAppointments] = useState([]);
@@ -26,9 +26,7 @@ export default function AppointmentInfoSection({ patientId }) {
         const response = await axios.get(`/appointment/${patientId}`);
         const formattedAppointments = response.data.map((appointment) => ({
           ...appointment,
-          date: dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format(
-            "DD/MM/YYYY"
-          ),
+          date: formatDateFR(appointment.date),
         }));
         setAppointments(formattedAppointments);
         setOriginalAppointments(formattedAppointments);
@@ -55,9 +53,11 @@ export default function AppointmentInfoSection({ patientId }) {
   };
 
   const handleDateChange = (id, value) => {
-    const formattedDate = dayjs(value, ["YYYY-MM-DD", "DD/MM/YYYY"]).format(
-      "DD/MM/YYYY"
-    );
+    const parsedDate = new Date(value);
+    const formattedDate = isNaN(parsedDate)
+      ? value
+      : parsedDate.toLocaleDateString("fr-FR");
+
     setAppointments((prev) =>
       prev.map((appointment) =>
         appointment.id === id
@@ -82,7 +82,7 @@ export default function AppointmentInfoSection({ patientId }) {
     const newAppointment = {
       id: null,
       patientId,
-      date: dayjs().format("DD/MM/YYYY"),
+      date: new Date().toLocaleDateString("fr-FR"),
       startTime: "",
       endTime: "",
       status: "En attente",
@@ -103,7 +103,7 @@ export default function AppointmentInfoSection({ patientId }) {
         .map((appointment) =>
           axios.put(`/appointment/${appointment.id}`, {
             ...appointment,
-            date: dayjs(appointment.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+            date: formatDate(appointment.date),
           })
         );
 
@@ -112,7 +112,7 @@ export default function AppointmentInfoSection({ patientId }) {
         .map((appointment) =>
           axios.post(`/appointment`, {
             patientId: appointment.patientId,
-            date: dayjs(appointment.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+            date: formatDate(appointment.date),
             startTime: appointment.startTime,
             endTime: appointment.endTime,
             status: appointment.status,
@@ -129,9 +129,7 @@ export default function AppointmentInfoSection({ patientId }) {
       const response = await axios.get(`/appointment/${patientId}`);
       const formattedAppointments = response.data.map((appointment) => ({
         ...appointment,
-        date: dayjs(appointment.date, ["DD/MM/YYYY", "YYYY-MM-DD"]).format(
-          "DD/MM/YYYY"
-        ),
+        date: formatDateFR(appointment.date),
       }));
       setAppointments(formattedAppointments);
       setOriginalAppointments(formattedAppointments);

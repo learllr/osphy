@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
-import { isEventInThePast } from "../../../../../shared/utils/dateUtils.js";
+import { consultationDetailsFields } from "../../../../../shared/constants/fields.js";
+import {
+  calculateAge,
+  formatDateFR,
+  isEventInThePast,
+} from "../../../../../shared/utils/dateUtils.js";
 import axios from "../../../axiosConfig.js";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside.js";
 import DetailItem from "../Design/DetailItem.jsx";
@@ -26,7 +31,6 @@ export default function ConsultationDetails({
     let parsedDiagnosis = consultation.diagnosis;
 
     try {
-      // 2 parsing car consultation.diagnosis est doublement encodé en JSON dans la base de données
       if (typeof parsedDiagnosis === "string") {
         parsedDiagnosis = JSON.parse(parsedDiagnosis);
       }
@@ -54,7 +58,6 @@ export default function ConsultationDetails({
   };
 
   const handleSaveChanges = async () => {
-    console.log("Données envoyées à l'API :", editableConsultation);
     try {
       await axios.put(
         `/consultation/${editableConsultation.id}`,
@@ -84,8 +87,7 @@ export default function ConsultationDetails({
 
   const generateDiagnosisMutation = useMutation({
     mutationFn: async () => {
-      const age =
-        new Date().getFullYear() - new Date(patient.birthDate).getFullYear();
+      const age = calculateAge(patient.birthDate);
 
       const response = await axios.post("/consultation/diagnosis", {
         id: editableConsultation.id,
@@ -144,59 +146,12 @@ export default function ConsultationDetails({
 
   const isPastConsultation = isEventInThePast(consultation.date);
 
-  const fields = [
-    { label: "Plainte", field: "patientComplaint", type: "textarea" },
-    {
-      label: "Facteurs aggravants",
-      field: "aggravatingFactors",
-      type: "textarea",
-    },
-    {
-      label: "Facteurs soulageants",
-      field: "relievingFactors",
-      type: "textarea",
-    },
-    {
-      label: "Symptômes associés",
-      field: "associatedSymptoms",
-      type: "textarea",
-    },
-    {
-      label: "Type de douleur",
-      field: "painType",
-      type: "select",
-      options: [
-        "Neuropathique",
-        "Nociceptive mécanique (périphérique)",
-        "Nociceptive inflammatoire (périphérique)",
-        "Centralisée",
-      ],
-    },
-    {
-      label: "Échelle EVA (0-10)",
-      field: "eva",
-      type: "number",
-      min: 0,
-      max: 10,
-    },
-    {
-      label: "Examen clinique",
-      field: "clinicalExamination",
-      type: "textarea",
-    },
-    {
-      label: "Tests d'ostéopathie",
-      field: "osteopathyTesting",
-      type: "textarea",
-    },
-    { label: "Traitement", field: "treatment", type: "textarea" },
-    { label: "Conseils", field: "advice", type: "textarea" },
-  ];
-
   return (
     <div ref={sectionRef}>
       <Section
-        title={`Détails de la consultation du ${consultation.date}`}
+        title={`Détails de la consultation du ${formatDateFR(
+          consultation.date
+        )}`}
         onEdit={handleEditClick}
         showCount={false}
         hideEditButton={isPastConsultation}
@@ -207,19 +162,21 @@ export default function ConsultationDetails({
               Informations sur les symptômes
             </h3>
             <div className="space-y-4">
-              {fields.map(({ label, field, type, options, min, max }) => (
-                <DetailItem
-                  key={field}
-                  label={label}
-                  value={editableConsultation[field]}
-                  isEditing={isEditing}
-                  onChange={(value) => handleFieldChange(field, value)}
-                  type={type}
-                  options={options}
-                  min={min}
-                  max={max}
-                />
-              ))}
+              {consultationDetailsFields.map(
+                ({ label, field, type, options, min, max }) => (
+                  <DetailItem
+                    key={field}
+                    label={label}
+                    value={editableConsultation[field]}
+                    isEditing={isEditing}
+                    onChange={(value) => handleFieldChange(field, value)}
+                    type={type}
+                    options={options}
+                    min={min}
+                    max={max}
+                  />
+                )
+              )}
             </div>
 
             {!isEditing && (

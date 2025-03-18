@@ -24,12 +24,8 @@ export default function ItemLine({
         ))
       ) : (
         <>
-          <span className="font-bold text-gray-800">
-            {values[1] || "Non renseigné"}
-          </span>
-          <span className="italic text-gray-500">
-            {values[2] || "Non renseigné"}
-          </span>
+          <span className="font-bold text-gray-800">{values[1] || "-"}</span>
+          <span className="italic text-gray-500">{values[2] || "-"}</span>
         </>
       )}
 
