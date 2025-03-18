@@ -1,10 +1,9 @@
 import React from "react";
-import ItemLine from "./ItemLine.jsx";
 import ItemActions from "./ItemActions.jsx";
+import ItemLine from "./ItemLine.jsx";
 
 export default function ItemList({
   items,
-  fields,
   onChange,
   onDelete,
   onAdd,
@@ -19,9 +18,8 @@ export default function ItemList({
         <ul>
           {items.map((item) => (
             <ItemLine
-              key={item.id}
+              key={item.id || `temp-${Math.random()}`}
               item={item}
-              fields={fields}
               onChange={onChange}
               onDelete={onDelete}
               isEditing={isEditing}

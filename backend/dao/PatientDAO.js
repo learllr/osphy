@@ -115,7 +115,12 @@ export default class PatientDAO {
   }
 
   static async createActivity(activityData) {
-    return await PatientActivity.create(activityData);
+    const activity = await PatientActivity.create(activityData);
+
+    return await PatientActivity.findOne({
+      where: { id: activity.id },
+      attributes: ["id", "activity", "temporalInfo"],
+    });
   }
 
   static async updateActivity(activityId, updatedData) {
