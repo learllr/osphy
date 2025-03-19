@@ -16,7 +16,10 @@ export default function PatientInfo({ patient }) {
           activities={patient.activities}
         />
 
-        <AntecedentInfoSection antecedents={patient.antecedents} />
+        <AntecedentInfoSection
+          patientId={patient.id}
+          antecedents={patient.antecedents}
+        />
 
         <ContraindicationInfoSection
           patientId={patient.id}

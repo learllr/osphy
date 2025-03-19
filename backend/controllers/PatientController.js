@@ -153,8 +153,8 @@ export const createPatientActivity = async (req, res) => {
 
     const newActivity = await PatientDAO.createActivity({
       patientId,
-      activity,
-      temporalInfo,
+      activity: sanitizeInput(activity),
+      temporalInfo: sanitizeInput(temporalInfo),
     });
 
     res.status(201).json(newActivity);
@@ -233,6 +233,80 @@ export const deletePatientActivity = async (req, res) => {
     res
       .status(500)
       .json({ message: "Erreur lors de la suppression de l'activité." });
+  }
+};
+
+/*
+----- Antécédents du patient -----
+*/
+
+export const createPatientAntecedent = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const { category, antecedent, year } = req.body;
+
+    const newAntecedent = await PatientDAO.createAntecedent({
+      patientId,
+      category: sanitizeInput(category) || "Traumatique",
+      year: sanitizeInput(year),
+      antecedent: sanitizeInput(antecedent),
+    });
+
+    res.status(201).json(newAntecedent);
+  } catch (error) {
+    console.error("Erreur lors de l'ajout d'un antécédent :", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de l'ajout de l'antécédent." });
+  }
+};
+
+export const getPatientAntecedents = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const antecedents = await PatientDAO.findAntecedentsByPatientId(patientId);
+
+    res.status(200).json(antecedents);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des antécédents :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des antécédents.",
+    });
+  }
+};
+
+export const updatePatientAntecedent = async (req, res) => {
+  try {
+    const { antecedentId } = req.params;
+    const { category, antecedent, year } = req.body;
+
+    const updatedAntecedent = await PatientDAO.updateAntecedent(antecedentId, {
+      category: sanitizeInput(category) || "Traumatique",
+      year: sanitizeInput(year),
+      antecedent: sanitizeInput(antecedent),
+    });
+
+    res.status(200).json(updatedAntecedent);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'antécédent :", error);
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour de l'antécédent.",
+    });
+  }
+};
+
+export const deletePatientAntecedent = async (req, res) => {
+  try {
+    const { antecedentId } = req.params;
+
+    await PatientDAO.deleteAntecedent(antecedentId);
+    res.status(204).send();
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'antécédent :", error);
+    res.status(500).json({
+      message: "Erreur lors de la suppression de l'antécédent.",
+    });
   }
 };
 

@@ -70,7 +70,12 @@ export default function GynecologyInfoSection({
   };
 
   return (
-    <Section title="Gynécologie" showCount={false} onEdit={handleEditClick}>
+    <Section
+      title="Gynécologie"
+      showCount={false}
+      onEdit={handleEditClick}
+      hideEditButton={isEditing}
+    >
       {gynecologyFields.map(({ label, field, options }) => (
         <DetailItem
           key={field}

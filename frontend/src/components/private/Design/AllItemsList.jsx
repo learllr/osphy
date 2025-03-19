@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation } from "react-query";
 import axios from "../../../axiosConfig.js";
 import ItemList from "./ItemList.jsx";
@@ -8,6 +8,8 @@ export default function AllItemsList({
   apiBaseUrl,
   isEditing,
   onEdit,
+  categoryOptions = [],
+  updateCount,
 }) {
   const [items, setItems] = useState(initialItems || []);
   const [initialItemsState, setInitialItemsState] = useState(
@@ -16,11 +18,6 @@ export default function AllItemsList({
   const [addedItems, setAddedItems] = useState([]);
   const [updatedItems, setUpdatedItems] = useState([]);
   const [deletedItems, setDeletedItems] = useState([]);
-
-  useEffect(() => {
-    setItems(initialItems || []);
-    setInitialItemsState(initialItems || []);
-  }, [initialItems]);
 
   const updateItemMutation = useMutation((item) =>
     axios.put(`${apiBaseUrl}/${item.id}`, item)
@@ -47,6 +44,7 @@ export default function AllItemsList({
 
     setItems((prev) => [...prev, newItem]);
     setAddedItems((prev) => [...prev, newItem]);
+    if (updateCount) updateCount(items.length + 1);
   };
 
   const handleUpdateItem = (id, field, value) => {
@@ -87,6 +85,7 @@ export default function AllItemsList({
       setDeletedItems((prev) => [...prev, id]);
       setItems((prev) => prev.filter((item) => item.id !== id));
     }
+    if (updateCount) updateCount(items.length - 1);
   };
 
   const handleSave = async () => {
@@ -106,6 +105,7 @@ export default function AllItemsList({
       setAddedItems([]);
       setUpdatedItems([]);
       setDeletedItems([]);
+      if (updateCount) updateCount(items.length);
       onEdit();
     } catch (error) {
       console.error("Erreur lors de l'enregistrement :", error);
@@ -130,6 +130,7 @@ export default function AllItemsList({
       onCancel={handleCancel}
       isEditing={isEditing}
       isLoading={isLoading}
+      categoryOptions={categoryOptions}
     />
   );
 }

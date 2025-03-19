@@ -7,12 +7,12 @@ import axios from "../../../../axiosConfig.js";
 import DetailItem from "../../Design/DetailItem.jsx";
 import Section from "../../Design/Section.jsx";
 
-const formatPatientData = (patientData) => ({
-  ...patientData,
-  birthDate: patientData?.birthDate ? formatDate(patientData.birthDate) : "",
-});
-
 export default function GeneralInfoSection({ patient }) {
+  const formatPatientData = (patientData) => ({
+    ...patientData,
+    birthDate: patientData?.birthDate ? formatDate(patientData.birthDate) : "",
+  });
+
   const [editablePatient, setEditablePatient] = useState(
     formatPatientData(patient)
   );
@@ -30,7 +30,7 @@ export default function GeneralInfoSection({ patient }) {
       ...prev,
       [field]:
         field === "birthDate" && !isNaN(Date.parse(value))
-          ? new Date(value).toISOString().split("T")[0]
+          ? formatDate(value)
           : value,
     }));
   };
@@ -71,6 +71,7 @@ export default function GeneralInfoSection({ patient }) {
       title="Informations générales"
       showCount={false}
       onEdit={handleEditClick}
+      hideEditButton={isEditing}
     >
       {patientInfosFields.map(({ label, field, type, options }) => {
         const value = editablePatient[field] ?? "-";

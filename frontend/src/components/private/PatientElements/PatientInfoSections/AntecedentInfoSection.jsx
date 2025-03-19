@@ -1,63 +1,36 @@
 import React, { useState } from "react";
+import AllItemsList from "../../Design/AllItemsList.jsx";
 import Section from "../../Design/Section.jsx";
 
-export default function AntecedentInfoSection({ antecedents }) {
-  const [selectedCategory, setSelectedCategory] = useState("Tous");
+export default function AntecedentInfoSection({ patientId, antecedents = [] }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentCount, setCurrentCount] = useState(antecedents.length);
 
-  const groupedAntecedents = {
-    Traumatique:
-      antecedents?.filter((ant) => ant.category === "Traumatique") || [],
-    Médical: antecedents?.filter((ant) => ant.category === "Médical") || [],
-    Chirurgical:
-      antecedents?.filter((ant) => ant.category === "Chirurgical") || [],
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
-  const filteredAntecedents =
-    selectedCategory === "Tous"
-      ? groupedAntecedents
-      : { [selectedCategory]: groupedAntecedents[selectedCategory] };
-
   return (
-    <Section title="Antécédents" count={antecedents?.length || 0}>
-      <div className="mb-4">
-        <label htmlFor="categoryFilter" className="mr-2">
-          Filtrer par catégorie :
-        </label>
-        <select
-          id="categoryFilter"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1"
-        >
-          <option value="Tous">Tous</option>
-          <option value="Traumatique">Traumatique</option>
-          <option value="Médical">Médical</option>
-          <option value="Chirurgical">Chirurgical</option>
-        </select>
-      </div>
-
-      {Object.entries(filteredAntecedents).map(
-        ([category, categoryAntecedents]) => (
-          <div key={category} className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">{category}</h3>
-            {categoryAntecedents.length > 0 ? (
-              <ul>
-                {categoryAntecedents
-                  .slice()
-                  .sort((a, b) => a.year - b.year)
-                  .map((antecedent) => (
-                    <li key={antecedent.id}>
-                      <strong>{antecedent.antecedent}</strong> (
-                      {antecedent.year})
-                    </li>
-                  ))}
-              </ul>
-            ) : (
-              <p>Aucun antécédent dans cette catégorie.</p>
-            )}
-          </div>
-        )
-      )}
+    <Section
+      title="Antécédents"
+      count={currentCount}
+      onEdit={handleEditClick}
+      hideEditButton={isEditing}
+    >
+      <AllItemsList
+        patientId={patientId}
+        initialItems={antecedents.map((ant) => ({
+          id: ant.id,
+          category: ant.category,
+          year: ant.year,
+          antecedent: ant.antecedent,
+        }))}
+        apiBaseUrl={`/patient/${patientId}/antecedent`}
+        onEdit={() => setIsEditing(false)}
+        isEditing={isEditing}
+        categoryOptions={["Traumatique", "Médical", "Chirurgical"]}
+        updateCount={setCurrentCount}
+      />
     </Section>
   );
 }

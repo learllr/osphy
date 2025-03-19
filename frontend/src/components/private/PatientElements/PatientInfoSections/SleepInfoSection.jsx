@@ -64,7 +64,12 @@ export default function SleepInfoSection({ patientSleep, patientId }) {
   };
 
   return (
-    <Section title="Sommeil" showCount={false} onEdit={handleEditClick}>
+    <Section
+      title="Sommeil"
+      showCount={false}
+      onEdit={handleEditClick}
+      hideEditButton={isEditing}
+    >
       {sleepFields.map(({ label, field, type, options, format, parse }) => (
         <DetailItem
           key={field}

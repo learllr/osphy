@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import AllItemsList from "../../Design/AllItemsList.jsx";
 import Section from "../../Design/Section.jsx";
 
-export default function ActivityInfoSection({ patientId, activities }) {
+export default function ActivityInfoSection({ patientId, activities = [] }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [currentCount, setCurrentCount] = useState(activities.length);
 
   const handleToggleEdit = () => {
     setIsEditing((prev) => !prev);
@@ -12,7 +13,7 @@ export default function ActivityInfoSection({ patientId, activities }) {
   return (
     <Section
       title="Activités"
-      count={activities.length}
+      count={currentCount}
       onEdit={handleToggleEdit}
       hideEditButton={isEditing}
     >
@@ -22,6 +23,7 @@ export default function ActivityInfoSection({ patientId, activities }) {
         apiBaseUrl={`/patient/${patientId}/activity`}
         isEditing={isEditing}
         onEdit={handleToggleEdit}
+        updateCount={setCurrentCount}
       />
     </Section>
   );

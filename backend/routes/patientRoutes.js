@@ -2,19 +2,23 @@ import express from "express";
 import {
   createPatient,
   createPatientActivity,
+  createPatientAntecedent,
+  createPatientContraindication,
   deletePatientActivity,
+  deletePatientAntecedent,
   deletePatientByIdAndUserId,
+  deletePatientContraindication,
   getAllPatients,
   getPatientActivities,
+  getPatientAntecedents,
   getPatientById,
+  getPatientContraindications,
   updatePatient,
   updatePatientActivity,
+  updatePatientAntecedent,
+  updatePatientContraindication,
   updatePatientGynecology,
   updatePatientSleep,
-  createPatientContraindication,
-  getPatientContraindications,
-  updatePatientContraindication,
-  deletePatientContraindication,
 } from "../controllers/PatientController.js";
 
 const router = express.Router();
@@ -30,6 +34,12 @@ router.post("/:patientId/activity", createPatientActivity);
 router.get("/:patientId/activities", getPatientActivities);
 router.put("/:patientId/activity/:activityId", updatePatientActivity);
 router.delete("/:patientId/activity/:activityId", deletePatientActivity);
+
+// Antécédents du patient
+router.post("/:patientId/antecedent", createPatientAntecedent);
+router.get("/:patientId/antecedents", getPatientAntecedents);
+router.put("/:patientId/antecedent/:antecedentId", updatePatientAntecedent);
+router.delete("/:patientId/antecedent/:antecedentId", deletePatientAntecedent);
 
 // Contre-indications du patient
 router.post("/:patientId/contraindication", createPatientContraindication);

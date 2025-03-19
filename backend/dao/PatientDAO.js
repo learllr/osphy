@@ -147,8 +147,50 @@ export default class PatientDAO {
   }
 
   /*
------ Contre-indications du patient -----
-*/
+  ----- Antécédents du patient -----
+  */
+
+  static async findAntecedentsByPatientId(patientId) {
+    return await PatientAntecedent.findAll({
+      where: { patientId },
+      attributes: ["id", "category", "antecedent", "year"],
+    });
+  }
+
+  static async createAntecedent(antecedentData) {
+    const antecedent = await PatientAntecedent.create(antecedentData);
+
+    return await PatientAntecedent.findOne({
+      where: { id: antecedent.id },
+      attributes: ["id", "category", "antecedent", "year"],
+    });
+  }
+
+  static async updateAntecedent(antecedentId, updatedData) {
+    const [updatedCount] = await PatientAntecedent.update(updatedData, {
+      where: { id: antecedentId },
+    });
+
+    if (updatedCount === 0) {
+      console.error("Aucune ligne mise à jour !");
+      return null;
+    }
+
+    return await PatientAntecedent.findOne({
+      where: { id: antecedentId },
+      attributes: ["id", "category", "antecedent", "year"],
+    });
+  }
+
+  static async deleteAntecedent(antecedentId) {
+    return await PatientAntecedent.destroy({
+      where: { id: antecedentId },
+    });
+  }
+
+  /*
+  ----- Contre-indications du patient -----
+  */
 
   static async findContraindicationsByPatientId(patientId) {
     return await PatientContraindication.findAll({
@@ -158,7 +200,14 @@ export default class PatientDAO {
   }
 
   static async createContraindication(contraindicationData) {
-    return await PatientContraindication.create(contraindicationData);
+    const contraindication = await PatientContraindication.create(
+      contraindicationData
+    );
+
+    return await PatientContraindication.findOne({
+      where: { id: contraindication.id },
+      attributes: ["id", "contraindication", "temporalInfo"],
+    });
   }
 
   static async updateContraindication(contraindicationId, updatedData) {
