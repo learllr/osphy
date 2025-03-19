@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class PatientActivity extends Model {}
@@ -25,15 +25,19 @@ export default (sequelize) => {
       temporalInfo: {
         type: DataTypes.STRING,
         allowNull: true,
+        validate: {
+          notEmpty: true,
+          len: [0, 120],
+        },
       },
       activity: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notEmpty: true,
-          len: [2, 120],
+          len: [0, 255],
         },
-      }
+      },
     },
     {
       sequelize,

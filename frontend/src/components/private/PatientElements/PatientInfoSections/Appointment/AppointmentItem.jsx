@@ -13,7 +13,6 @@ export default function AppointmentItem({
   handleDelete,
 }) {
   const formattedDate = appointment.date ? formatDateFR(appointment.date) : "";
-
   const dateForInput = appointment.date ? formatDate(appointment.date) : "";
 
   return (
@@ -26,6 +25,8 @@ export default function AppointmentItem({
               value={dateForInput}
               onChange={(e) => handleDateChange(appointment.id, e.target.value)}
               className="border rounded px-2 py-1 w-full md:w-auto"
+              max="2300-12-31"
+              min="1900-01-01"
             />
             <input
               type="time"

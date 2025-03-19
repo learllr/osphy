@@ -14,11 +14,11 @@ import {
   formatToUpperCase,
 } from "../../../../shared/utils/textUtils.js";
 import Body from "../common/Body.jsx";
-import { useAlert } from "../contexts/AlertContext.jsx";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 import Combobox from "../private/Design/Combobox.jsx";
 
 export default function Contact() {
-  const { showAlert } = useAlert();
+  const { showMessage } = useMessageDialog();
   const subjects = [
     { value: "question", label: "Question" },
     { value: "feedback", label: "Retour (bugs, critiques, suggestions...)" },
@@ -34,11 +34,11 @@ export default function Contact() {
       return response.data;
     },
     onSuccess: () => {
-      showAlert("Message envoyé avec succès!", "success");
+      showMessage("success", "Message envoyé avec succès!");
       reset();
     },
     onError: () => {
-      showAlert("Une erreur est survenue, veuillez réessayer.", "destructive");
+      showMessage("error", "Une erreur est survenue, veuillez réessayer.");
     },
   });
 

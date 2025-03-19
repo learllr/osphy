@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
@@ -17,7 +17,9 @@ import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
 import { useUser } from "../contexts/UserContext";
 import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
+import ConfirmDialog from "../dialogs/ConfirmDialog.jsx";
 import Pagination from "./Design/Pagination.jsx";
+import PatientDropdown from "./PatientDropdown.jsx";
 
 export default function Patients() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -31,6 +33,25 @@ export default function Patients() {
   const [currentPage, setCurrentPage] = useState(1);
   const patientsPerPage = 10;
   const queryClient = useQueryClient();
+  const dropdownRef = useRef(null);
+
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    patientId: null,
+  });
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown({});
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const { data: patients = [], refetch } = useQuery(
     "patients",
@@ -59,8 +80,15 @@ export default function Patients() {
     }));
   };
 
-  const handleDeletePatient = async (id) => {
-    deletePatientMutation.mutate(id);
+  const confirmDelete = () => {
+    if (confirmDialog.patientId) {
+      deletePatientMutation.mutate(confirmDialog.patientId);
+      setConfirmDialog({ isOpen: false, patientId: null });
+    }
+  };
+
+  const handleDeletePatient = (id) => {
+    setConfirmDialog({ isOpen: true, patientId: id });
   };
 
   const handleGenderFilterChange = (gender) => {
@@ -229,23 +257,10 @@ export default function Patients() {
                   >
                     <FaEllipsisV />
                   </button>
-                  {showDropdown[patient.id] && (
-                    <ul className="absolute right-0 bg-white border rounded shadow-lg mt-32 z-10 w-52">
-                      <li>
-                        <button className="px-4 py-2 hover:bg-gray-200 w-full text-left">
-                          Exporter en PDF
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => handleDeletePatient(patient.id)}
-                          className="px-4 py-2 hover:bg-gray-200 w-full text-left text-red-500"
-                        >
-                          Supprimer
-                        </button>
-                      </li>
-                    </ul>
-                  )}
+                  <PatientDropdown
+                    patientId={patient.id}
+                    onDelete={handleDeletePatient}
+                  />
                 </div>
               </div>
             );
@@ -264,6 +279,16 @@ export default function Patients() {
           onPatientAdded={handlePatientAdded}
         />
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog({ isOpen: false, patientId: null })}
+        onConfirm={confirmDelete}
+        title="Supprimer le patient"
+        message="Êtes-vous sûr de vouloir supprimer ce patient ? Cette action est irréversible."
+        confirmText="Supprimer"
+        cancelText="Annuler"
+      />
     </Body>
   );
 }

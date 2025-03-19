@@ -3,14 +3,17 @@ import { useForm } from "react-hook-form";
 import { FaMars, FaSearch, FaVenus } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { calculateAge } from "../../../../shared/utils/dateUtils.js";
+import {
+  calculateAge,
+  formatDateFR,
+} from "../../../../shared/utils/dateUtils.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
   highlightText,
 } from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig.js";
-import { useAlert } from "../contexts/AlertContext";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 
 export default function PatientSearch() {
   const { register, watch, setValue } = useForm({
@@ -19,7 +22,7 @@ export default function PatientSearch() {
   const searchQuery = watch("searchQuery");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
+  const { showMessage } = useMessageDialog();
 
   const { data: patients = [] } = useQuery(
     "patients",
@@ -29,7 +32,7 @@ export default function PatientSearch() {
     },
     {
       onError: () => {
-        showAlert("Erreur lors de la récupération des patients", "destructive");
+        showMessage("error", "Erreur lors de la récupération des patients");
       },
     }
   );
@@ -43,7 +46,7 @@ export default function PatientSearch() {
           const age = calculateAge(patient.birthDate).toString();
           return (
             fullName.includes(searchQuery.toLowerCase()) ||
-            birthDate.includes(searchQuery.toLowerCase()) ||
+            formatDateFR(birthDate).includes(searchQuery.toLowerCase()) ||
             age.includes(searchQuery.toLowerCase())
           );
         })
@@ -83,7 +86,7 @@ export default function PatientSearch() {
       </form>
 
       {isDropdownVisible && filteredPatients.length > 0 && (
-        <ul className="absolute bg-white text-black w-96 mt-1 max-h-60 overflow-y-auto rounded shadow-lg z-10">
+        <ul className="absolute bg-white text-black w-96 mt-1 max-h-60 overflow-y-auto border rounded shadow-lg z-10">
           {filteredPatients.map((patient) => {
             const age = calculateAge(patient.birthDate);
             const genderIcon =
@@ -109,7 +112,7 @@ export default function PatientSearch() {
                       formatToUpperCase(patient.lastName),
                       searchQuery
                     )} - ${highlightText(
-                      patient.birthDate,
+                      formatDateFR(patient.birthDate),
                       searchQuery
                     )} (${highlightText(age.toString(), searchQuery)})`,
                   }}

@@ -14,13 +14,13 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link } from "react-router-dom";
 import Body from "../common/Body.jsx";
-import { useAlert } from "../contexts/AlertContext";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 import { useUser } from "../contexts/UserContext.jsx";
 import ResetPasswordDialog from "../dialogs/ResetPasswordDialog.jsx";
 
 export default function Login() {
   const { loginUser } = useUser();
-  const { showAlert } = useAlert();
+  const { showMessage } = useMessageDialog();
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -28,18 +28,8 @@ export default function Login() {
     defaultValues: { email: "", password: "" },
   });
 
-  const mutation = useMutation(
-    ({ email, password }) => loginUser(email, password),
-    {
-      onSuccess: (result) => {
-        if (!result.success) {
-          showAlert(result.message, "destructive");
-        }
-      },
-      onError: () => {
-        showAlert("Erreur lors de la connexion", "destructive");
-      },
-    }
+  const mutation = useMutation(({ email, password }) =>
+    loginUser(email, password)
   );
 
   const onSubmit = (data) => {

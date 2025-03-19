@@ -36,6 +36,10 @@ export default (sequelize) => {
       antecedent: {
         type: DataTypes.TEXT,
         allowNull: true,
+        validate: {
+          notEmpty: true,
+          len: [0, 255],
+        },
       },
     },
     {

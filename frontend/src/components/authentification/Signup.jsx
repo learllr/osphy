@@ -17,12 +17,13 @@ import {
   formatToUpperCase,
 } from "../../../../shared/utils/textUtils.js";
 import Body from "../common/Body.jsx";
-import { useAlert } from "../contexts/AlertContext";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 import { useUser } from "../contexts/UserContext";
 
 export default function Signup() {
   const { signupUser, loginUser } = useUser();
-  const { showAlert } = useAlert();
+  const { showMessage } = useMessageDialog();
+
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       firstName: "",
@@ -35,49 +36,29 @@ export default function Signup() {
     },
   });
 
-  const mutation = useMutation(
-    async (data) => {
-      const userData = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-        newsletterAccepted: data.newsletterAccepted,
-        termsAccepted: data.termsAccepted,
-      };
-      return await signupUser(userData);
-    },
-    {
-      onSuccess: async (result, variables) => {
-        if (result.success) {
-          const loginResult = await loginUser(
-            variables.email,
-            variables.password
-          );
-          if (!loginResult.success) {
-            showAlert(loginResult.message, "destructive");
-          }
-        } else {
-          showAlert(result.message, "destructive");
-        }
-      },
-      onError: () => {
-        showAlert("Erreur lors de l'inscription", "destructive");
-      },
-    }
-  );
+  const mutation = useMutation(async (data) => {
+    const userData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+      newsletterAccepted: data.newsletterAccepted,
+      termsAccepted: data.termsAccepted,
+    };
+    return await signupUser(userData);
+  });
 
   const onSubmit = (data) => {
     const { password, confirmPassword } = data;
     if (password !== confirmPassword) {
-      showAlert("Les mots de passe ne correspondent pas.", "destructive");
+      showMessage("error", "Les mots de passe ne correspondent pas.");
       return;
     }
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordPattern.test(password)) {
-      showAlert(
-        "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre.",
-        "warning"
+      showMessage(
+        "warning",
+        "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre."
       );
       return;
     }

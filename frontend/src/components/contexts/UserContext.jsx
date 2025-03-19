@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axiosConfig.js";
 import LoadingScreen from "../common/Loading/LoadingScreen.jsx";
+import { useMessageDialog } from "./MessageDialogContext.jsx";
 
 const UserContext = createContext();
 
@@ -14,6 +15,7 @@ export const UserProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { showMessage } = useMessageDialog();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,7 +37,6 @@ export const UserProvider = ({ children }) => {
         setIsLoading(false);
       },
       onError: (error) => {
-        console.error("Erreur lors de la récupération du profil :", error);
         handleUnauthorized(error.response?.status);
         logoutUser();
         setIsLoading(false);
@@ -69,12 +70,13 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
       queryClient.invalidateQueries("userProfile");
+      showMessage("success", "Inscription réussie !");
       return { success: true };
     } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.error || "Erreur lors de l'inscription",
-      };
+      const message =
+        error.response?.data?.error || "Erreur lors de l'inscription";
+      showMessage("error", message);
+      return { success: false, message };
     }
   };
 
@@ -88,13 +90,14 @@ export const UserProvider = ({ children }) => {
       setIsAuthenticated(true);
       queryClient.invalidateQueries("userProfile");
       navigate("/patients");
-      return { success: true, message: "Connexion réussie !" };
+      showMessage("success", "Connexion réussie !");
+      return { success: true };
     } catch (error) {
+      const message =
+        error.response?.data?.error || "Erreur lors de la connexion";
+      showMessage("error", message);
       setIsAuthenticated(false);
-      return {
-        success: false,
-        message: error.response?.data?.error || "Erreur lors de la connexion",
-      };
+      return { success: false, message };
     }
   };
 
@@ -106,8 +109,9 @@ export const UserProvider = ({ children }) => {
       setUser(null);
       queryClient.clear();
       navigate("/");
+      showMessage("success", "Déconnexion réussie !");
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
+      showMessage("error", "Erreur lors de la déconnexion");
     }
   };
 

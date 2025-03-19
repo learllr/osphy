@@ -31,9 +31,12 @@ export default function PatientInfo({ patient }) {
           patientGynecology={patient.gynecology}
         />
 
-        <PregnancyInfoSection pregnancies={patient.pregnancies} />
+        <PregnancyInfoSection
+          patientId={patient.id}
+          pregnancies={patient.pregnancies}
+        />
 
-        <SleepInfoSection patientSleep={patient.sleep} patientId={patient.id} />
+        <SleepInfoSection patientId={patient.id} patientSleep={patient.sleep} />
 
         <AppointmentInfoSection patientId={patient.id} />
       </div>

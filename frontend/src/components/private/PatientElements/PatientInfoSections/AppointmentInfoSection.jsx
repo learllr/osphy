@@ -6,6 +6,7 @@ import {
   isEventInThePast,
 } from "../../../../../../shared/utils/dateUtils.js";
 import axios from "../../../../axiosConfig.js";
+import { useMessageDialog } from "../../../contexts/MessageDialogContext.jsx";
 import Section from "../../Design/Section.jsx";
 import AppointmentFilters from "./Appointment/AppointmentFilters.jsx";
 import AppointmentItem from "./Appointment/AppointmentItem.jsx";
@@ -19,6 +20,7 @@ export default function AppointmentInfoSection({ patientId }) {
   const [loading, setLoading] = useState(false);
   const [modifiedAppointments, setModifiedAppointments] = useState(new Set());
   const [appointmentsToDelete, setAppointmentsToDelete] = useState([]);
+  const { showMessage } = useMessageDialog();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -26,7 +28,7 @@ export default function AppointmentInfoSection({ patientId }) {
         const response = await axios.get(`/appointment/${patientId}`);
         const formattedAppointments = response.data.map((appointment) => ({
           ...appointment,
-          date: formatDateFR(appointment.date),
+          date: formatDate(appointment.date),
         }));
         setAppointments(formattedAppointments);
         setOriginalAppointments(formattedAppointments);
@@ -53,10 +55,7 @@ export default function AppointmentInfoSection({ patientId }) {
   };
 
   const handleDateChange = (id, value) => {
-    const parsedDate = new Date(value);
-    const formattedDate = isNaN(parsedDate)
-      ? value
-      : parsedDate.toLocaleDateString("fr-FR");
+    const formattedDate = value ? formatDate(value) : "";
 
     setAppointments((prev) =>
       prev.map((appointment) =>
@@ -70,7 +69,11 @@ export default function AppointmentInfoSection({ patientId }) {
 
   const handleDelete = (id) => {
     setAppointments((prev) => prev.filter((appt) => appt.id !== id));
-    setAppointmentsToDelete((prev) => [...prev, id]);
+
+    if (!String(id).startsWith("temp-")) {
+      setAppointmentsToDelete((prev) => [...prev, id]);
+    }
+
     setModifiedAppointments((prev) => {
       const newSet = new Set(prev);
       newSet.delete(id);
@@ -80,7 +83,7 @@ export default function AppointmentInfoSection({ patientId }) {
 
   const handleAddAppointment = () => {
     const newAppointment = {
-      id: null,
+      id: `temp-${Date.now()}-${Math.random()}`,
       patientId,
       date: new Date().toLocaleDateString("fr-FR"),
       startTime: "",
@@ -93,13 +96,32 @@ export default function AppointmentInfoSection({ patientId }) {
 
   const handleSaveChanges = async () => {
     setLoading(true);
+
+    const invalidAppointments = appointments.filter(
+      (appointment) =>
+        (!appointment.date || !appointment.startTime || !appointment.endTime) &&
+        String(appointment.id).startsWith("temp-")
+    );
+
+    if (invalidAppointments.length > 0) {
+      showMessage(
+        "error",
+        "Veuillez remplir tous les champs obligatoires : date, heure de début et heure de fin."
+      );
+      setLoading(false);
+      return;
+    }
+
     try {
       await Promise.all(
         appointmentsToDelete.map((id) => axios.delete(`/appointment/${id}`))
       );
 
       const updates = appointments
-        .filter((appointment) => appointment.id !== null)
+        .filter(
+          (appointment) =>
+            appointment.id && !String(appointment.id).startsWith("temp-")
+        )
         .map((appointment) =>
           axios.put(`/appointment/${appointment.id}`, {
             ...appointment,
@@ -108,19 +130,33 @@ export default function AppointmentInfoSection({ patientId }) {
         );
 
       const newAppointments = appointments
-        .filter((appointment) => appointment.id === null)
+        .filter((appointment) => String(appointment.id).startsWith("temp-"))
         .map((appointment) =>
-          axios.post(`/appointment`, {
-            patientId: appointment.patientId,
-            date: formatDate(appointment.date),
-            startTime: appointment.startTime,
-            endTime: appointment.endTime,
-            status: appointment.status,
-            comment: appointment.comment,
-          })
+          axios
+            .post(`/appointment`, {
+              patientId: appointment.patientId,
+              date: formatDate(appointment.date),
+              startTime: appointment.startTime,
+              endTime: appointment.endTime,
+              status: appointment.status,
+              comment: appointment.comment,
+            })
+            .then((response) => ({
+              tempId: appointment.id,
+              newData: response.data,
+            }))
         );
 
-      await Promise.all([...updates, ...newAppointments]);
+      const createdAppointments = await Promise.all(newAppointments);
+
+      setAppointments((prev) =>
+        prev.map((appt) => {
+          const created = createdAppointments.find(
+            (ca) => ca.tempId === appt.id
+          );
+          return created ? created.newData : appt;
+        })
+      );
 
       setIsEditing(false);
       setModifiedAppointments(new Set());
@@ -174,7 +210,7 @@ export default function AppointmentInfoSection({ patientId }) {
       title="Rendez-vous"
       count={filteredAppointments.length}
       onEdit={handleEdit}
-      hideEditButton={showPastAppointments}
+      hideEditButton={isEditing}
     >
       {!isEditing && (
         <AppointmentFilters
@@ -198,7 +234,9 @@ export default function AppointmentInfoSection({ patientId }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm">Aucun rendez-vous correspondant.</p>
+        <p className="text-center text-gray-600 text-sm">
+          Aucun rendez-vous correspondant.
+        </p>
       )}
       {isEditing && (
         <>

@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class PatientPractitioner extends Model {}
@@ -26,15 +26,14 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: true,
+          len: [0, 255],
         },
       },
       fullName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: true,
-          len: [2, 120],
+          len: [0, 120],
         },
       },
     },

@@ -11,7 +11,7 @@ export default function ItemList({
   onCancel,
   isEditing,
   isLoading,
-  categoryOptions,
+  fieldOptions,
 }) {
   const hasCategory = items.some((item) => item.category);
 
@@ -31,6 +31,7 @@ export default function ItemList({
           {!isEditing && hasCategory && (
             <h3 className="text-lg font-semibold mb-2">{category}</h3>
           )}
+
           <ul>
             {categoryItems.map((item) => (
               <ItemLine
@@ -39,7 +40,7 @@ export default function ItemList({
                 onChange={onChange}
                 onDelete={onDelete}
                 isEditing={isEditing}
-                categoryOptions={categoryOptions}
+                fieldOptions={fieldOptions}
               />
             ))}
           </ul>

@@ -24,6 +24,10 @@ export default function ActivityInfoSection({ patientId, activities = [] }) {
         isEditing={isEditing}
         onEdit={handleToggleEdit}
         updateCount={setCurrentCount}
+        columnLabels={{
+          activity: "Activité",
+          temporalInfo: "Date/Fréquence",
+        }}
       />
     </Section>
   );

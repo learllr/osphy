@@ -85,6 +85,7 @@ export default function GeneralInfoSection({ patient }) {
             onChange={(newValue) => handleFieldChange(field, newValue)}
             type={type}
             options={options}
+            allowEmptyOption={false}
           />
         );
       })}

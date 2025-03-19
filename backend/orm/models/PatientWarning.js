@@ -1,5 +1,5 @@
 "use strict";
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
   class PatientWarning extends Model {}
@@ -26,7 +26,7 @@ export default (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-          notEmpty: true,
+          len: [0, 255],
         },
       },
     },

@@ -28,8 +28,13 @@ export default function AntecedentInfoSection({ patientId, antecedents = [] }) {
         apiBaseUrl={`/patient/${patientId}/antecedent`}
         onEdit={() => setIsEditing(false)}
         isEditing={isEditing}
-        categoryOptions={["Traumatique", "Médical", "Chirurgical"]}
+        fieldOptions={{ category: ["Traumatique", "Médical", "Chirurgical"] }}
         updateCount={setCurrentCount}
+        columnLabels={{
+          category: "Catégorie",
+          antecedent: "Antécédent",
+          year: "Année",
+        }}
       />
     </Section>
   );

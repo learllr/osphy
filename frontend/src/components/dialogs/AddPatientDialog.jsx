@@ -17,10 +17,10 @@ import {
   formatToUpperCase,
 } from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig";
-import { useAlert } from "../contexts/AlertContext";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 
 export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
-  const { showAlert } = useAlert();
+  const { showMessage } = useMessageDialog();
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, setValue, reset } = useForm({
@@ -44,12 +44,12 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
       onSuccess: (data) => {
         queryClient.invalidateQueries("patients");
         onPatientAdded(data);
-        showAlert("Patient ajouté avec succès", "success");
+        showMessage("success", "Patient ajouté avec succès");
         onClose();
         reset();
       },
       onError: (error) => {
-        showAlert("Erreur lors de l'ajout du patient", "error");
+        showMessage("error", "Erreur lors de l'ajout du patient");
         console.error("Erreur lors de l'ajout du patient:", error);
       },
     }

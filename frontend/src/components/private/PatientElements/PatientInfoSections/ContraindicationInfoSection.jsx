@@ -27,6 +27,10 @@ export default function ContraindicationInfoSection({
         isEditing={isEditing}
         onEdit={handleToggleEdit}
         updateCount={setCurrentCount}
+        columnLabels={{
+          contraindication: "Contre-indication",
+          temporalInfo: "Date/Fréquence",
+        }}
       />
     </Section>
   );

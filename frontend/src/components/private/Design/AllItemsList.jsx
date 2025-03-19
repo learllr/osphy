@@ -8,8 +8,9 @@ export default function AllItemsList({
   apiBaseUrl,
   isEditing,
   onEdit,
-  categoryOptions = [],
+  fieldOptions = [],
   updateCount,
+  columnLabels,
 }) {
   const [items, setItems] = useState(initialItems || []);
   const [initialItemsState, setInitialItemsState] = useState(
@@ -117,20 +118,41 @@ export default function AllItemsList({
     setAddedItems([]);
     setUpdatedItems([]);
     setDeletedItems([]);
+    if (updateCount) updateCount(initialItemsState.length);
     onEdit();
   };
 
+  const columnKeys =
+    items.length > 0
+      ? Object.keys(items[0]).filter(
+          (key) => key !== "id" && (isEditing || key !== "category")
+        )
+      : [];
+
   return (
-    <ItemList
-      items={items}
-      onChange={handleUpdateItem}
-      onDelete={handleDeleteItem}
-      onAdd={handleAddItem}
-      onSave={handleSave}
-      onCancel={handleCancel}
-      isEditing={isEditing}
-      isLoading={isLoading}
-      categoryOptions={categoryOptions}
-    />
+    <div>
+      {columnKeys.length > 0 && (
+        <div className="flex font-semibold border-b pb-2 mb-4">
+          {columnKeys.map((key) => (
+            <span key={key} className="flex-1">
+              {columnLabels?.[key] || key}
+            </span>
+          ))}
+          {isEditing && <span className="w-6"></span>}
+        </div>
+      )}
+
+      <ItemList
+        items={items}
+        onChange={handleUpdateItem}
+        onDelete={handleDeleteItem}
+        onAdd={handleAddItem}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        isEditing={isEditing}
+        isLoading={isLoading}
+        fieldOptions={fieldOptions}
+      />
+    </div>
   );
 }

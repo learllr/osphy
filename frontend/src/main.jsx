@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App.jsx";
-import { AlertProvider } from "./components/contexts/AlertContext.jsx";
+import { MessageDialogProvider } from "./components/contexts/MessageDialogContext.jsx";
 import { UserProvider } from "./components/contexts/UserContext.jsx";
 import "./index.css";
 
@@ -15,11 +15,11 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <Router>
-        <UserProvider>
-          <AlertProvider>
+        <MessageDialogProvider>
+          <UserProvider>
             <App />
-          </AlertProvider>
-        </UserProvider>
+          </UserProvider>
+        </MessageDialogProvider>
       </Router>
     </QueryClientProvider>
   </React.StrictMode>
