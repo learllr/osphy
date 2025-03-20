@@ -88,7 +88,7 @@ export const generateDiagnosis = async (req, res) => {
     
           Génère un JSON contenant :
           - Un diagnostic différentiel sous forme de texte, avec les noms médicaux entourés des balises <strong></strong>.
-          - Une liste de tous les tests cliniques ostéopathiques à adopter, incluant :
+          - Une liste de tous les examens cliniques ostéopathiques à adopter, incluant :
             - Nom du test
             - Description du test
             - Checked: false
@@ -99,7 +99,7 @@ export const generateDiagnosis = async (req, res) => {
             "exams": [
               {
                 "name": "Test de Neer",
-                "description": "Ce test vise à évaluer la présence d'une bursite sous-acromiale en provoquant une compression sous l'acromion.",
+                "description": "Cet examen vise à évaluer la présence d'une bursite sous-acromiale en provoquant une compression sous l'acromion.",
                 "checked": false
               },
             ]
