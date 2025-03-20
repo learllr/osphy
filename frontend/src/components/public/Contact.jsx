@@ -34,7 +34,7 @@ export default function Contact() {
       return response.data;
     },
     onSuccess: () => {
-      showMessage("success", "Message envoyé avec succès!");
+      showMessage("success", "Message envoyé avec succès !");
       reset();
     },
     onError: () => {

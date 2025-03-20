@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import { appointmentFields } from "../../../../shared/constants/fields.js";
 import {
   formatDate,
   isEventInThePast,
 } from "../../../../shared/utils/dateUtils.js";
-import axios from "../../axiosConfig.js";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
+import ConfirmDialog from "../dialogs/ConfirmDialog.jsx";
 import DetailItem from "../private/Design/DetailItem.jsx";
 
 export default function AppointmentDialog({
@@ -19,6 +19,9 @@ export default function AppointmentDialog({
   onDelete,
 }) {
   const [editableEvent, setEditableEvent] = useState(null);
+  const { showMessage } = useMessageDialog();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (selectedEvent) {
@@ -30,30 +33,19 @@ export default function AppointmentDialog({
           : "",
         endTime: selectedEvent.endTime ? selectedEvent.endTime.slice(0, 5) : "",
       });
+
+      setTimeout(() => setIsVisible(true), 10);
     } else {
-      setEditableEvent(null);
+      setIsVisible(false);
+      setTimeout(() => setEditableEvent(null), 300);
     }
   }, [selectedEvent]);
 
   const handleChange = (field, value) => {
-    setEditableEvent((prev) => {
-      if (!prev) return prev;
-
-      if (field === "date") {
-        const parsedDate = new Date(value);
-        return {
-          ...prev,
-          date: !isNaN(parsedDate)
-            ? parsedDate.toISOString().split("T")[0]
-            : value,
-        };
-      }
-
-      return {
-        ...prev,
-        [field]: value,
-      };
-    });
+    setEditableEvent((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleSave = async () => {
@@ -66,43 +58,48 @@ export default function AppointmentDialog({
       endTime: `${editableEvent.endTime}:00`,
     };
 
-    try {
-      await axios.put(`/appointment/${editableEvent.id}`, updatedEvent);
-      if (onEdit) onEdit(updatedEvent);
-      setSelectedEvent(null);
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour :", error);
-      alert("Erreur lors de la mise à jour du rendez-vous.");
+    onEdit(updatedEvent);
+    setIsVisible(false);
+    setTimeout(() => setSelectedEvent(null), 300);
+    setIsEditing(false);
+  };
+
+  const confirmDelete = () => {
+    if (onDelete && selectedEvent) {
+      onDelete(selectedEvent.id);
+      setIsVisible(false);
+      setTimeout(() => setSelectedEvent(null), 300);
+      setIsConfirmOpen(false);
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce rendez-vous ?")) {
-      if (onDelete && selectedEvent) {
-        onDelete(selectedEvent.id);
-        setSelectedEvent(null);
-      }
-    }
-  };
+  if (!editableEvent) return null;
 
   return (
-    <Dialog.Root
-      open={!!selectedEvent}
-      onOpenChange={() => setSelectedEvent(null)}
-    >
-      <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
-      <Dialog.Content className="fixed top-1/2 left-1/2 w-[90%] max-w-md p-6 bg-white rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-50">
-        <Dialog.Title className="text-xl font-bold mb-4">
-          Détails du rendez-vous
-        </Dialog.Title>
-        <Dialog.Description className="text-sm text-gray-600 mb-4">
-          Voici les informations détaillées concernant le rendez-vous
-          sélectionné.
-        </Dialog.Description>
-        <Separator />
-        {editableEvent && (
-          <div className="space-y-1 mt-5">
+    <>
+      <div
+        className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10 transition-opacity duration-300 ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={() => {
+          setIsVisible(false);
+          setTimeout(() => setSelectedEvent(null), 300);
+        }}
+      >
+        <div
+          className={`bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative z-[60] transition-transform duration-300 transform ${
+            isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95"
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-xl font-bold mb-4">Détails du rendez-vous</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Voici les informations détaillées concernant le rendez-vous
+            sélectionné.
+          </p>
+          <Separator />
+
+          <div className="space-y-3 mt-5">
             {appointmentFields.map(
               ({ label, field, type, options, editable, allowEmptyOption }) => (
                 <DetailItem
@@ -124,30 +121,46 @@ export default function AppointmentDialog({
               )
             )}
           </div>
-        )}
-        <div className="flex space-x-4 mt-6">
-          {editableEvent && (
-            <>
-              {isEditing ||
-              !isEventInThePast(editableEvent.date, editableEvent.startTime) ? (
-                <>
-                  {isEditing ? (
-                    <Button onClick={handleSave}>Enregistrer</Button>
-                  ) : (
-                    <Button onClick={() => setIsEditing(true)}>Modifier</Button>
-                  )}
-                  <Button variant="destructive" onClick={handleDelete}>
-                    Supprimer
-                  </Button>
-                </>
-              ) : null}
-            </>
-          )}
-          <Dialog.Close asChild>
-            <Button variant="outline">Fermer</Button>
-          </Dialog.Close>
+
+          <div className="flex space-x-4 mt-6">
+            {isEditing ||
+            !isEventInThePast(editableEvent.date, editableEvent.startTime) ? (
+              <>
+                {isEditing ? (
+                  <Button onClick={handleSave}>Enregistrer</Button>
+                ) : (
+                  <Button onClick={() => setIsEditing(true)}>Modifier</Button>
+                )}
+                <Button
+                  variant="destructive"
+                  onClick={() => setIsConfirmOpen(true)}
+                >
+                  Supprimer
+                </Button>
+              </>
+            ) : null}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsVisible(false);
+                setTimeout(() => setSelectedEvent(null), 300);
+              }}
+            >
+              Fermer
+            </Button>
+          </div>
         </div>
-      </Dialog.Content>
-    </Dialog.Root>
+      </div>
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Supprimer le rendez-vous"
+        message="Êtes-vous sûr de vouloir supprimer ce rendez-vous ? Cette action est irréversible."
+        confirmText="Supprimer"
+        cancelText="Annuler"
+      />
+    </>
   );
 }

@@ -1,3 +1,85 @@
+export const patientSections = [
+  {
+    title: "Informations personnelles",
+    fields: [
+      {
+        name: "gender",
+        label: "Sexe",
+        type: "select",
+        options: [
+          { value: "", label: "Sélectionnez" },
+          { value: "Homme", label: "Homme" },
+          { value: "Femme", label: "Femme" },
+        ],
+        required: true,
+      },
+      {
+        name: "lastName",
+        label: "Nom",
+        type: "text",
+        placeholder: "DUPONT",
+        required: true,
+        format: "uppercase",
+      },
+      {
+        name: "firstName",
+        label: "Prénom",
+        type: "text",
+        placeholder: "Jean",
+        required: true,
+        format: "capitalize",
+      },
+      {
+        name: "birthDate",
+        label: "Date de naissance",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    title: "Coordonnées",
+    fields: [
+      {
+        name: "address",
+        label: "Adresse",
+        type: "text",
+        placeholder: "123 Rue de Paris",
+      },
+      {
+        name: "postalCode",
+        label: "Code postal",
+        type: "text",
+        placeholder: "75001",
+      },
+      { name: "city", label: "Ville", type: "text", placeholder: "Paris" },
+      {
+        name: "addressComplement",
+        label: "Complément d'adresse",
+        type: "text",
+        placeholder: "Bâtiment, étage, etc.",
+      },
+    ],
+  },
+  {
+    title: "Contact",
+    fields: [
+      {
+        name: "email",
+        label: "Email",
+        type: "email",
+        placeholder: "jean.dupont@example.com",
+      },
+      {
+        name: "mobilePhone",
+        label: "Téléphone mobile",
+        type: "text",
+        placeholder: "06 00 00 00 00",
+      },
+    ],
+  },
+];
+
 export const consultationDetailsFields = [
   { label: "Plainte", field: "patientComplaint", type: "textarea" },
   {
@@ -48,7 +130,7 @@ export const consultationDetailsFields = [
 ];
 
 export const appointmentFields = [
-  { label: "Nom du patient", field: "name", editable: false },
+  { label: "Nom du patient", field: "name", editable: false, required: true },
   {
     label: "Type",
     field: "type",
@@ -62,6 +144,7 @@ export const appointmentFields = [
       "Autre",
     ],
     allowEmptyOption: false,
+    required: true,
   },
   {
     label: "Statut",
@@ -69,10 +152,11 @@ export const appointmentFields = [
     type: "select",
     options: ["Confirmé", "En attente", "Annulé"],
     allowEmptyOption: false,
+    required: true,
   },
-  { label: "Date", field: "date", type: "date" },
-  { label: "Heure de début", field: "startTime", type: "time" },
-  { label: "Heure de fin", field: "endTime", type: "time" },
+  { label: "Date", field: "date", type: "date", required: true },
+  { label: "Heure de début", field: "startTime", type: "time", required: true },
+  { label: "Heure de fin", field: "endTime", type: "time", required: true },
 ];
 
 export const patientInfosFields = [

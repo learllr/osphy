@@ -38,7 +38,7 @@ export default function DetailItem({
   return (
     <div className="flex text-sm mb-1">
       <strong className="w-2/5 text-gray-600 flex items-center">{label}</strong>
-      <span className="w-3/5 flex items-center">
+      <span className="w-3/5 flex items-center break-all">
         {isEditing && editable ? (
           type === "select" ? (
             <select

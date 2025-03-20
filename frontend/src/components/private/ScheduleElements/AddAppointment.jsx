@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "../../../axiosConfig.js";
+import { useMessageDialog } from "../../contexts/MessageDialogContext.jsx";
 import PatientSearchDialog from "../../dialogs/PatientSearchDialog.jsx";
 
 export default function AddAppointment({ patients, onAppointmentAdd }) {
@@ -16,8 +17,8 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     },
   });
 
+  const { showMessage } = useMessageDialog();
   const [showModal, setShowModal] = useState(false);
-
   const patient = watch("patient");
 
   const handlePatientSelect = (selectedPatient) => {
@@ -29,12 +30,15 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     const { date, startTime, endTime, patient, type } = data;
 
     if (!patient) {
-      alert("Veuillez sélectionner un patient.");
+      showMessage("error", "Veuillez sélectionner un patient.");
       return;
     }
 
     if (!date || !startTime || !endTime) {
-      alert("Veuillez remplir tous les champs de date et d'heure.");
+      showMessage(
+        "error",
+        "Veuillez remplir tous les champs de date et d'heure."
+      );
       return;
     }
 
@@ -42,7 +46,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
       new Date(`${date} ${startTime}`).getTime() >=
       new Date(`${date} ${endTime}`).getTime()
     ) {
-      alert("L'heure de fin doit être après l'heure de début.");
+      showMessage("error", "L'heure de fin doit être après l'heure de début.");
       return;
     }
 
@@ -64,7 +68,7 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
 
       reset();
     } catch (error) {
-      console.error("Erreur lors de la création du rendez-vous :", error);
+      showMessage("error", "Erreur lors de la création du rendez-vous.");
     }
   };
 
@@ -72,7 +76,10 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
     <div className="bg-white w-full text-sm">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Patient :</label>
+          <label className="block text-gray-700 mb-1 items-center">
+            Patient
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <div className="w-full p-2 border rounded bg-gray-100 text-gray-700">
             {patient ? (
               `${patient.firstName} ${patient.lastName}`
@@ -86,12 +93,14 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">
-            Type de rendez-vous :
+          <label className="block text-gray-700 mb-1 items-center">
+            Type de rendez-vous
+            <span className="text-red-500 ml-1">*</span>
           </label>
           <select
             {...register("type", { required: true })}
             className="w-full p-2 border rounded"
+            aria-invalid={watch("type") ? "false" : "true"}
           >
             <option value="Suivi">Suivi</option>
             <option value="Première consultation">Première consultation</option>
@@ -104,31 +113,43 @@ export default function AddAppointment({ patients, onAppointmentAdd }) {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">
-            Date du rendez-vous :
+          <label className="block text-gray-700 mb-1 items-center">
+            Date du rendez-vous
+            <span className="text-red-500 ml-1">*</span>
           </label>
           <input
             type="date"
             {...register("date", { required: true })}
             className="w-full p-2 border rounded"
+            aria-invalid={watch("date") ? "false" : "true"}
+            min="1900-01-01"
+            max="2500-12-31"
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Heure de début :</label>
+          <label className="block text-gray-700 mb-1 items-center">
+            Heure de début
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <input
             type="time"
             {...register("startTime", { required: true })}
             className="w-full p-2 border rounded"
+            aria-invalid={watch("startTime") ? "false" : "true"}
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Heure de fin :</label>
+          <label className="block text-gray-700 mb-1 items-center">
+            Heure de fin
+            <span className="text-red-500 ml-1">*</span>
+          </label>
           <input
             type="time"
             {...register("endTime", { required: true })}
             className="w-full p-2 border rounded"
+            aria-invalid={watch("endTime") ? "false" : "true"}
           />
         </div>
 

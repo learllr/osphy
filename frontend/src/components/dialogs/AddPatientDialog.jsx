@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
+import { patientSections } from "../../../../shared/constants/fields.js";
 import {
   capitalizeFirstLetter,
   formatToUpperCase,
@@ -24,18 +25,11 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, setValue, reset } = useForm({
-    defaultValues: {
-      gender: null,
-      lastName: null,
-      firstName: null,
-      birthDate: null,
-      address: null,
-      postalCode: null,
-      city: null,
-      addressComplement: null,
-      mobilePhone: null,
-      email: null,
-    },
+    defaultValues: Object.fromEntries(
+      patientSections.flatMap((section) =>
+        section.fields.map((field) => [field.name, ""])
+      )
+    ),
   });
 
   const mutation = useMutation(
@@ -44,13 +38,12 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
       onSuccess: (data) => {
         queryClient.invalidateQueries("patients");
         onPatientAdded(data);
-        showMessage("success", "Patient ajouté avec succès");
+        showMessage("success", "Patient ajouté avec succès !");
         onClose();
         reset();
       },
-      onError: (error) => {
-        showMessage("error", "Erreur lors de l'ajout du patient");
-        console.error("Erreur lors de l'ajout du patient:", error);
+      onError: () => {
+        showMessage("error", "Erreur lors de l'ajout du patient.");
       },
     }
   );
@@ -61,7 +54,7 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto p-8">
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto p-8 text-sm">
         <DialogHeader>
           <DialogTitle>Ajouter un patient</DialogTitle>
           <DialogDescription>
@@ -69,105 +62,74 @@ export default function AddPatientDialog({ isOpen, onClose, onPatientAdded }) {
             patient.
           </DialogDescription>
         </DialogHeader>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4 p-4"
+          className="flex flex-col space-y-2 p-4"
         >
-          <Separator />
-          <h4 className="text-md font-medium text-gray-600">
-            Informations personnelles
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label>
-              Sexe
-              <select
-                {...register("gender")}
-                className="w-full p-2 border rounded"
-                required
-              >
-                <option value="">Sélectionnez</option>
-                <option value="Homme">Homme</option>
-                <option value="Femme">Femme</option>
-              </select>
-            </label>
-            <label>
-              Nom
-              <Input
-                {...register("lastName", {
-                  onChange: (e) => {
-                    setValue("lastName", formatToUpperCase(e.target.value));
-                  },
-                })}
-                required
-                placeholder="DUPONT"
-              />
-            </label>
-            <label>
-              Prénom
-              <Input
-                {...register("firstName", {
-                  onChange: (e) => {
-                    setValue(
-                      "firstName",
-                      capitalizeFirstLetter(e.target.value)
-                    );
-                  },
-                })}
-                required
-                placeholder="Jean"
-              />
-            </label>
-            <label>
-              Date de naissance
-              <Input type="date" {...register("birthDate")} required />
-            </label>
-          </div>
+          {patientSections.map((section, index) => (
+            <div key={index}>
+              <h4 className="text-base font-medium text-gray-600 mb-4">
+                {section.title}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {section.fields.map((field, idx) => (
+                  <label key={idx} className="block">
+                    <label
+                      key={idx}
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      {field.label}{" "}
+                      {field.required && (
+                        <span className="text-red-500 align-middle leading-none">
+                          *
+                        </span>
+                      )}
+                    </label>
 
-          <Separator className="my-4" />
-
-          <h4 className="text-md font-medium text-gray-600">Coordonnées</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label>
-              Adresse
-              <Input {...register("address")} placeholder="123 Rue de Paris" />
-            </label>
-            <label>
-              Code postal
-              <Input {...register("postalCode")} placeholder="75001" />
-            </label>
-            <label>
-              Ville
-              <Input {...register("city")} placeholder="Paris" />
-            </label>
-            <label>
-              Complément d'adresse
-              <Input
-                {...register("addressComplement")}
-                placeholder="Bâtiment, étage, etc."
-              />
-            </label>
-          </div>
-
-          <Separator className="my-4" />
-
-          <h4 className="text-md font-medium text-gray-600">Contact</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label>
-              Email
-              <Input
-                type="email"
-                {...register("email")}
-                placeholder="jean.dupont@example.com"
-              />
-            </label>
-            <label>
-              Téléphone mobile
-              <Input
-                {...register("mobilePhone")}
-                placeholder="06 00 00 00 00"
-              />
-            </label>
-          </div>
+                    {field.type === "select" ? (
+                      <select
+                        {...register(field.name)}
+                        className="w-full p-2 border rounded"
+                        required={field.required}
+                      >
+                        {field.options.map((option, i) => (
+                          <option key={i} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <Input
+                        {...register(field.name, {
+                          onChange: (e) => {
+                            if (field.format === "uppercase") {
+                              setValue(
+                                field.name,
+                                formatToUpperCase(e.target.value)
+                              );
+                            }
+                            if (field.format === "capitalize") {
+                              setValue(
+                                field.name,
+                                capitalizeFirstLetter(e.target.value)
+                              );
+                            }
+                          },
+                        })}
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        required={field.required}
+                      />
+                    )}
+                  </label>
+                ))}
+              </div>
+              {index !== patientSections.length - 1 && (
+                <Separator className="my-4" />
+              )}
+            </div>
+          ))}
 
           <DialogFooter>
             <Button

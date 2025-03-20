@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaCalendarAlt, FaPlus, FaSearch } from "react-icons/fa";
 import { formatDateFR } from "../../../../../shared/utils/dateUtils.js";
 import { highlightText } from "../../../../../shared/utils/textUtils.js";
 import AddConsultationDialog from "../../dialogs/AddConsultationDialog.jsx";
@@ -23,31 +22,45 @@ export default function ConsultationList({
   });
 
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4 text-center">Consultations</h2>
-      <Button
+    <div className="bg-white rounded-lg p-6 border">
+      <h2 className="text-lg font-semibold mb-4 text-gray-700 text-center">
+        Consultations
+      </h2>
+
+      {/* Bouton d'ajout */}
+      <button
         onClick={openAddDialog}
-        className="flex items-center mb-4 px-4 py-2 w-full"
+        className="flex items-center justify-center w-full bg-primary text-white font-medium py-2 px-4 rounded-lg transition hover:bg-primary/90"
       >
         <FaPlus className="mr-2" /> Ajouter une consultation
-      </Button>
-      <input
-        type="text"
-        placeholder="Rechercher une consultation..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full px-4 py-2 mb-4 rounded border text-sm"
-      />
-      <ul>
+      </button>
+
+      {/* Champ de recherche */}
+      <div className="relative w-full my-4">
+        <input
+          type="text"
+          placeholder="Rechercher par date..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border focus:ring-2 focus:ring-primary focus:outline-none"
+        />
+        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+          <FaSearch size={14} />
+        </span>
+      </div>
+
+      {/* Liste des consultations */}
+      <div className="space-y-3">
         {filteredConsultations.length > 0 ? (
           filteredConsultations.map((consultation) => (
-            <li
+            <div
               key={consultation.id}
-              className="mb-4 cursor-pointer border-b-[1px] border-stone-200"
+              className="flex items-center p-3 bg-gray-50 rounded-lg shadow-sm border cursor-pointer transition hover:bg-gray-100"
+              onClick={() => onConsultationClick(consultation)}
             >
+              <FaCalendarAlt className="text-primary mr-3" />
               <span
-                onClick={() => onConsultationClick(consultation)}
-                className="text-primary hover:text-primary/90"
+                className="text-gray-700 font-medium text-sm"
                 dangerouslySetInnerHTML={{
                   __html: highlightText(
                     formatDateFR(consultation.date),
@@ -55,19 +68,22 @@ export default function ConsultationList({
                   ),
                 }}
               />
-            </li>
+            </div>
           ))
         ) : (
-          <li className="text-sm">Aucune consultation enregistrée.</li>
+          <p className="text-gray-500 text-sm text-center">
+            Aucune consultation enregistrée.
+          </p>
         )}
-      </ul>
+      </div>
 
+      {/* Dialog d'ajout */}
       <AddConsultationDialog
         patientId={patientId}
-        isVisible={showAddDialog}
+        isOpen={showAddDialog}
         onClose={closeAddDialog}
         onConsultationAdded={onConsultationAdded}
       />
-    </>
+    </div>
   );
 }

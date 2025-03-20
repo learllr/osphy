@@ -7,7 +7,10 @@ export default class ConsultationDAO {
   }
 
   static async findAllConsultationByPatientId(patientId) {
-    return await Consultation.findAll({ where: { patientId } });
+    return await Consultation.findAll({
+      where: { patientId },
+      order: [["date", "DESC"]],
+    });
   }
 
   static async deleteConsultationById(consultationId) {

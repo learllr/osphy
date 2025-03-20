@@ -55,7 +55,9 @@ export default function PatientDetails() {
       const response = await axios.get(`/consultation/${id}`);
       setConsultations(response.data);
       setSelectedConsultation(
-        response.data.find((c) => c.id === updatedConsultation.id)
+        updatedConsultation
+          ? response.data.find((c) => c.id === updatedConsultation.id)
+          : null
       );
     } catch (error) {
       console.error("Erreur lors de la récupération des consultations:", error);
@@ -68,8 +70,8 @@ export default function PatientDetails() {
 
   return (
     <Body>
-      <div className="flex">
-        <div className="w-2/12 pr-6 mt-4">
+      <div className="flex flex-col lg:flex-row w-full">
+        <div className="w-full lg:w-2/12 min-w-52 p-1">
           <ConsultationList
             consultations={consultations}
             onConsultationClick={handleConsultationClick}
@@ -78,22 +80,25 @@ export default function PatientDetails() {
             onConsultationDeleted={handleConsultationDeleted}
           />
         </div>
+
         <div className="flex flex-col w-full">
-          <div className="flex">
-            <div className="w-1/2 p-1">
+          <div className="flex flex-col lg:flex-row">
+            <div
+              className={`w-full ${
+                selectedConsultation ? "lg:w-1/2" : "lg:w-full"
+              } p-1`}
+            >
               <GeneralInfoSection patient={patient} />
             </div>
-            <div className="w-1/2 p-1">
-              {selectedConsultation ? (
+            {selectedConsultation && (
+              <div className="w-full lg:w-1/2 p-1">
                 <ConsultationDetails
                   consultation={selectedConsultation}
                   patient={patient}
                   onConsultationUpdated={handleConsultationUpdated}
                 />
-              ) : (
-                <p className="p-8 text-sm">Aucune consultation sélectionnée.</p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
           <div className="w-full p-1">
             <PatientInfo patient={patient} />

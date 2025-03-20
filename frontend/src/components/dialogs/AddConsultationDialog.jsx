@@ -13,10 +13,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import axios from "../../axiosConfig.js";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 
 export default function AddConsultationDialog({
   patientId,
-  isVisible,
+  isOpen,
   onClose,
   onConsultationAdded,
 }) {
@@ -26,57 +27,69 @@ export default function AddConsultationDialog({
       patientComplaint: "",
     },
   });
+  const { showMessage } = useMessageDialog();
 
-  const mutation = useMutation(
-    async (data) => {
+  const addConsultationMutation = useMutation(
+    async (consultationData) => {
       const response = await axios.post(`/consultation`, {
-        ...data,
+        ...consultationData,
         patientId,
       });
       return response.data;
     },
     {
-      onSuccess: (data) => {
-        onConsultationAdded(data);
+      onSuccess: (newConsultation) => {
+        showMessage("success", "Consultation ajoutée avec succès !");
+        onConsultationAdded(newConsultation);
         reset();
         onClose();
       },
       onError: (error) => {
+        showMessage("error", "Erreur lors de l'ajout de la consultation.");
         console.error("Erreur lors de l'ajout de la consultation :", error);
       },
     }
   );
 
-  const onSubmit = (data) => {
-    mutation.mutate(data);
+  const handleFormSubmit = (formData) => {
+    addConsultationMutation.mutate(formData);
   };
 
   return (
-    <Dialog open={isVisible} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto p-8">
         <DialogHeader>
-          <DialogTitle>Nouvelle Consultation</DialogTitle>
+          <DialogTitle>Nouvelle consultation</DialogTitle>
           <DialogDescription>
             Remplissez les informations de la consultation pour le patient.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div>
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">
+              Date
+              <span className="text-red-500 align-middle leading-none ml-1">
+                *
+              </span>
+            </Label>
             <Input
+              id="date"
               type="date"
               {...register("date")}
-              className="w-full mt-2 p-2 border"
+              className="w-full mt-1 p-2 border"
+              required
             />
           </div>
 
           <div>
             <Label htmlFor="patientComplaint">Motif de consultation</Label>
             <Input
+              id="patientComplaint"
               type="text"
               {...register("patientComplaint")}
               placeholder="Motif de consultation"
-              className="w-full mt-2 p-2 border"
+              className="w-full mt-1 p-2 border"
             />
           </div>
 
@@ -91,8 +104,8 @@ export default function AddConsultationDialog({
             >
               Annuler
             </Button>
-            <Button type="submit" disabled={mutation.isLoading}>
-              {mutation.isLoading ? "Ajout..." : "Ajouter"}
+            <Button type="submit" disabled={addConsultationMutation.isLoading}>
+              {addConsultationMutation.isLoading ? "Ajout..." : "Ajouter"}
             </Button>
           </DialogFooter>
         </form>

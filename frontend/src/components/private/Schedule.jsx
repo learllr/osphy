@@ -3,26 +3,42 @@ import { determineAppointmentBackgroundColor } from "../../../../shared/utils/co
 import { determineStatusIcon } from "../../../../shared/utils/iconUtils.js";
 import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
+import { useMessageDialog } from "../contexts/MessageDialogContext.jsx";
 import AddAppointment from "./ScheduleElements/AddAppointment.jsx";
 import CalendarView from "./ScheduleElements/CalendarView.jsx";
 
 export default function Schedule() {
+  const { showMessage } = useMessageDialog();
   const [patients, setPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const fetchData = async (endpoint, setter) => {
+    const fetchData = async (
+      endpoint,
+      setter,
+      successMessage,
+      errorMessage
+    ) => {
       try {
         const response = await axios.get(endpoint);
         setter(response.data);
+        if (successMessage) showMessage("success", successMessage);
       } catch (error) {
-        console.error(`Erreur lors de la récupération de ${endpoint}:`, error);
+        showMessage("error", errorMessage);
       }
     };
 
-    fetchData("/patient", setPatients);
-    fetchData("/appointment", (data) =>
-      setAppointments(data.map(formatAppointment))
+    fetchData(
+      "/patient",
+      setPatients,
+      null,
+      "Erreur lors de la récupération des patients."
+    );
+    fetchData(
+      "/appointment",
+      (data) => setAppointments(data.map(formatAppointment)),
+      null,
+      "Erreur lors de la récupération des rendez-vous."
     );
   }, []);
 
@@ -69,14 +85,16 @@ export default function Schedule() {
 
   const handleAddAppointment = (newAppointment) => {
     const formatted = formatAppointment(newAppointment);
-    if (formatted) setAppointments((prev) => [...prev, formatted]);
+    if (formatted) {
+      setAppointments((prev) => [...prev, formatted]);
+      showMessage("success", "Rendez-vous ajouté avec succès !");
+    }
   };
 
   const handleEditAppointment = async (updatedAppointment) => {
     if (!updatedAppointment || !updatedAppointment.id) return;
 
     const patient = patients.find((p) => p.id === updatedAppointment.patientId);
-
     const formattedAppointment = formatAppointment({
       ...updatedAppointment,
       patient,
@@ -98,9 +116,9 @@ export default function Schedule() {
         `/appointment/${updatedAppointment.id}`,
         formattedAppointment
       );
+      showMessage("success", "Rendez-vous mis à jour avec succès !");
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du rendez-vous :", error);
-      alert("Échec de la mise à jour du rendez-vous.");
+      showMessage("error", "Échec de la mise à jour du rendez-vous.");
     }
   };
 
@@ -112,16 +130,17 @@ export default function Schedule() {
       setAppointments((prev) =>
         prev.filter((appointment) => appointment.id !== appointmentId)
       );
+      showMessage("success", "Rendez-vous supprimé avec succès !");
     } catch (error) {
-      alert("Échec de la suppression du rendez-vous.");
+      showMessage("error", "Échec de la suppression du rendez-vous.");
     }
   };
 
   return (
     <Body>
       <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-1/5 bg-white p-6 border border-gray-300 rounded">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+        <div className="w-full lg:w-1/5 bg-white p-6 border border-gray-300 rounded min-w-64">
+          <h2 className="text-lg font-semibold mb-4 text-gray-700">
             Ajouter un rendez-vous
           </h2>
           <AddAppointment
@@ -130,7 +149,7 @@ export default function Schedule() {
           />
         </div>
         <div className="w-full lg:w-4/5 bg-white p-6 border border-gray-300 rounded">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+          <h2 className="text-lg font-semibold mb-4 text-gray-700">
             Calendrier des rendez-vous
           </h2>
           <CalendarView

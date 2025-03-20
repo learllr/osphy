@@ -18,19 +18,21 @@ export default function PatientDropdown({ patientId, onDelete }) {
     };
   }, []);
 
+  const toggleDropdown = (event) => {
+    event.stopPropagation();
+    setIsOpen((prev) => !prev);
+  };
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDropdown}
         className="text-gray-500 hover:text-gray-700 ml-3"
       >
         <FaEllipsisV />
       </button>
       {isOpen && (
-        <ul
-          ref={dropdownRef}
-          className="absolute right-0 bg-white border rounded shadow mt-2 z-10 w-52 text-sm"
-        >
+        <ul className="absolute right-0 bg-white border rounded shadow mt-3 z-10 w-52 text-sm">
           <li>
             <button className="px-4 py-2 hover:bg-gray-100 w-full text-left">
               Exporter en PDF

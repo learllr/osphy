@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useEffect, useRef, useState } from "react";
-import { FaEllipsisV, FaMars, FaPlus, FaVenus } from "react-icons/fa";
+import { FaMars, FaPlus, FaVenus } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import {
@@ -15,6 +15,7 @@ import {
 } from "../../../../shared/utils/textUtils.js";
 import axios from "../../axiosConfig.js";
 import Body from "../common/Body.jsx";
+import { useMessageDialog } from "../contexts/MessageDialogContext";
 import { useUser } from "../contexts/UserContext";
 import AddPatientDialog from "../dialogs/AddPatientDialog.jsx";
 import ConfirmDialog from "../dialogs/ConfirmDialog.jsx";
@@ -29,11 +30,11 @@ export default function Patients() {
     femme: true,
   });
   const { user } = useUser();
-  const [showDropdown, setShowDropdown] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const patientsPerPage = 10;
   const queryClient = useQueryClient();
   const dropdownRef = useRef(null);
+  const { showMessage } = useMessageDialog();
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -64,21 +65,15 @@ export default function Patients() {
     }
   );
 
-  const deletePatientMutation = useMutation(
-    (id) => axios.delete(`/patient/${id}`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("patients");
-      },
+  const deletePatientMutation = useMutation(async (id) => {
+    try {
+      await axios.delete(`/patient/${id}`);
+      queryClient.invalidateQueries("patients");
+      showMessage("success", "Le patient a été supprimé avec succès !");
+    } catch (error) {
+      showMessage("error", "Erreur lors de la suppression du patient.");
     }
-  );
-
-  const toggleDropdown = (id) => {
-    setShowDropdown((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
+  });
 
   const confirmDelete = () => {
     if (confirmDialog.patientId) {
@@ -251,12 +246,6 @@ export default function Patients() {
                   >
                     Ouvrir
                   </Link>
-                  <button
-                    onClick={() => toggleDropdown(patient.id)}
-                    className="text-gray-500 hover:text-gray-700 ml-3 relative"
-                  >
-                    <FaEllipsisV />
-                  </button>
                   <PatientDropdown
                     patientId={patient.id}
                     onDelete={handleDeletePatient}

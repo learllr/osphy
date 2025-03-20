@@ -99,7 +99,7 @@ export default function PatientSearch() {
             return (
               <li
                 key={patient.id}
-                className="flex items-center p-2 cursor-pointer hover:bg-gray-200"
+                className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => handlePatientSelect(patient.id)}
               >
                 {genderIcon}

@@ -23,14 +23,18 @@ export const calculateAge = (birthDate) => {
 export const isEventInThePast = (date, startTime = null) => {
   if (!date) return false;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   let eventDateTime;
   if (startTime) {
     eventDateTime = new Date(`${date}T${startTime}:00`);
   } else {
     eventDateTime = new Date(date);
+    eventDateTime.setHours(0, 0, 0, 0);
   }
 
-  return eventDateTime < new Date();
+  return eventDateTime < today;
 };
 
 export function formatDate(date) {
