@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
 import {
   formatDate,
-  formatDateFR,
   isEventInThePast,
 } from "../../../../../../shared/utils/dateUtils.js";
 import axios from "../../../../axiosConfig.js";
@@ -148,13 +147,25 @@ export default function AppointmentInfoSection({ patientId }) {
         );
 
       const createdAppointments = await Promise.all(newAppointments);
+      const updatedAppointments = await Promise.all(updates);
 
       setAppointments((prev) =>
         prev.map((appt) => {
+          const updated = updatedAppointments.find(
+            (ua) => ua.data.id === appt.id
+          );
+          if (updated) {
+            return updated.data;
+          }
+
           const created = createdAppointments.find(
             (ca) => ca.tempId === appt.id
           );
-          return created ? created.newData : appt;
+          if (created) {
+            return created.newData;
+          }
+
+          return appt;
         })
       );
 
@@ -163,10 +174,7 @@ export default function AppointmentInfoSection({ patientId }) {
       setAppointmentsToDelete([]);
 
       const response = await axios.get(`/appointment/${patientId}`);
-      const formattedAppointments = response.data.map((appointment) => ({
-        ...appointment,
-        date: formatDateFR(appointment.date),
-      }));
+      const formattedAppointments = response.data;
       setAppointments(formattedAppointments);
       setOriginalAppointments(formattedAppointments);
     } catch (error) {

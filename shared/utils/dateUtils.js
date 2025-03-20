@@ -23,18 +23,23 @@ export const calculateAge = (birthDate) => {
 export const isEventInThePast = (date, startTime = null) => {
   if (!date) return false;
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const eventDate = new Date(date);
 
-  let eventDateTime;
-  if (startTime) {
-    eventDateTime = new Date(`${date}T${startTime}:00`);
-  } else {
-    eventDateTime = new Date(date);
-    eventDateTime.setHours(0, 0, 0, 0);
+  if (!isNaN(eventDate.getTime())) {
+    if (startTime) {
+      const [hours, minutes] = startTime.split(":").map(Number);
+      eventDate.setHours(hours, minutes, 0, 0);
+    } else {
+      eventDate.setHours(0, 0, 0, 0);
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return eventDate < today;
   }
 
-  return eventDateTime < today;
+  return false;
 };
 
 export function formatDate(date) {
