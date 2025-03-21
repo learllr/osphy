@@ -1,4 +1,6 @@
-const introMenuItems = [
+import { CircleCheckBig, Star, Stethoscope, User } from "lucide-react";
+
+export const introMenuItems = [
   {
     title: "Fonctionnalités",
     description:
@@ -25,11 +27,11 @@ const introMenuItems = [
   },
 ];
 
-const subscriptionMenuItems = [
+export const subscriptionMenuItems = [
   {
     title: "Formule Classique",
     description: "Accédez aux fonctionnalités de base.",
-    icon: CheckCircle,
+    icon: CircleCheckBig,
     link: "/plans/classic",
   },
   {
@@ -37,5 +39,28 @@ const subscriptionMenuItems = [
     description: "Profitez de fonctionnalités avancées pour un suivi amélioré.",
     icon: Star,
     link: "/plans/premium",
+  },
+];
+export const patientDetailsMenu = [
+  {
+    label: "Informations du patient",
+    path: "infos",
+    icon: User,
+    subMenu: [
+      { label: "Informations générales", path: "general" },
+      { label: "Activités", path: "activites" },
+      { label: "Antécédents", path: "antecedents" },
+      { label: "Contre-indications", path: "contre-indications" },
+      { label: "Gynécologie", path: "gynecologie" },
+      { label: "Grossesses", path: "grossesses" },
+      { label: "Sommeil", path: "sommeil" },
+      { label: "Rendez-vous", path: "rendez-vous" },
+    ],
+  },
+  {
+    label: "Consultations",
+    path: "consultations",
+    icon: Stethoscope,
+    subMenu: [],
   },
 ];

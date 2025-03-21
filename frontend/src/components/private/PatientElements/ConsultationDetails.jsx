@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import { consultationDetailsFields } from "../../../../../shared/constants/fields.js";
-import {
-  formatDateFR,
-  isEventInThePast,
-} from "../../../../../shared/utils/dateUtils.js";
+import { isEventInThePast } from "../../../../../shared/utils/dateUtils.js";
 import axios from "../../../axiosConfig.js";
 import { useMessageDialog } from "../../contexts/MessageDialogContext.jsx";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside.js";
@@ -109,7 +106,7 @@ export default function ConsultationDetails({
   return (
     <div ref={sectionRef}>
       <Section
-        title={`Consultation du ${formatDateFR(consultation.date)}`}
+        title={`Consultation du ${consultation.date}`}
         onEdit={handleEditClick}
         onDelete={() => handleDeleteConsultation(consultation.id)}
         showCount={false}
@@ -120,39 +117,43 @@ export default function ConsultationDetails({
           <div>
             <div className="space-y-4">
               {consultationDetailsFields.map(
-                ({ label, field, type, options, min, max }) => (
-                  <DetailItem
-                    key={field}
-                    label={label}
-                    value={editableConsultation[field]}
-                    isEditing={isEditing}
-                    onChange={(value) => handleFieldChange(field, value)}
-                    type={type}
-                    options={options}
-                    min={min}
-                    max={max}
-                  />
+                ({ label, field, type, options, min, max }, index) => (
+                  <>
+                    <DetailItem
+                      key={field}
+                      label={label}
+                      value={editableConsultation[field]}
+                      isEditing={isEditing}
+                      onChange={(value) => handleFieldChange(field, value)}
+                      type={type}
+                      options={options}
+                      min={min}
+                      max={max}
+                    />
+
+                    {field === "eva" && (
+                      <DiagnosisSection
+                        isEditing={isEditing}
+                        editableConsultation={editableConsultation}
+                        patient={patient}
+                        onDiagnosisGenerated={(diagnosis) => {
+                          setEditableConsultation((prev) => ({
+                            ...prev,
+                            diagnosis,
+                          }));
+                          if (onConsultationUpdated) {
+                            onConsultationUpdated({
+                              ...editableConsultation,
+                              diagnosis,
+                            });
+                          }
+                        }}
+                      />
+                    )}
+                  </>
                 )
               )}
             </div>
-
-            <DiagnosisSection
-              isEditing={isEditing}
-              editableConsultation={editableConsultation}
-              patient={patient}
-              onDiagnosisGenerated={(diagnosis) => {
-                setEditableConsultation((prev) => ({
-                  ...prev,
-                  diagnosis,
-                }));
-                if (onConsultationUpdated) {
-                  onConsultationUpdated({
-                    ...editableConsultation,
-                    diagnosis,
-                  });
-                }
-              }}
-            />
 
             {isEditing && (
               <div className="flex gap-4 mt-4 justify-center">

@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { useMutation } from "react-query";
 import { calculateAge } from "../../../../../shared/utils/dateUtils.js";
 import axios from "../../../axiosConfig.js";
+import ConfirmDialog from "../../dialogs/ConfirmDialog.jsx";
+import DiagnosisDisplay from "./Diagnosis/DiagnosisDisplay";
+import DiagnosisEdit from "./Diagnosis/DiagnosisEdit";
 
 export default function DiagnosisSection({
   isEditing,
@@ -10,11 +14,42 @@ export default function DiagnosisSection({
   patient,
   onDiagnosisGenerated,
 }) {
+  const [isEditingDiagnosis, setIsEditingDiagnosis] = useState(false);
+  const [backupDiagnosis, setBackupDiagnosis] = useState(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
+  const updateDiagnosisMutation = useMutation({
+    mutationFn: async (updatedDiagnosis) => {
+      await axios.put(
+        `/diagnosis/${editableConsultation.id}`,
+        updatedDiagnosis
+      );
+    },
+    onSuccess: () => {
+      onDiagnosisGenerated(editedDiagnosis);
+      setIsEditingDiagnosis(false);
+    },
+    onError: (error) => {
+      console.error("Erreur lors de la mise à jour du diagnostic :", error);
+    },
+  });
+
+  const deleteDiagnosisMutation = useMutation({
+    mutationFn: async () => {
+      await axios.delete(`/diagnosis/${editableConsultation.id}`);
+    },
+    onSuccess: () => {
+      onDiagnosisGenerated(null);
+    },
+    onError: (error) => {
+      console.error("Erreur lors de la suppression du diagnostic :", error);
+    },
+  });
+
   const generateDiagnosisMutation = useMutation({
     mutationFn: async () => {
       const age = calculateAge(patient.birthDate);
-
-      const response = await axios.post("/consultation/diagnosis", {
+      const response = await axios.post("/diagnosis", {
         id: editableConsultation.id,
         gender: patient.gender,
         age,
@@ -30,24 +65,35 @@ export default function DiagnosisSection({
         },
         activities: patient.activities?.map((a) => a.activity) || [],
       });
-
       return response.data;
     },
     onSuccess: (data) => {
-      if (onDiagnosisGenerated) {
-        onDiagnosisGenerated(data.diagnosis);
-      }
-    },
-    onError: (error) => {
-      console.error("Erreur lors de la génération du diagnostic :", error);
+      onDiagnosisGenerated(data.diagnosis);
     },
   });
+
+  const handleEditDiagnosis = () => {
+    setBackupDiagnosis(editableConsultation.diagnosis);
+    setIsEditingDiagnosis(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingDiagnosis(false);
+  };
+
+  const handleDeleteDiagnosis = () => {
+    setIsConfirmDialogOpen(true);
+  };
+
+  const confirmDeleteDiagnosis = () => {
+    deleteDiagnosisMutation.mutate();
+    setIsConfirmDialogOpen(false);
+  };
 
   if (isEditing) return null;
 
   return (
     <>
-      {/* Bouton pour générer le diagnostic */}
       <div className="text-center my-6">
         <Button
           onClick={() => generateDiagnosisMutation.mutate()}
@@ -64,60 +110,47 @@ export default function DiagnosisSection({
         </Button>
       </div>
 
-      {/* Affichage des résultats du diagnostic */}
-      {editableConsultation.diagnosis &&
-        editableConsultation.diagnosis.exams?.length > 0 && (
-          <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">
-              Diagnostics différentiels
-            </h3>
-            <p className="text-gray-700 mb-4">
-              {editableConsultation.diagnosis.summary}
-            </p>
+      {editableConsultation.diagnosis && (
+        <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg relative">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4 flex justify-between">
+            Diagnostics différentiels
+            <div className="flex gap-3">
+              <FaEdit
+                className="text-blue-500 cursor-pointer"
+                size={18}
+                onClick={handleEditDiagnosis}
+              />
+              <FaTrash
+                className="text-red-500 cursor-pointer"
+                size={18}
+                onClick={handleDeleteDiagnosis}
+              />
+            </div>
+          </h3>
 
-            {editableConsultation.diagnosis?.differential_diagnosis && (
-              <div className="mt-3 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-                <p className="text-gray-700">
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        editableConsultation.diagnosis.differential_diagnosis,
-                    }}
-                  />
-                </p>
-              </div>
-            )}
+          {isEditingDiagnosis ? (
+            <DiagnosisEdit
+              diagnosis={editableConsultation.diagnosis}
+              onSave={(updatedDiagnosis) =>
+                updateDiagnosisMutation.mutate(updatedDiagnosis)
+              }
+              onCancel={handleCancelEdit}
+            />
+          ) : (
+            <DiagnosisDisplay diagnosis={editableConsultation.diagnosis} />
+          )}
+        </div>
+      )}
 
-            {editableConsultation.diagnosis?.exams &&
-              Array.isArray(editableConsultation.diagnosis.exams) && (
-                <ul className="mt-2">
-                  {editableConsultation.diagnosis.exams.map((exam, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center space-x-2 mt-3"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={exam.checked}
-                        onChange={() =>
-                          onDiagnosisGenerated((prev) => {
-                            const updatedDiagnosis = { ...prev };
-                            updatedDiagnosis.exams[index].checked =
-                              !updatedDiagnosis.exams[index].checked;
-                            return updatedDiagnosis;
-                          })
-                        }
-                        className="form-checkbox h-4 w-4 text-primary flex-shrink-0"
-                      />
-                      <span className="text-gray-700">
-                        <strong>{exam.name}</strong> - {exam.description}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-          </div>
-        )}
+      <ConfirmDialog
+        isOpen={isConfirmDialogOpen}
+        onClose={() => setIsConfirmDialogOpen(false)}
+        onConfirm={confirmDeleteDiagnosis}
+        title="Confirmer la suppression"
+        message="Êtes-vous sûr de vouloir supprimer ce diagnostic ? Cette action est irréversible."
+        confirmText="Supprimer"
+        cancelText="Annuler"
+      />
     </>
   );
 }

@@ -15,16 +15,19 @@ export default function Section({
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   return (
-    <div className="bg-white p-6 rounded-md border border-gray-200 relative text-sm">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-700 border-b">
-          {title} {showCount && `(${count})`}
+    <div className="bg-white p-6 rounded-lg border border-gray-300 shadow-sm relative text-sm">
+      <div className="flex justify-between items-center pb-3 border-b border-primary">
+        <h2 className="text-lg font-semibold text-gray-800">
+          {title}{" "}
+          {showCount && count > 0 && (
+            <span className="text-gray-500">({count})</span>
+          )}
         </h2>
         <div className="flex items-center space-x-2">
           {!hideEditButton && (
             <button
               onClick={onEdit}
-              className="text-primary bg-white hover:bg-white hover:text-primary/90"
+              className="text-primary hover:text-primary/80 p-2 rounded-md transition-all duration-200 focus:ring focus:ring-primary/20"
               aria-label={`Modifier ${title}`}
             >
               <FaEdit size={16} />
@@ -33,7 +36,7 @@ export default function Section({
           {onDelete && (
             <button
               onClick={() => setIsConfirmDialogOpen(true)}
-              className="text-red-600 bg-white hover:bg-white hover:text-red-500"
+              className="text-red-600 hover:text-red-500 p-2 rounded-md transition-all duration-200 focus:ring focus:ring-red-200"
               aria-label={`Supprimer ${title}`}
             >
               <FaTrash size={16} />
@@ -41,7 +44,8 @@ export default function Section({
           )}
         </div>
       </div>
-      {children}
+
+      <div className="mt-4">{children}</div>
 
       {onDelete && (
         <ConfirmDialog

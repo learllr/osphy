@@ -131,19 +131,9 @@ export default function AllItemsList({
 
   return (
     <div>
-      {columnKeys.length > 0 && (
-        <div className="flex font-semibold border-b pb-2 mb-4">
-          {columnKeys.map((key) => (
-            <span key={key} className="flex-1">
-              {columnLabels?.[key] || key}
-            </span>
-          ))}
-          {isEditing && <span className="w-6"></span>}
-        </div>
-      )}
-
       <ItemList
         items={items}
+        columnLabels={columnLabels}
         onChange={handleUpdateItem}
         onDelete={handleDeleteItem}
         onAdd={handleAddItem}

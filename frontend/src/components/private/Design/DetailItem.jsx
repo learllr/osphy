@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import { Link } from "react-router-dom";
 import { formatDateFR } from "../../../../../shared/utils/dateUtils";
+import { formatPhoneNumber } from "../../../../../shared/utils/formatUtils";
 
 export default function DetailItem({
   label,
@@ -17,8 +18,12 @@ export default function DetailItem({
   allowEmptyOption = true,
 }) {
   const handleInputChange = (e) => {
-    const inputValue = e.target.value;
-    if (type === "number") {
+    let inputValue = e.target.value;
+
+    if (label === "Téléphone") {
+      inputValue = inputValue.replace(/\D/g, "");
+      onChange(formatPhoneNumber(inputValue));
+    } else if (type === "number") {
       const numericValue = inputValue === "" ? "" : Number(inputValue);
       if (
         (min !== undefined && numericValue < min) ||
@@ -33,14 +38,25 @@ export default function DetailItem({
   };
 
   const displayValue =
-    type === "date" && !isEditing ? formatDateFR(value) : value || "-";
+    type === "date" && !isEditing
+      ? formatDateFR(value)
+      : label === "Téléphone" && value
+      ? formatPhoneNumber(value)
+      : value || "-";
 
   return (
     <div className="flex text-sm mb-1">
       <strong className="w-2/5 text-gray-600 flex items-center">{label}</strong>
       <span className="w-3/5 flex items-center break-all">
         {isEditing && editable ? (
-          type === "select" ? (
+          label === "Téléphone" ? (
+            <Input
+              type="tel"
+              value={value || ""}
+              onChange={handleInputChange}
+              className="bg-gray-100 px-4 py-2 rounded-md"
+            />
+          ) : type === "select" ? (
             <select
               className="w-full bg-gray-100 px-4 py-2 rounded-md border text-gray-700"
               value={value ?? ""}

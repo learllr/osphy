@@ -54,7 +54,7 @@ export default function ConsultationList({
         {filteredConsultations.length > 0 ? (
           filteredConsultations.map((consultation) => (
             <div
-              key={consultation.id}
+              key={consultation.id || `consultation-${index}`}
               className="flex items-center p-3 bg-gray-50 rounded-lg shadow-sm border cursor-pointer transition hover:bg-gray-100"
               onClick={() => onConsultationClick(consultation)}
             >
@@ -62,10 +62,7 @@ export default function ConsultationList({
               <span
                 className="text-gray-700 font-medium text-sm"
                 dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    formatDateFR(consultation.date),
-                    searchQuery
-                  ),
+                  __html: highlightText(consultation.date, searchQuery),
                 }}
               />
             </div>

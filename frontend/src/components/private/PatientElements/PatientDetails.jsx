@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { patientDetailsMenu } from "../../../../../shared/constants/menuItems.js";
 import axios from "../../../axiosConfig.js";
 import Body from "../../common/Body.jsx";
 import LoadingScreen from "../../common/Loading/LoadingScreen.jsx";
+import PageNavBar from "../Design/PageNavBar.jsx";
 import ConsultationDetails from "./ConsultationDetails.jsx";
 import ConsultationList from "./ConsultationList.jsx";
 import PatientInfo from "./PatientInfo.jsx";
-import GeneralInfoSection from "./PatientInfoSections/GeneralInfoSection.jsx";
 
 export default function PatientDetails() {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
   const [consultations, setConsultations] = useState([]);
   const [selectedConsultation, setSelectedConsultation] = useState(null);
+  const [activeTab, setActiveTab] = useState("consultations");
+  const [activeSubTab, setActiveSubTab] = useState("activites");
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -33,6 +36,10 @@ export default function PatientDetails() {
     setSelectedConsultation(consultation);
   };
 
+  if (!patient) {
+    return <LoadingScreen />;
+  }
+
   const handleConsultationAdded = (newConsultation) => {
     setConsultations((prev) => [...prev, newConsultation]);
     setSelectedConsultation(newConsultation);
@@ -50,6 +57,10 @@ export default function PatientDetails() {
     });
   };
 
+  if (!patient) {
+    return <LoadingScreen />;
+  }
+
   const handleConsultationUpdated = async (updatedConsultation) => {
     try {
       const response = await axios.get(`/consultation/${id}`);
@@ -64,34 +75,28 @@ export default function PatientDetails() {
     }
   };
 
-  if (!patient) {
-    return <LoadingScreen />;
-  }
-
   return (
     <Body>
-      <div className="flex flex-col lg:flex-row w-full">
-        <div className="w-full lg:w-2/12 min-w-52 p-1">
-          <ConsultationList
-            consultations={consultations}
-            onConsultationClick={handleConsultationClick}
-            patientId={id}
-            onConsultationAdded={handleConsultationAdded}
-            onConsultationDeleted={handleConsultationDeleted}
-          />
-        </div>
+      <PageNavBar
+        menuItems={patientDetailsMenu}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        activeSubTab={activeSubTab}
+        onSubTabChange={setActiveSubTab}
+      />
 
-        <div className="flex flex-col w-full">
-          <div className="flex flex-col lg:flex-row">
-            <div
-              className={`w-full ${
-                selectedConsultation ? "lg:w-1/2" : "lg:w-full"
-              } p-1`}
-            >
-              <GeneralInfoSection patient={patient} />
-            </div>
+      <div className="flex flex-col w-full mt-4">
+        {activeTab === "consultations" ? (
+          <div className="flex">
+            <ConsultationList
+              consultations={consultations}
+              onConsultationClick={handleConsultationClick}
+              patientId={id}
+              onConsultationAdded={handleConsultationAdded}
+              onConsultationDeleted={handleConsultationDeleted}
+            />
             {selectedConsultation && (
-              <div className="w-full lg:w-1/2 p-1">
+              <div className="mt-4">
                 <ConsultationDetails
                   consultation={selectedConsultation}
                   patient={patient}
@@ -100,10 +105,9 @@ export default function PatientDetails() {
               </div>
             )}
           </div>
-          <div className="w-full p-1">
-            <PatientInfo patient={patient} />
-          </div>
-        </div>
+        ) : (
+          <PatientInfo patient={patient} activeSubTab={activeSubTab} />
+        )}
       </div>
     </Body>
   );

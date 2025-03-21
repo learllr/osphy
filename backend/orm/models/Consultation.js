@@ -1,5 +1,9 @@
 "use strict";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import { DataTypes, Model } from "sequelize";
+
+dayjs.extend(customParseFormat);
 
 export default (sequelize) => {
   class Consultation extends Model {}
@@ -25,6 +29,16 @@ export default (sequelize) => {
       date: {
         type: DataTypes.DATEONLY,
         allowNull: false,
+        get() {
+          const rawValue = this.getDataValue("date");
+          return rawValue ? dayjs(rawValue).format("DD/MM/YYYY") : null;
+        },
+        set(value) {
+          this.setDataValue(
+            "date",
+            dayjs(value, "DD/MM/YYYY").format("YYYY-MM-DD")
+          );
+        },
       },
       patientComplaint: {
         type: DataTypes.TEXT,

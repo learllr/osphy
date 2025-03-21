@@ -1,9 +1,10 @@
+import { Trash2 } from "lucide-react";
 import React from "react";
 import ItemActions from "./ItemActions.jsx";
-import ItemLine from "./ItemLine.jsx";
 
 export default function ItemList({
   items,
+  columnLabels,
   onChange,
   onDelete,
   onAdd,
@@ -11,9 +12,16 @@ export default function ItemList({
   onCancel,
   isEditing,
   isLoading,
-  fieldOptions,
 }) {
   const hasCategory = items.some((item) => item.category);
+
+  const columnKeys = hasCategory
+    ? Object.keys(columnLabels).filter((key) => key !== "category")
+    : Object.keys(columnLabels);
+
+  if (isEditing) {
+    columnKeys.push("actions");
+  }
 
   const groupedItems = hasCategory
     ? items.reduce((acc, item) => {
@@ -22,31 +30,66 @@ export default function ItemList({
         acc[category].push(item);
         return acc;
       }, {})
-    : { Tous: items };
+    : { "": items };
 
   return (
-    <div>
-      {Object.entries(groupedItems).map(([category, categoryItems]) => (
-        <div key={category} className="mb-2">
-          {!isEditing && hasCategory && (
-            <h3 className="text-lg font-semibold mb-2">{category}</h3>
-          )}
-
-          <ul>
-            {categoryItems.map((item) => (
-              <ItemLine
-                key={item.id || `temp-${Math.random()}`}
-                item={item}
-                onChange={onChange}
-                onDelete={onDelete}
-                isEditing={isEditing}
-                fieldOptions={fieldOptions}
-              />
+    <div className="overflow-x-auto w-full">
+      <table className="w-full text-sm text-gray-700 border-collapse">
+        <thead className="bg-gray-100 text-gray-600 uppercase text-xs font-semibold tracking-wider">
+          <tr>
+            {columnKeys.map((key) => (
+              <th
+                key={key}
+                className="px-4 py-3 text-left border-b border-gray-300"
+              >
+                {columnLabels[key] || "Actions"}
+              </th>
             ))}
-          </ul>
-        </div>
-      ))}
-
+          </tr>
+        </thead>
+        {Object.entries(groupedItems).map(([category, categoryItems]) => (
+          <tbody key={category} className="border-t border-gray-300">
+            {hasCategory && category && (
+              <tr>
+                <td
+                  colSpan={columnKeys.length}
+                  className="px-4 py-3 text-lg font-semibold text-primary bg-gray-50 text-center"
+                >
+                  {category}
+                </td>
+              </tr>
+            )}
+            {categoryItems.map((item, index) => (
+              <tr key={item.id || `temp-${index}`} className="bg-white">
+                {columnKeys.map((key) => (
+                  <td
+                    key={key}
+                    className="px-4 py-3 border-b border-gray-200 text-left"
+                  >
+                    {isEditing && key !== "actions" ? (
+                      <input
+                        type="text"
+                        value={item[key] || ""}
+                        onChange={(e) => onChange(item.id, key, e.target.value)}
+                        className="w-full px-2 py-1 border rounded"
+                      />
+                    ) : key !== "actions" ? (
+                      item[key]
+                    ) : (
+                      <button
+                        onClick={() => onDelete(item.id)}
+                        className="text-red-500 hover:bg-red-50 bg-gray-50 rounded-full p-2"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ))}
+      </table>
       <ItemActions
         onAdd={onAdd}
         onSave={onSave}

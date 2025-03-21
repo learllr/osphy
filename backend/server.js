@@ -7,6 +7,7 @@ import appointmentRoutes from "./routes/appointmentRoutes.js";
 import authentificationRoutes from "./routes/authentificationRoutes.js";
 import consultationRoutes from "./routes/consultationRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import diagnosisRoutes from "./routes/diagnosisRoutes.js";
 import newsletterRoutes from "./routes/newsletterRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
 import pregnancyPatientRoutes from "./routes/pregnancyPatientRoutes.js";
@@ -44,6 +45,7 @@ app.use("/api/appointment", authenticateToken, appointmentRoutes);
 app.use("/api/patient", authenticateToken, patientRoutes);
 app.use("/api/pregnancy", authenticateToken, pregnancyPatientRoutes);
 app.use("/api/consultation", authenticateToken, consultationRoutes);
+app.use("/api/diagnosis", authenticateToken, diagnosisRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/contact", contactRoutes);
 
