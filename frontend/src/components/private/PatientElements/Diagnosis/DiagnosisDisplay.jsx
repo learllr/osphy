@@ -1,3 +1,4 @@
+import { Mail } from "lucide-react";
 import React from "react";
 
 export default function DiagnosisDisplay({ diagnosis, onToggleExam }) {
@@ -24,6 +25,15 @@ export default function DiagnosisDisplay({ diagnosis, onToggleExam }) {
           </li>
         ))}
       </ul>
+
+      <div className="flex items-center justify-center">
+        <button
+          type="button"
+          className="mt-6 px-4 py-2 bg-primary text-white rounded shadow hover:bg-primary/90 transition flex items-center justify-center"
+        >
+          <Mail className="mr-2" /> Rédiger un mail
+        </button>
+      </div>
     </>
   );
 }
