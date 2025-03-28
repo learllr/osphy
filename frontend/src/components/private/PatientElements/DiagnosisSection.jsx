@@ -1,8 +1,5 @@
-import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import { useMutation } from "react-query";
-import { calculateAge } from "../../../../../shared/utils/dateUtils.js";
 import axios from "../../../axiosConfig.js";
 import ConfirmDialog from "../../dialogs/ConfirmDialog.jsx";
 import DiagnosisDisplay from "./Diagnosis/DiagnosisDisplay";
@@ -11,11 +8,10 @@ import DiagnosisEdit from "./Diagnosis/DiagnosisEdit";
 export default function DiagnosisSection({
   isEditing,
   editableConsultation,
-  patient,
   onDiagnosisGenerated,
+  isEditingDiagnosis,
+  setIsEditingDiagnosis,
 }) {
-  const [isEditingDiagnosis, setIsEditingDiagnosis] = useState(false);
-  const [backupDiagnosis, setBackupDiagnosis] = useState(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const updateDiagnosisMutation = useMutation({
@@ -24,9 +20,10 @@ export default function DiagnosisSection({
         `/diagnosis/${editableConsultation.id}`,
         updatedDiagnosis
       );
+      return updatedDiagnosis;
     },
-    onSuccess: () => {
-      onDiagnosisGenerated(editedDiagnosis);
+    onSuccess: (data) => {
+      onDiagnosisGenerated(data);
       setIsEditingDiagnosis(false);
     },
     onError: (error) => {
@@ -46,43 +43,8 @@ export default function DiagnosisSection({
     },
   });
 
-  const generateDiagnosisMutation = useMutation({
-    mutationFn: async () => {
-      const age = calculateAge(patient.birthDate);
-      const response = await axios.post("/diagnosis", {
-        id: editableConsultation.id,
-        gender: patient.gender,
-        age,
-        weight: patient.weight,
-        height: patient.height,
-        occupation: patient.occupation,
-        antecedents: patient.antecedents?.map((a) => a.antecedent) || [],
-        symptoms: {
-          plaint: editableConsultation.patientComplaint,
-          aggravatingFactors: editableConsultation.aggravatingFactors,
-          relievingFactors: editableConsultation.relievingFactors,
-          associatedSymptoms: editableConsultation.associatedSymptoms,
-        },
-        activities: patient.activities?.map((a) => a.activity) || [],
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      onDiagnosisGenerated(data.diagnosis);
-    },
-  });
-
-  const handleEditDiagnosis = () => {
-    setBackupDiagnosis(editableConsultation.diagnosis);
-    setIsEditingDiagnosis(true);
-  };
-
   const handleCancelEdit = () => {
     setIsEditingDiagnosis(false);
-  };
-
-  const handleDeleteDiagnosis = () => {
-    setIsConfirmDialogOpen(true);
   };
 
   const confirmDeleteDiagnosis = () => {
@@ -92,55 +54,36 @@ export default function DiagnosisSection({
 
   if (isEditing) return null;
 
+  const handleToggleExam = (index) => {
+    const updatedExams = [...editableConsultation.diagnosis.exams];
+    updatedExams[index].checked = !updatedExams[index].checked;
+
+    const updatedDiagnosis = {
+      ...editableConsultation.diagnosis,
+      exams: updatedExams,
+    };
+
+    updateDiagnosisMutation.mutate(updatedDiagnosis);
+  };
+
   return (
     <>
-      <div className="text-center my-6">
-        <Button
-          onClick={() => generateDiagnosisMutation.mutate()}
-          className={`text-white px-6 py-2 rounded-lg w-full ${
-            generateDiagnosisMutation.isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : ""
-          }`}
-          disabled={generateDiagnosisMutation.isLoading}
-        >
-          {generateDiagnosisMutation.isLoading
-            ? "Chargement..."
-            : "Générer le diagnostic et l'examen clinique"}
-        </Button>
+      <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg relative">
+        {isEditingDiagnosis ? (
+          <DiagnosisEdit
+            diagnosis={editableConsultation.diagnosis}
+            onSave={(updatedDiagnosis) =>
+              updateDiagnosisMutation.mutate(updatedDiagnosis)
+            }
+            onCancel={handleCancelEdit}
+          />
+        ) : (
+          <DiagnosisDisplay
+            diagnosis={editableConsultation.diagnosis}
+            onToggleExam={handleToggleExam}
+          />
+        )}
       </div>
-
-      {editableConsultation.diagnosis && (
-        <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg relative">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4 flex justify-between">
-            Diagnostics différentiels
-            <div className="flex gap-3">
-              <FaEdit
-                className="text-blue-500 cursor-pointer"
-                size={18}
-                onClick={handleEditDiagnosis}
-              />
-              <FaTrash
-                className="text-red-500 cursor-pointer"
-                size={18}
-                onClick={handleDeleteDiagnosis}
-              />
-            </div>
-          </h3>
-
-          {isEditingDiagnosis ? (
-            <DiagnosisEdit
-              diagnosis={editableConsultation.diagnosis}
-              onSave={(updatedDiagnosis) =>
-                updateDiagnosisMutation.mutate(updatedDiagnosis)
-              }
-              onCancel={handleCancelEdit}
-            />
-          ) : (
-            <DiagnosisDisplay diagnosis={editableConsultation.diagnosis} />
-          )}
-        </div>
-      )}
 
       <ConfirmDialog
         isOpen={isConfirmDialogOpen}

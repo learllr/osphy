@@ -18,7 +18,7 @@ export default function PageNavBar({
               ${
                 activeTab === path
                   ? "bg-primary text-white shadow-md scale-105"
-                  : "text-gray-700 hover:bg-gray-100 hover:text-primary hover:scale-105"
+                  : "text-gray-700 hover:bg-gray-100 hover:scale-105"
               }`}
           >
             {Icon && <Icon className="w-5 h-5" />}
@@ -40,7 +40,7 @@ export default function PageNavBar({
                   ${
                     activeSubTab === path
                       ? "bg-primary text-white shadow"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-primary"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
               >
                 {label}

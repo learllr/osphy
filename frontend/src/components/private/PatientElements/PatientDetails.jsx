@@ -14,8 +14,8 @@ export default function PatientDetails() {
   const [patient, setPatient] = useState(null);
   const [consultations, setConsultations] = useState([]);
   const [selectedConsultation, setSelectedConsultation] = useState(null);
-  const [activeTab, setActiveTab] = useState("consultations");
-  const [activeSubTab, setActiveSubTab] = useState("activites");
+  const [activeTab, setActiveTab] = useState("infos");
+  const [activeSubTab, setActiveSubTab] = useState("general");
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -33,6 +33,7 @@ export default function PatientDetails() {
   }, [id]);
 
   const handleConsultationClick = (consultation) => {
+    console.log(consultation);
     setSelectedConsultation(consultation);
   };
 
@@ -87,16 +88,18 @@ export default function PatientDetails() {
 
       <div className="flex flex-col w-full mt-4">
         {activeTab === "consultations" ? (
-          <div className="flex">
-            <ConsultationList
-              consultations={consultations}
-              onConsultationClick={handleConsultationClick}
-              patientId={id}
-              onConsultationAdded={handleConsultationAdded}
-              onConsultationDeleted={handleConsultationDeleted}
-            />
+          <div className="flex w-full gap-4">
+            <div className="w-1/5">
+              <ConsultationList
+                consultations={consultations}
+                onConsultationClick={handleConsultationClick}
+                patientId={id}
+                onConsultationAdded={handleConsultationAdded}
+                onConsultationDeleted={handleConsultationDeleted}
+              />
+            </div>
             {selectedConsultation && (
-              <div className="mt-4">
+              <div className="w-4/5">
                 <ConsultationDetails
                   consultation={selectedConsultation}
                   patient={patient}

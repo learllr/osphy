@@ -1,11 +1,12 @@
 import React from "react";
 
-export default function DiagnosisDisplay({ diagnosis }) {
+export default function DiagnosisDisplay({ diagnosis, onToggleExam }) {
+  console.log(diagnosis);
   return (
     <>
       <p
         className="text-gray-700 mb-4"
-        dangerouslySetInnerHTML={{ __html: diagnosis.differential_diagnosis }}
+        dangerouslySetInnerHTML={{ __html: diagnosis.summary }}
       />
 
       <ul className="mt-2">
@@ -15,7 +16,7 @@ export default function DiagnosisDisplay({ diagnosis }) {
               type="checkbox"
               checked={exam.checked}
               className="form-checkbox h-4 w-4 text-primary flex-shrink-0"
-              readOnly
+              onChange={() => onToggleExam(index)}
             />
             <span className="text-gray-700">
               <strong>{exam.name}</strong> : {exam.description}

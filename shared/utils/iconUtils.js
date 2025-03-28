@@ -1,19 +1,25 @@
+import { CheckCircle, Clock, XCircle } from "lucide-react";
 import { createElement } from "react";
-import { FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 
 export const determineStatusIcon = (status) => {
   const icons = {
     Confirmé: () =>
-      createElement(FaCheckCircle, {
+      createElement(CheckCircle, {
         className: "text-green-500 bg-white rounded-lg",
+        size: 18,
+        strokeWidth: 2,
       }),
     "En attente": () =>
-      createElement(FaClock, {
+      createElement(Clock, {
         className: "text-yellow-500 bg-white rounded-lg",
+        size: 18,
+        strokeWidth: 2,
       }),
     Annulé: () =>
-      createElement(FaTimesCircle, {
+      createElement(XCircle, {
         className: "text-red-500 bg-white rounded-lg",
+        size: 18,
+        strokeWidth: 2,
       }),
   };
 

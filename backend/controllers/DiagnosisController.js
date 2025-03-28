@@ -48,7 +48,7 @@ export const createDiagnosis = async (req, res) => {
 
           **Exemple de réponse attendue :**
           {
-            "differential_diagnosis": "Le patient présente une douleur à l'épaule droite. Le diagnostic différentiel inclut une <strong>tendinite de la coiffe des rotateurs</strong>, une <strong>bursite sous-acromiale</strong> et une <strong>capsulite rétractile</strong>.",
+            "summary": "Le patient présente une douleur à l'épaule droite. Le diagnostic différentiel inclut une <strong>tendinite de la coiffe des rotateurs</strong>, une <strong>bursite sous-acromiale</strong> et une <strong>capsulite rétractile</strong>.",
             "exams": [
               {
                 "name": "Test de Neer",

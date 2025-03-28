@@ -14,40 +14,40 @@ export default function MobileNavBar({
   return (
     <div className="lg:hidden bg-white shadow py-4">
       <div className="container mx-auto flex flex-col space-y-2">
-        <Link
-          to="/"
-          className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
-          onClick={toggleMenu}
-        >
-          Accueil
-        </Link>
-
-        <Link
-          to="/about"
-          className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
-          onClick={toggleMenu}
-        >
-          Qui sommes-nous ?
-        </Link>
-
-        <Link
-          to="/plans"
-          className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
-          onClick={toggleMenu}
-        >
-          Formules
-        </Link>
-
-        <Link
-          to="/contact"
-          className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
-          onClick={toggleMenu}
-        >
-          Contact
-        </Link>
-
         {!isAuthenticated ? (
           <>
+            <Link
+              to="/"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Accueil
+            </Link>
+
+            <Link
+              to="/about"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Qui sommes-nous ?
+            </Link>
+
+            <Link
+              to="/plans"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Formules
+            </Link>
+
+            <Link
+              to="/contact"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Contact
+            </Link>
+
             <Link to="/login" className="w-full" onClick={toggleMenu}>
               <Button
                 variant="outline"
@@ -64,9 +64,26 @@ export default function MobileNavBar({
           </>
         ) : (
           <>
+            <Link
+              to="/patients"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Patients
+            </Link>
+
+            <Link
+              to="/agenda"
+              className={`${navigationMenuTriggerStyle()} text-gray-700 hover:text-gray-900`}
+              onClick={toggleMenu}
+            >
+              Agenda
+            </Link>
+
             <div className="w-full">
               <PatientSearch />
             </div>
+
             <Link
               to="/settings"
               className={`${navigationMenuTriggerStyle()} w-full flex items-center gap-2`}
@@ -75,6 +92,7 @@ export default function MobileNavBar({
               <FiSettings className="w-5 h-5 flex-shrink-0" />
               Paramètres
             </Link>
+
             <Link
               to="/manage-account"
               className={`${navigationMenuTriggerStyle()} text-primary w-full`}
@@ -82,6 +100,7 @@ export default function MobileNavBar({
             >
               {user ? `${user.firstName} ${user.lastName}` : "Chargement..."}
             </Link>
+
             <button
               onClick={() => {
                 toggleMenu();

@@ -35,11 +35,20 @@ export default function AllItemsList({
     addItemMutation.isLoading ||
     deleteItemMutation.isLoading;
 
-  const handleAddItem = () => {
-    if (items.length === 0) return;
-    const keys = Object.keys(items[0]);
+  const handleAddItem = (category = null) => {
+    if (items.length === 0 && !columnLabels) return;
+
+    const keys =
+      items.length > 0 ? Object.keys(items[0]) : Object.keys(columnLabels);
+
     const newItem = keys.reduce((acc, key) => {
-      acc[key] = key === "id" ? `temp-${Date.now()}` : "";
+      if (key === "id") {
+        acc[key] = `temp-${Date.now()}`;
+      } else if (key === "category") {
+        acc[key] = category;
+      } else {
+        acc[key] = "";
+      }
       return acc;
     }, {});
 

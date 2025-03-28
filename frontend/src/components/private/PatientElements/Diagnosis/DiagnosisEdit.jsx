@@ -4,11 +4,8 @@ import { FaPlus, FaTrash } from "react-icons/fa";
 
 export default function DiagnosisEdit({ diagnosis, onSave, onCancel }) {
   const [editedDiagnosis, setEditedDiagnosis] = useState({
-    differential_diagnosis: diagnosis.differential_diagnosis
-      ? diagnosis.differential_diagnosis.replace(
-          /<strong>(.*?)<\/strong>/g,
-          "**$1**"
-        )
+    summary: diagnosis.summary
+      ? diagnosis.summary.replace(/<strong>(.*?)<\/strong>/g, "**$1**")
       : "",
     exams: diagnosis.exams || [],
   });
@@ -45,7 +42,7 @@ export default function DiagnosisEdit({ diagnosis, onSave, onCancel }) {
 
   const handleSave = () => {
     onSave({
-      differential_diagnosis: editedDiagnosis.differential_diagnosis.replace(
+      summary: editedDiagnosis.summary.replace(
         /\*\*(.*?)\*\*/g,
         "<strong>$1</strong>"
       ),
@@ -63,11 +60,11 @@ export default function DiagnosisEdit({ diagnosis, onSave, onCancel }) {
       <textarea
         ref={differentialRef}
         className="w-full p-2 border border-gray-300 rounded-lg overflow-hidden resize-none"
-        value={editedDiagnosis.differential_diagnosis}
+        value={editedDiagnosis.summary}
         onChange={(e) =>
           setEditedDiagnosis({
             ...editedDiagnosis,
-            differential_diagnosis: e.target.value,
+            summary: e.target.value,
           })
         }
       />
